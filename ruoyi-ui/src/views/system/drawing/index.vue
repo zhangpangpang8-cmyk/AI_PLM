@@ -17,30 +17,30 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="图纸版本" prop="drawingVersion">
+      <!-- <el-form-item label="图纸版本" prop="drawingVersion">
         <el-input
           v-model="queryParams.drawingVersion"
           placeholder="请输入图纸版本"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="是否最新版本" prop="latestVersion">
+      </el-form-item> -->
+      <!-- <el-form-item label="是否最新版本" prop="latestVersion">
         <el-input
           v-model="queryParams.latestVersion"
           placeholder="请输入是否最新版本"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="项目id" prop="projectId">
+      </el-form-item> -->
+      <!-- <el-form-item label="项目id" prop="projectId">
         <el-input
           v-model="queryParams.projectId"
           placeholder="请输入项目id"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="项目名称" prop="projectName">
         <el-input
           v-model="queryParams.projectName"
@@ -57,14 +57,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="项目任务id" prop="projectTaskId">
+      <!-- <el-form-item label="项目任务id" prop="projectTaskId">
         <el-input
           v-model="queryParams.projectTaskId"
           placeholder="请输入项目任务id"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="项目任务编码" prop="projectTaskCode">
         <el-input
           v-model="queryParams.projectTaskCode"
@@ -81,7 +81,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="变更id" prop="ecoId">
+      <!-- <el-form-item label="变更id" prop="ecoId">
         <el-input
           v-model="queryParams.ecoId"
           placeholder="请输入变更id"
@@ -112,7 +112,7 @@
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="文件名称" prop="fileName">
         <el-input
           v-model="queryParams.fileName"
@@ -121,7 +121,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="文件后缀" prop="fileSuffix">
+      <!-- <el-form-item label="文件后缀" prop="fileSuffix">
         <el-input
           v-model="queryParams.fileSuffix"
           placeholder="请输入文件后缀"
@@ -176,7 +176,7 @@
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -230,36 +230,37 @@
     </el-row>
 
     <el-table v-loading="loading" :data="drawingList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" />
-      <el-table-column label="图纸编号" align="center" prop="drawingCode" />
-      <el-table-column label="图纸名称" align="center" prop="drawingName" />
-      <el-table-column label="图纸类型" align="center" prop="drawingType" />
-      <el-table-column label="图纸版本" align="center" prop="drawingVersion" />
-      <el-table-column label="是否最新版本" align="center" prop="latestVersion" />
-      <el-table-column label="状态" align="center" prop="status" />
-      <el-table-column label="项目id" align="center" prop="projectId" />
-      <el-table-column label="项目名称" align="center" prop="projectName" />
-      <el-table-column label="项目编码" align="center" prop="projectCode" />
-      <el-table-column label="项目任务id" align="center" prop="projectTaskId" />
-      <el-table-column label="项目任务编码" align="center" prop="projectTaskCode" />
-      <el-table-column label="项目任务名称" align="center" prop="projectTaskName" />
-      <el-table-column label="变更id" align="center" prop="ecoId" />
-      <el-table-column label="变更标题" align="center" prop="ecoTitle" />
-      <el-table-column label="变更编码" align="center" prop="ecoCode" />
-      <el-table-column label="变更说明" align="center" prop="ecoDescription" />
-      <el-table-column label="发布状态" align="center" prop="publishStatus" />
-      <el-table-column label="文件名称" align="center" prop="fileName" />
-      <el-table-column label="文件后缀" align="center" prop="fileSuffix" />
-      <el-table-column label="文件大小" align="center" prop="fileSize" />
-      <el-table-column label="文件路径" align="center" prop="filePath" />
-      <el-table-column label="文件大小" align="center" prop="size" />
-      <el-table-column label="图纸描述" align="center" prop="remark" />
-      <el-table-column label="申请流程" align="center" prop="flowKey" />
-      <el-table-column label="流程实例id" align="center" prop="flowInsId" />
-      <el-table-column label="单据类型" align="center" prop="billType" />
-      <el-table-column label="能否进行变更" align="center" prop="allowChange" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column key="id" label="id" align="center" prop="id" />
+<el-table-column key="drawingCode" label="图纸编号" align="center" prop="drawingCode" />
+<el-table-column key="drawingName" label="图纸名称" align="center" prop="drawingName" />
+<el-table-column key="drawingType" label="图纸类型" align="center" prop="drawingType" />
+<el-table-column key="drawingVersion" label="图纸版本" align="center" prop="drawingVersion" />
+<el-table-column key="latestVersion" label="是否最新版本" align="center" prop="latestVersion" />
+<el-table-column key="status" label="状态" align="center" prop="status" />
+<el-table-column key="projectId" label="项目id" align="center" prop="projectId" />
+<el-table-column key="projectName" label="项目名称" align="center" prop="projectName" />
+<el-table-column key="projectCode" label="项目编码" align="center" prop="projectCode" />
+<el-table-column key="projectTaskId" label="项目任务id" align="center" prop="projectTaskId" />
+<el-table-column key="projectTaskCode" label="项目任务编码" align="center" prop="projectTaskCode" />
+<el-table-column key="projectTaskName" label="项目任务名称" align="center" prop="projectTaskName" />
+<el-table-column key="ecoId" label="变更id" align="center" prop="ecoId" />
+<el-table-column key="ecoTitle" label="变更标题" align="center" prop="ecoTitle" />
+<el-table-column key="ecoCode" label="变更编码" align="center" prop="ecoCode" />
+<el-table-column key="ecoDescription" label="变更说明" align="center" prop="ecoDescription" />
+<el-table-column key="publishStatus" label="发布状态" align="center" prop="publishStatus" />
+<el-table-column key="fileName" label="文件名称" align="center" prop="fileName" />
+<el-table-column key="fileSuffix" label="文件后缀" align="center" prop="fileSuffix" />
+<el-table-column key="fileSize" label="文件大小" align="center" prop="fileSize" />
+<el-table-column key="filePath" label="文件路径" align="center" prop="filePath" />
+<el-table-column key="size" label="文件大小2" align="center" prop="size" /> <!-- 注意：原代码有两个文件大小，建议区分key -->
+<el-table-column key="remark" label="图纸描述" align="center" prop="remark" />
+<el-table-column key="flowKey" label="申请流程" align="center" prop="flowKey" />
+<el-table-column key="flowInsId" label="流程实例id" align="center" prop="flowInsId" />
+<el-table-column key="billType" label="单据类型" align="center" prop="billType" />
+<el-table-column key="allowChange" label="能否进行变更" align="center" prop="allowChange" />
+<el-table-column key="action" label="操作" align="center" class-name="small-padding fixed-width">
+  <!-- 操作列内容保持不变 -->
+</el-table-column>
         <template slot-scope="scope">
           <el-button
             size="mini"
