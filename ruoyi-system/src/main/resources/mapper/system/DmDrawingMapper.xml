@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DmDrawingMapper">
+    
+    <resultMap type="DmDrawing" id="DmDrawingResult">
+        <result property="id"    column="id"    />
+        <result property="drawingCode"    column="drawing_code"    />
+        <result property="drawingName"    column="drawing_name"    />
+        <result property="drawingType"    column="drawing_type"    />
+        <result property="drawingVersion"    column="drawing_version"    />
+        <result property="latestVersion"    column="latest_version"    />
+        <result property="status"    column="status"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="projectCode"    column="project_code"    />
+        <result property="projectTaskId"    column="project_task_id"    />
+        <result property="projectTaskCode"    column="project_task_code"    />
+        <result property="projectTaskName"    column="project_task_name"    />
+        <result property="ecoId"    column="eco_id"    />
+        <result property="ecoTitle"    column="eco_title"    />
+        <result property="ecoCode"    column="eco_code"    />
+        <result property="ecoDescription"    column="eco_description"    />
+        <result property="publishStatus"    column="publish_status"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="fileSuffix"    column="file_suffix"    />
+        <result property="fileSize"    column="file_size"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="size"    column="size"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="flowKey"    column="flow_key"    />
+        <result property="flowInsId"    column="flow_ins_id"    />
+        <result property="billType"    column="bill_type"    />
+        <result property="allowChange"    column="allow_change"    />
+    </resultMap>
+
+    <sql id="selectDmDrawingVo">
+        select id, drawing_code, drawing_name, drawing_type, drawing_version, latest_version, status, project_id, project_name, project_code, project_task_id, project_task_code, project_task_name, eco_id, eco_title, eco_code, eco_description, publish_status, file_name, file_suffix, file_size, file_path, size, remark, create_by, create_time, update_by, update_time, flow_key, flow_ins_id, bill_type, allow_change from dm_drawing
+    </sql>
+
+    <select id="selectDmDrawingList" parameterType="DmDrawing" resultMap="DmDrawingResult">
+        <include refid="selectDmDrawingVo"/>
+        <where>  
+            <if test="drawingCode != null  and drawingCode != ''"> and drawing_code = #{drawingCode}</if>
+            <if test="drawingName != null  and drawingName != ''"> and drawing_name like concat('%', #{drawingName}, '%')</if>
+            <if test="drawingType != null  and drawingType != ''"> and drawing_type = #{drawingType}</if>
+            <if test="drawingVersion != null  and drawingVersion != ''"> and drawing_version = #{drawingVersion}</if>
+            <if test="latestVersion != null  and latestVersion != ''"> and latest_version = #{latestVersion}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="projectId != null "> and project_id = #{projectId}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
+            <if test="projectTaskId != null "> and project_task_id = #{projectTaskId}</if>
+            <if test="projectTaskCode != null  and projectTaskCode != ''"> and project_task_code = #{projectTaskCode}</if>
+            <if test="projectTaskName != null  and projectTaskName != ''"> and project_task_name like concat('%', #{projectTaskName}, '%')</if>
+            <if test="ecoId != null "> and eco_id = #{ecoId}</if>
+            <if test="ecoTitle != null  and ecoTitle != ''"> and eco_title = #{ecoTitle}</if>
+            <if test="ecoCode != null  and ecoCode != ''"> and eco_code = #{ecoCode}</if>
+            <if test="ecoDescription != null  and ecoDescription != ''"> and eco_description = #{ecoDescription}</if>
+            <if test="publishStatus != null  and publishStatus != ''"> and publish_status = #{publishStatus}</if>
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="fileSuffix != null  and fileSuffix != ''"> and file_suffix = #{fileSuffix}</if>
+            <if test="fileSize != null  and fileSize != ''"> and file_size = #{fileSize}</if>
+            <if test="filePath != null  and filePath != ''"> and file_path = #{filePath}</if>
+            <if test="size != null "> and size = #{size}</if>
+            <if test="flowKey != null  and flowKey != ''"> and flow_key = #{flowKey}</if>
+            <if test="flowInsId != null  and flowInsId != ''"> and flow_ins_id = #{flowInsId}</if>
+            <if test="billType != null  and billType != ''"> and bill_type = #{billType}</if>
+            <if test="allowChange != null  and allowChange != ''"> and allow_change = #{allowChange}</if>
+        </where>
+    </select>
+    
+    <select id="selectDmDrawingById" parameterType="Long" resultMap="DmDrawingResult">
+        <include refid="selectDmDrawingVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertDmDrawing" parameterType="DmDrawing" useGeneratedKeys="true" keyProperty="id">
+        insert into dm_drawing
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="drawingCode != null and drawingCode != ''">drawing_code,</if>
+            <if test="drawingName != null and drawingName != ''">drawing_name,</if>
+            <if test="drawingType != null and drawingType != ''">drawing_type,</if>
+            <if test="drawingVersion != null and drawingVersion != ''">drawing_version,</if>
+            <if test="latestVersion != null and latestVersion != ''">latest_version,</if>
+            <if test="status != null">status,</if>
+            <if test="projectId != null">project_id,</if>
+            <if test="projectName != null">project_name,</if>
+            <if test="projectCode != null">project_code,</if>
+            <if test="projectTaskId != null">project_task_id,</if>
+            <if test="projectTaskCode != null">project_task_code,</if>
+            <if test="projectTaskName != null">project_task_name,</if>
+            <if test="ecoId != null">eco_id,</if>
+            <if test="ecoTitle != null">eco_title,</if>
+            <if test="ecoCode != null">eco_code,</if>
+            <if test="ecoDescription != null">eco_description,</if>
+            <if test="publishStatus != null">publish_status,</if>
+            <if test="fileName != null and fileName != ''">file_name,</if>
+            <if test="fileSuffix != null and fileSuffix != ''">file_suffix,</if>
+            <if test="fileSize != null and fileSize != ''">file_size,</if>
+            <if test="filePath != null and filePath != ''">file_path,</if>
+            <if test="size != null">size,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="flowKey != null">flow_key,</if>
+            <if test="flowInsId != null">flow_ins_id,</if>
+            <if test="billType != null">bill_type,</if>
+            <if test="allowChange != null">allow_change,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="drawingCode != null and drawingCode != ''">#{drawingCode},</if>
+            <if test="drawingName != null and drawingName != ''">#{drawingName},</if>
+            <if test="drawingType != null and drawingType != ''">#{drawingType},</if>
+            <if test="drawingVersion != null and drawingVersion != ''">#{drawingVersion},</if>
+            <if test="latestVersion != null and latestVersion != ''">#{latestVersion},</if>
+            <if test="status != null">#{status},</if>
+            <if test="projectId != null">#{projectId},</if>
+            <if test="projectName != null">#{projectName},</if>
+            <if test="projectCode != null">#{projectCode},</if>
+            <if test="projectTaskId != null">#{projectTaskId},</if>
+            <if test="projectTaskCode != null">#{projectTaskCode},</if>
+            <if test="projectTaskName != null">#{projectTaskName},</if>
+            <if test="ecoId != null">#{ecoId},</if>
+            <if test="ecoTitle != null">#{ecoTitle},</if>
+            <if test="ecoCode != null">#{ecoCode},</if>
+            <if test="ecoDescription != null">#{ecoDescription},</if>
+            <if test="publishStatus != null">#{publishStatus},</if>
+            <if test="fileName != null and fileName != ''">#{fileName},</if>
+            <if test="fileSuffix != null and fileSuffix != ''">#{fileSuffix},</if>
+            <if test="fileSize != null and fileSize != ''">#{fileSize},</if>
+            <if test="filePath != null and filePath != ''">#{filePath},</if>
+            <if test="size != null">#{size},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="flowKey != null">#{flowKey},</if>
+            <if test="flowInsId != null">#{flowInsId},</if>
+            <if test="billType != null">#{billType},</if>
+            <if test="allowChange != null">#{allowChange},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDmDrawing" parameterType="DmDrawing">
+        update dm_drawing
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="drawingCode != null and drawingCode != ''">drawing_code = #{drawingCode},</if>
+            <if test="drawingName != null and drawingName != ''">drawing_name = #{drawingName},</if>
+            <if test="drawingType != null and drawingType != ''">drawing_type = #{drawingType},</if>
+            <if test="drawingVersion != null and drawingVersion != ''">drawing_version = #{drawingVersion},</if>
+            <if test="latestVersion != null and latestVersion != ''">latest_version = #{latestVersion},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="projectName != null">project_name = #{projectName},</if>
+            <if test="projectCode != null">project_code = #{projectCode},</if>
+            <if test="projectTaskId != null">project_task_id = #{projectTaskId},</if>
+            <if test="projectTaskCode != null">project_task_code = #{projectTaskCode},</if>
+            <if test="projectTaskName != null">project_task_name = #{projectTaskName},</if>
+            <if test="ecoId != null">eco_id = #{ecoId},</if>
+            <if test="ecoTitle != null">eco_title = #{ecoTitle},</if>
+            <if test="ecoCode != null">eco_code = #{ecoCode},</if>
+            <if test="ecoDescription != null">eco_description = #{ecoDescription},</if>
+            <if test="publishStatus != null">publish_status = #{publishStatus},</if>
+            <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
+            <if test="fileSuffix != null and fileSuffix != ''">file_suffix = #{fileSuffix},</if>
+            <if test="fileSize != null and fileSize != ''">file_size = #{fileSize},</if>
+            <if test="filePath != null and filePath != ''">file_path = #{filePath},</if>
+            <if test="size != null">size = #{size},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="flowKey != null">flow_key = #{flowKey},</if>
+            <if test="flowInsId != null">flow_ins_id = #{flowInsId},</if>
+            <if test="billType != null">bill_type = #{billType},</if>
+            <if test="allowChange != null">allow_change = #{allowChange},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDmDrawingById" parameterType="Long">
+        delete from dm_drawing where id = #{id}
+    </delete>
+
+    <delete id="deleteDmDrawingByIds" parameterType="String">
+        delete from dm_drawing where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
