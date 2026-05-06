@@ -376,7 +376,13 @@ insert into sys_role_menu values ('2', '1057');
 insert into sys_role_menu values ('2', '1058');
 insert into sys_role_menu values ('2', '1059');
 insert into sys_role_menu values ('2', '1060');
-
+insert into sys_role_menu values ('2', '118');
+insert into sys_role_menu values ('2', '2000');
+insert into sys_role_menu values ('2', '2001');
+insert into sys_role_menu values ('2', '2002');
+insert into sys_role_menu values ('2', '2003');
+insert into sys_role_menu values ('2', '2004');
+insert into sys_role_menu values ('2', '2005');
 -- ----------------------------
 -- 8、角色和部门关联表  角色1-N部门
 -- ----------------------------
@@ -721,3 +727,67 @@ create table gen_table_column (
   update_time       datetime                                   comment '更新时间',
   primary key (column_id)
 ) engine=innodb auto_increment=1 comment = '代码生成业务表字段';
+
+-- ----------------------------
+-- 21、图纸管理表
+-- ----------------------------
+drop table if exists sys_drawing;
+create table sys_drawing (
+  drawing_id         bigint(20)      not null auto_increment    comment '图纸ID',
+  drawing_name       varchar(100)    not null                   comment '图纸名称',
+  drawing_type       varchar(50)     not null                   comment '图纸类型',
+  file_path          varchar(255)    not null                   comment '文件路径',
+  status              char(1)         default '0'                comment '状态（0正常 1停用）',
+  create_by         varchar(64)     default ''                 comment '创建者',
+  create_time       datetime                                   comment '创建时间',
+  update_by         varchar(64)     default ''                 comment '更新者',
+  update_time       datetime                                   comment '更新时间',
+  remark            varchar(500)    default null               comment '备注',
+  primary key (drawing_id)
+) engine=innodb auto_increment=100 comment = '图纸管理表';
+
+-- ----------------------------
+-- 初始化-图纸管理表数据
+-- ----------------------------
+insert into sys_drawing values(1, '图纸1', '类型A', '/path/to/drawing1', '0', 'admin', sysdate(), '', null, '图纸1备注');
+insert into sys_drawing values(2, '图纸2', '类型B', '/path/to/drawing2', '0', 'admin', sysdate(), '', null, '图纸2备注');
+
+
+-- ----------------------------
+-- 22、图纸管理按钮权限
+-- ----------------------------
+drop table if exists sys_menu;
+create table sys_menu (
+  menu_id           bigint(20)      not null auto_increment    comment '菜单ID',
+  menu_name         varchar(50)     not null                   comment '菜单名称',
+  parent_id         bigint(20)      default 0                  comment '父菜单ID',
+  order_num         int(4)          default 0                  comment '显示顺序',
+  path              varchar(200)    default ''                 comment '路由地址',
+  component         varchar(255)    default null               comment '组件路径',
+  query             varchar(255)    default null               comment '路由参数',
+  route_name        varchar(50)     default ''                 comment '路由名称',
+  is_frame          int(1)          default 1                  comment '是否为外链（0是 1否）',
+  is_cache          int(1)          default 0                  comment '是否缓存（0缓存 1不缓存）',
+  menu_type         char(1)         default ''                 comment '菜单类型（M目录 C菜单 F按钮）',
+  visible           char(1)         default 0                  comment '菜单状态（0显示 1隐藏）',
+  status            char(1)         default 0                  comment '菜单状态（0正常 1停用）',
+  perms             varchar(100)    default null               comment '权限标识',
+  icon              varchar(100)    default '#'                comment '菜单图标',
+  create_by         varchar(64)     default ''                 comment '创建者',
+  create_time       datetime                                   comment '创建时间',
+  update_by         varchar(64)     default ''                 comment '更新者',
+  update_time       datetime                                   comment '更新时间',
+  remark            varchar(500)    default ''                 comment '备注',
+  primary key (menu_id)
+) engine=innodb auto_increment=2000 comment = '菜单权限表';
+
+-- ----------------------------
+-- 初始化-图纸管理按钮权限数据
+-- ----------------------------
+insert into sys_menu values('2000', '图纸管理', '0', '5', 'drawing',     null, '', '', 1, 0, 'M', '0', '0', '', 'drawing',    'admin', sysdate(), '', null, '图纸管理目录');
+insert into sys_menu values('2001', '图纸查询', '2000', '1',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:drawing:query', '#', 'admin', sysdate(), '', null, '');
+insert into sys_menu values('2002', '图纸新增', '2000', '2',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:drawing:add', '#', 'admin', sysdate(), '', null, '');
+insert into sys_menu values('2003', '图纸修改', '2000', '3',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:drawing:edit', '#', 'admin', sysdate(), '', null, '');
+insert into sys_menu values('2004', '图纸删除', '2000', '4',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:drawing:remove', '#', 'admin', sysdate(), '', null, '');
+insert into sys_menu values('2005', '图纸导出', '2000', '5',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:drawing:export', '#', 'admin', sysdate(), '', null, '');
+
