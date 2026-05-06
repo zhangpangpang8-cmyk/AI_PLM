@@ -18,16 +18,11 @@ export function getDrawing(id) {
 }
 
 // 新增图纸管理
-export function addDrawing(file) {
-  const formData = new FormData()
-  formData.append('file', file)
+export function addDrawing(data) {
   return request({
     url: '/system/drawing',
     method: 'post',
-    data: formData,
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
+    data: data
   })
 }
 

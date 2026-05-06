@@ -152,3 +152,4 @@ minio:
   accessKey: minioadmin
   secretKey: minioadmin
   bucketName: drawings
+

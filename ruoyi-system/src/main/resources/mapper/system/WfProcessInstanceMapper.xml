@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.WfProcessInstanceMapper">
+
+    <resultMap type="WfProcessInstance" id="WfProcessInstanceResult">
+        <id     property="id"                 column="id"                  />
+        <result property="processDefinitionId" column="process_definition_id" />
+        <result property="businessType"       column="business_type"       />
+        <result property="businessId"         column="business_id"         />
+        <result property="businessNo"         column="business_no"         />
+        <result property="title"              column="title"               />
+        <result property="initiator"          column="initiator"           />
+        <result property="currentNode"        column="current_node"        />
+        <result property="status"             column="status"              />
+        <result property="startTime"          column="start_time"          />
+        <result property="endTime"            column="end_time"            />
+        <result property="duration"           column="duration"            />
+        <result property="createTime"         column="create_time"         />
+    </resultMap>
+
+    <sql id="selectWfProcessInstanceVo">
+        select id, process_definition_id, business_type, business_id, business_no,
+               title, initiator, current_node, status, start_time, end_time, duration, create_time
+        from wf_process_instance
+    </sql>
+
+    <select id="selectWfProcessInstanceList" parameterType="WfProcessInstance" resultMap="WfProcessInstanceResult">
+        <include refid="selectWfProcessInstanceVo"/>
+        <where>
+            <if test="processDefinitionId != null "> and process_definition_id = #{processDefinitionId}</if>
+            <if test="businessType != null  and businessType != ''"> and business_type = #{businessType}</if>
+            <if test="businessId != null "> and business_id = #{businessId}</if>
+            <if test="initiator != null  and initiator != ''"> and initiator = #{initiator}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectWfProcessInstanceById" parameterType="Long" resultMap="WfProcessInstanceResult">
+        <include refid="selectWfProcessInstanceVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectWfProcessInstanceByBusinessId" resultMap="WfProcessInstanceResult">
+        <include refid="selectWfProcessInstanceVo"/>
+        where business_type = #{businessType} and business_id = #{businessId}
+        order by create_time desc limit 1
+    </select>
+
+    <insert id="insertWfProcessInstance" parameterType="WfProcessInstance" useGeneratedKeys="true" keyProperty="id">
+        insert into wf_process_instance
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="processDefinitionId != null">process_definition_id,</if>
+            <if test="businessType != null and businessType != ''">business_type,</if>
+            <if test="businessId != null">business_id,</if>
+            <if test="businessNo != null">business_no,</if>
+            <if test="title != null">title,</if>
+            <if test="initiator != null">initiator,</if>
+            <if test="currentNode != null">current_node,</if>
+            <if test="status != null">status,</if>
+            <if test="startTime != null">start_time,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="processDefinitionId != null">#{processDefinitionId},</if>
+            <if test="businessType != null and businessType != ''">#{businessType},</if>
+            <if test="businessId != null">#{businessId},</if>
+            <if test="businessNo != null">#{businessNo},</if>
+            <if test="title != null">#{title},</if>
+            <if test="initiator != null">#{initiator},</if>
+            <if test="currentNode != null">#{currentNode},</if>
+            <if test="status != null">#{status},</if>
+            <if test="startTime != null">#{startTime},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateWfProcessInstance" parameterType="WfProcessInstance">
+        update wf_process_instance
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="currentNode != null">current_node = #{currentNode},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="duration != null">duration = #{duration},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWfProcessInstanceById" parameterType="Long">
+        delete from wf_process_instance where id = #{id}
+    </delete>
+</mapper>

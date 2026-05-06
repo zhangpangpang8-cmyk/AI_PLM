@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.WfProcessTaskMapper">
+
+    <resultMap type="WfProcessTask" id="WfProcessTaskResult">
+        <id     property="id"              column="id"              />
+        <result property="instanceId"      column="instance_id"     />
+        <result property="nodeName"        column="node_name"       />
+        <result property="assignee"        column="assignee"        />
+        <result property="candidateUsers"  column="candidate_users" />
+        <result property="taskStatus"      column="task_status"     />
+        <result property="approvalOpinion" column="approval_opinion"/>
+        <result property="approvalTime"    column="approval_time"   />
+        <result property="startTime"       column="start_time"      />
+        <result property="endTime"         column="end_time"        />
+        <result property="createTime"      column="create_time"     />
+    </resultMap>
+
+    <sql id="selectWfProcessTaskVo">
+        select id, instance_id, node_name, assignee, candidate_users, task_status,
+               approval_opinion, approval_time, start_time, end_time, create_time
+        from wf_process_task
+    </sql>
+
+    <select id="selectWfProcessTaskList" parameterType="WfProcessTask" resultMap="WfProcessTaskResult">
+        <include refid="selectWfProcessTaskVo"/>
+        <where>
+            <if test="instanceId != null "> and instance_id = #{instanceId}</if>
+            <if test="nodeName != null  and nodeName != ''"> and node_name = #{nodeName}</if>
+            <if test="assignee != null  and assignee != ''"> and assignee = #{assignee}</if>
+            <if test="taskStatus != null  and taskStatus != ''"> and task_status = #{taskStatus}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectWfProcessTaskById" parameterType="Long" resultMap="WfProcessTaskResult">
+        <include refid="selectWfProcessTaskVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectPendingTasksByUserId" parameterType="String" resultMap="WfProcessTaskResult">
+        <include refid="selectWfProcessTaskVo"/>
+        where assignee = #{userId} and task_status = 'pending'
+        order by create_time asc
+    </select>
+
+    <select id="selectCompletedTasksByUserId" parameterType="String" resultMap="WfProcessTaskResult">
+        <include refid="selectWfProcessTaskVo"/>
+        where assignee = #{userId} and task_status in ('approved', 'rejected')
+        order by approval_time desc
+    </select>
+
+    <insert id="insertWfProcessTask" parameterType="WfProcessTask" useGeneratedKeys="true" keyProperty="id">
+        insert into wf_process_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="instanceId != null">instance_id,</if>
+            <if test="nodeName != null">node_name,</if>
+            <if test="assignee != null">assignee,</if>
+            <if test="candidateUsers != null">candidate_users,</if>
+            <if test="taskStatus != null">task_status,</if>
+            <if test="startTime != null">start_time,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="instanceId != null">#{instanceId},</if>
+            <if test="nodeName != null">#{nodeName},</if>
+            <if test="assignee != null">#{assignee},</if>
+            <if test="candidateUsers != null">#{candidateUsers},</if>
+            <if test="taskStatus != null">#{taskStatus},</if>
+            <if test="startTime != null">#{startTime},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateWfProcessTask" parameterType="WfProcessTask">
+        update wf_process_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskStatus != null">task_status = #{taskStatus},</if>
+            <if test="approvalOpinion != null">approval_opinion = #{approvalOpinion},</if>
+            <if test="approvalTime != null">approval_time = #{approvalTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWfProcessTaskById" parameterType="Long">
+        delete from wf_process_task where id = #{id}
+    </delete>
+</mapper>

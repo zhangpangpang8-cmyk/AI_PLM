@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.WfProcessDefinitionMapper">
+
+    <resultMap type="WfProcessDefinition" id="WfProcessDefinitionResult">
+        <id     property="id"            column="id"            />
+        <result property="processKey"    column="process_key"   />
+        <result property="processName"   column="process_name"  />
+        <result property="processType"   column="process_type"  />
+        <result property="description"   column="description"   />
+        <result property="status"        column="status"        />
+        <result property="createBy"      column="create_by"     />
+        <result property="createTime"    column="create_time"   />
+        <result property="updateBy"      column="update_by"     />
+        <result property="updateTime"    column="update_time"   />
+        <result property="remark"        column="remark"        />
+    </resultMap>
+
+    <sql id="selectWfProcessDefinitionVo">
+        select id, process_key, process_name, process_type, description, status,
+               create_by, create_time, update_by, update_time, remark
+        from wf_process_definition
+    </sql>
+
+    <select id="selectWfProcessDefinitionList" parameterType="WfProcessDefinition" resultMap="WfProcessDefinitionResult">
+        <include refid="selectWfProcessDefinitionVo"/>
+        <where>
+            <if test="processKey != null  and processKey != ''"> and process_key = #{processKey}</if>
+            <if test="processName != null  and processName != ''"> and process_name like concat('%', #{processName}, '%')</if>
+            <if test="processType != null  and processType != ''"> and process_type = #{processType}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectWfProcessDefinitionById" parameterType="Long" resultMap="WfProcessDefinitionResult">
+        <include refid="selectWfProcessDefinitionVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectWfProcessDefinitionByKey" parameterType="String" resultMap="WfProcessDefinitionResult">
+        <include refid="selectWfProcessDefinitionVo"/>
+        where process_key = #{processKey}
+    </select>
+
+    <insert id="insertWfProcessDefinition" parameterType="WfProcessDefinition" useGeneratedKeys="true" keyProperty="id">
+        insert into wf_process_definition
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="processKey != null and processKey != ''">process_key,</if>
+            <if test="processName != null and processName != ''">process_name,</if>
+            <if test="processType != null">process_type,</if>
+            <if test="description != null">description,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="remark != null">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="processKey != null and processKey != ''">#{processKey},</if>
+            <if test="processName != null and processName != ''">#{processName},</if>
+            <if test="processType != null">#{processType},</if>
+            <if test="description != null">#{description},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="remark != null">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateWfProcessDefinition" parameterType="WfProcessDefinition">
+        update wf_process_definition
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="processKey != null and processKey != ''">process_key = #{processKey},</if>
+            <if test="processName != null and processName != ''">process_name = #{processName},</if>
+            <if test="processType != null">process_type = #{processType},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWfProcessDefinitionById" parameterType="Long">
+        delete from wf_process_definition where id = #{id}
+    </delete>
+
+    <delete id="deleteWfProcessDefinitionByIds" parameterType="String">
+        delete from wf_process_definition where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
