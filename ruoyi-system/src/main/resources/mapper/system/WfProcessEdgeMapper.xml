@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.WfProcessEdgeMapper">
+
+    <resultMap type="WfProcessEdge" id="WfProcessEdgeResult">
+        <id     property="id"                 column="id"                 />
+        <result property="processDefinitionId" column="process_definition_id" />
+        <result property="edgeKey"            column="edge_key"           />
+        <result property="sourceNodeId"       column="source_node_id"     />
+        <result property="targetNodeId"       column="target_node_id"     />
+        <result property="conditionExpr"      column="condition_expr"     />
+        <result property="conditionText"      column="condition_text"     />
+        <result property="sort"               column="sort"               />
+        <result property="createTime"         column="create_time"        />
+    </resultMap>
+
+    <sql id="selectWfProcessEdgeVo">
+        select id, process_definition_id, edge_key, source_node_id, target_node_id,
+        condition_expr, condition_text, sort, create_time
+        from wf_process_edge
+    </sql>
+
+    <select id="selectWfProcessEdgeList" parameterType="WfProcessEdge" resultMap="WfProcessEdgeResult">
+        <include refid="selectWfProcessEdgeVo"/>
+        <where>
+            <if test="processDefinitionId != null "> and process_definition_id = #{processDefinitionId}</if>
+            <if test="edgeKey != null  and edgeKey != ''"> and edge_key = #{edgeKey}</if>
+            <if test="sourceNodeId != null "> and source_node_id = #{sourceNodeId}</if>
+            <if test="targetNodeId != null "> and target_node_id = #{targetNodeId}</if>
+        </where>
+        order by sort asc, create_time desc
+    </select>
+
+    <select id="selectWfProcessEdgeById" parameterType="Long" resultMap="WfProcessEdgeResult">
+        <include refid="selectWfProcessEdgeVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectEdgesByProcessDefinitionId" parameterType="Long" resultMap="WfProcessEdgeResult">
+        <include refid="selectWfProcessEdgeVo"/>
+        where process_definition_id = #{processDefinitionId}
+        order by sort asc, create_time asc
+    </select>
+
+    <insert id="insertWfProcessEdge" parameterType="WfProcessEdge" useGeneratedKeys="true" keyProperty="id">
+        insert into wf_process_edge
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="processDefinitionId != null">process_definition_id,</if>
+            <if test="edgeKey != null and edgeKey != ''">edge_key,</if>
+            <if test="sourceNodeId != null">source_node_id,</if>
+            <if test="targetNodeId != null">target_node_id,</if>
+            <if test="conditionExpr != null and conditionExpr != ''">condition_expr,</if>
+            <if test="conditionText != null and conditionText != ''">condition_text,</if>
+            <if test="sort != null">sort,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="processDefinitionId != null">#{processDefinitionId},</if>
+            <if test="edgeKey != null and edgeKey != ''">#{edgeKey},</if>
+            <if test="sourceNodeId != null">#{sourceNodeId},</if>
+            <if test="targetNodeId != null">#{targetNodeId},</if>
+            <if test="conditionExpr != null and conditionExpr != ''">#{conditionExpr},</if>
+            <if test="conditionText != null and conditionText != ''">#{conditionText},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateWfProcessEdge" parameterType="WfProcessEdge">
+        update wf_process_edge
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="processDefinitionId != null">process_definition_id = #{processDefinitionId},</if>
+            <if test="edgeKey != null and edgeKey != ''">edge_key = #{edgeKey},</if>
+            <if test="sourceNodeId != null">source_node_id = #{sourceNodeId},</if>
+            <if test="targetNodeId != null">target_node_id = #{targetNodeId},</if>
+            <if test="conditionExpr != null and conditionExpr != ''">condition_expr = #{conditionExpr},</if>
+            <if test="conditionText != null and conditionText != ''">condition_text = #{conditionText},</if>
+            <if test="sort != null">sort = #{sort},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWfProcessEdgeById" parameterType="Long">
+        delete from wf_process_edge where id = #{id}
+    </delete>
+
+    <delete id="deleteWfProcessEdgeByIds" parameterType="String">
+        delete from wf_process_edge where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteEdgesByProcessDefinitionId" parameterType="Long">
+        delete from wf_process_edge where process_definition_id = #{processDefinitionId}
+    </delete>
+</mapper>

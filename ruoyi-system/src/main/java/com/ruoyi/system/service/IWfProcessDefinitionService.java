@@ -2,9 +2,11 @@ package com.ruoyi.system.service;
 
 import java.util.List;
 import com.ruoyi.system.domain.WfProcessDefinition;
+import com.ruoyi.system.domain.WfProcessNode;
+import com.ruoyi.system.domain.WfProcessEdge;
 
 /**
- * 流程定义Service接口
+ * 流程定义Service接口（增强版）
  *
  * @author ruoyi
  */
@@ -35,7 +37,7 @@ public interface IWfProcessDefinitionService
     public List<WfProcessDefinition> selectWfProcessDefinitionList(WfProcessDefinition wfProcessDefinition);
 
     /**
-     * 新增流程定义
+     * 新增流程定义（包含节点和连线）
      *
      * @param wfProcessDefinition 流程定义
      * @return 结果
@@ -43,7 +45,7 @@ public interface IWfProcessDefinitionService
     public int insertWfProcessDefinition(WfProcessDefinition wfProcessDefinition);
 
     /**
-     * 修改流程定义
+     * 修改流程定义（包含节点和连线）
      *
      * @param wfProcessDefinition 流程定义
      * @return 结果
@@ -65,4 +67,22 @@ public interface IWfProcessDefinitionService
      * @return 结果
      */
     public int deleteWfProcessDefinitionById(Long id);
+
+    /**
+     * 保存流程设计（包含节点和连线）
+     *
+     * @param wfProcessDefinition 流程定义
+     * @param nodes 节点列表
+     * @param edges 连线列表
+     * @return 结果
+     */
+    public int saveProcessDesign(WfProcessDefinition wfProcessDefinition, List<WfProcessNode> nodes, List<WfProcessEdge> edges);
+
+    /**
+     * 查询流程定义详情（包含节点和连线）
+     *
+     * @param id 流程定义ID
+     * @return 流程定义
+     */
+    public WfProcessDefinition selectProcessDefinitionDetail(Long id);
 }

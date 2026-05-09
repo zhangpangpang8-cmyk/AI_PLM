@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.WfProcessNodeMapper">
+
+    <resultMap type="WfProcessNode" id="WfProcessNodeResult">
+        <id     property="id"                 column="id"                 />
+        <result property="processDefinitionId" column="process_definition_id" />
+        <result property="nodeKey"            column="node_key"           />
+        <result property="nodeName"           column="node_name"          />
+        <result property="nodeType"           column="node_type"          />
+        <result property="nodeX"              column="node_x"             />
+        <result property="nodeY"              column="node_y"             />
+        <result property="assigneeType"       column="assignee_type"      />
+        <result property="assigneeValue"      column="assignee_value"     />
+        <result property="formKey"            column="form_key"           />
+        <result property="conditionExpr"      column="condition_expr"     />
+        <result property="sort"               column="sort"               />
+        <result property="remark"             column="remark"             />
+        <result property="createTime"         column="create_time"        />
+    </resultMap>
+
+    <sql id="selectWfProcessNodeVo">
+        select id, process_definition_id, node_key, node_name, node_type, node_x, node_y,
+               assignee_type, assignee_value, form_key, condition_expr, sort, remark, create_time
+        from wf_process_node
+    </sql>
+
+    <select id="selectWfProcessNodeList" parameterType="WfProcessNode" resultMap="WfProcessNodeResult">
+        <include refid="selectWfProcessNodeVo"/>
+        <where>
+            <if test="processDefinitionId != null "> and process_definition_id = #{processDefinitionId}</if>
+            <if test="nodeKey != null  and nodeKey != ''"> and node_key = #{nodeKey}</if>
+            <if test="nodeName != null  and nodeName != ''"> and node_name like concat('%', #{nodeName}, '%')</if>
+            <if test="nodeType != null  and nodeType != ''"> and node_type = #{nodeType}</if>
+        </where>
+        order by sort asc, create_time desc
+    </select>
+
+    <select id="selectWfProcessNodeById" parameterType="Long" resultMap="WfProcessNodeResult">
+        <include refid="selectWfProcessNodeVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectNodesByProcessDefinitionId" parameterType="Long" resultMap="WfProcessNodeResult">
+        <include refid="selectWfProcessNodeVo"/>
+        where process_definition_id = #{processDefinitionId}
+        order by sort asc, create_time asc
+    </select>
+
+    <insert id="insertWfProcessNode" parameterType="WfProcessNode" useGeneratedKeys="true" keyProperty="id">
+        insert into wf_process_node
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="processDefinitionId != null">process_definition_id,</if>
+            <if test="nodeKey != null and nodeKey != ''">node_key,</if>
+            <if test="nodeName != null and nodeName != ''">node_name,</if>
+            <if test="nodeType != null and nodeType != ''">node_type,</if>
+            <if test="nodeX != null">node_x,</if>
+            <if test="nodeY != null">node_y,</if>
+            <if test="assigneeType != null and assigneeType != ''">assignee_type,</if>
+            <if test="assigneeValue != null and assigneeValue != ''">assignee_value,</if>
+            <if test="formKey != null and formKey != ''">form_key,</if>
+            <if test="conditionExpr != null and conditionExpr != ''">condition_expr,</if>
+            <if test="sort != null">sort,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="processDefinitionId != null">#{processDefinitionId},</if>
+            <if test="nodeKey != null and nodeKey != ''">#{nodeKey},</if>
+            <if test="nodeName != null and nodeName != ''">#{nodeName},</if>
+            <if test="nodeType != null and nodeType != ''">#{nodeType},</if>
+            <if test="nodeX != null">#{nodeX},</if>
+            <if test="nodeY != null">#{nodeY},</if>
+            <if test="assigneeType != null and assigneeType != ''">#{assigneeType},</if>
+            <if test="assigneeValue != null and assigneeValue != ''">#{assigneeValue},</if>
+            <if test="formKey != null and formKey != ''">#{formKey},</if>
+            <if test="conditionExpr != null and conditionExpr != ''">#{conditionExpr},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWfProcessNode" parameterType="WfProcessNode">
+        update wf_process_node
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="processDefinitionId != null">process_definition_id = #{processDefinitionId},</if>
+            <if test="nodeKey != null and nodeKey != ''">node_key = #{nodeKey},</if>
+            <if test="nodeName != null and nodeName != ''">node_name = #{nodeName},</if>
+            <if test="nodeType != null and nodeType != ''">node_type = #{nodeType},</if>
+            <if test="nodeX != null">node_x = #{nodeX},</if>
+            <if test="nodeY != null">node_y = #{nodeY},</if>
+            <if test="assigneeType != null and assigneeType != ''">assignee_type = #{assigneeType},</if>
+            <if test="assigneeValue != null and assigneeValue != ''">assignee_value = #{assigneeValue},</if>
+            <if test="formKey != null and formKey != ''">form_key = #{formKey},</if>
+            <if test="conditionExpr != null and conditionExpr != ''">condition_expr = #{conditionExpr},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWfProcessNodeById" parameterType="Long">
+        delete from wf_process_node where id = #{id}
+    </delete>
+
+    <delete id="deleteWfProcessNodeByIds" parameterType="String">
+        delete from wf_process_node where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteNodesByProcessDefinitionId" parameterType="Long">
+        delete from wf_process_node where process_definition_id = #{processDefinitionId}
+    </delete>
+</mapper>

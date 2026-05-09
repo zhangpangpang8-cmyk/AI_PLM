@@ -3,8 +3,13 @@ package com.ruoyi.system.service.impl;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.ruoyi.system.mapper.WfProcessDefinitionMapper;
+import com.ruoyi.system.mapper.WfProcessNodeMapper;
+import com.ruoyi.system.mapper.WfProcessEdgeMapper;
 import com.ruoyi.system.domain.WfProcessDefinition;
+import com.ruoyi.system.domain.WfProcessNode;
+import com.ruoyi.system.domain.WfProcessEdge;
 import com.ruoyi.system.service.IWfProcessDefinitionService;
 
 /**
@@ -17,6 +22,12 @@ public class WfProcessDefinitionServiceImpl implements IWfProcessDefinitionServi
 {
     @Autowired
     private WfProcessDefinitionMapper wfProcessDefinitionMapper;
+
+    @Autowired
+    private WfProcessNodeMapper wfProcessNodeMapper;
+
+    @Autowired
+    private WfProcessEdgeMapper wfProcessEdgeMapper;
 
     /**
      * 查询流程定义
@@ -85,9 +96,14 @@ public class WfProcessDefinitionServiceImpl implements IWfProcessDefinitionServi
      * @return 结果
      */
     @Override
+    @Transactional
     public int deleteWfProcessDefinitionByIds(Long[] ids)
     {
-        return wfProcessDefinitionMapper.deleteWfProcessDefinitionByIds(ids);
+        for (Long id : ids)
+        {
+            deleteWfProcessDefinitionById(id);
+        }
+        return ids.length;
     }
 
     /**
@@ -97,8 +113,79 @@ public class WfProcessDefinitionServiceImpl implements IWfProcessDefinitionServi
      * @return 结果
      */
     @Override
+    @Transactional
     public int deleteWfProcessDefinitionById(Long id)
     {
+        wfProcessNodeMapper.deleteNodesByProcessDefinitionId(id);
+        wfProcessEdgeMapper.deleteEdgesByProcessDefinitionId(id);
         return wfProcessDefinitionMapper.deleteWfProcessDefinitionById(id);
+    }
+
+    /**
+     * 保存流程设计（包含节点和连线）
+     *
+     * @param wfProcessDefinition 流程定义
+     * @param nodes 节点列表
+     * @param edges 连线列表
+     * @return 结果
+     */
+    @Override
+    @Transactional
+    public int saveProcessDesign(WfProcessDefinition wfProcessDefinition, List<WfProcessNode> nodes, List<WfProcessEdge> edges)
+    {
+        int result = 0;
+
+        if (wfProcessDefinition.getId() == null)
+        {
+            wfProcessDefinitionMapper.insertWfProcessDefinition(wfProcessDefinition);
+        }
+        else
+        {
+            wfProcessDefinitionMapper.updateWfProcessDefinition(wfProcessDefinition);
+            wfProcessNodeMapper.deleteNodesByProcessDefinitionId(wfProcessDefinition.getId());
+            wfProcessEdgeMapper.deleteEdgesByProcessDefinitionId(wfProcessDefinition.getId());
+        }
+
+        Long processDefinitionId = wfProcessDefinition.getId();
+
+        if (nodes != null && !nodes.isEmpty())
+        {
+            for (WfProcessNode node : nodes)
+            {
+                node.setProcessDefinitionId(processDefinitionId);
+                wfProcessNodeMapper.insertWfProcessNode(node);
+            }
+        }
+
+        if (edges != null && !edges.isEmpty())
+        {
+            for (WfProcessEdge edge : edges)
+            {
+                edge.setProcessDefinitionId(processDefinitionId);
+                wfProcessEdgeMapper.insertWfProcessEdge(edge);
+            }
+        }
+
+        return 1;
+    }
+
+    /**
+     * 查询流程定义详情（包含节点和连线）
+     *
+     * @param id 流程定义ID
+     * @return 流程定义
+     */
+    @Override
+    public WfProcessDefinition selectProcessDefinitionDetail(Long id)
+    {
+        WfProcessDefinition definition = wfProcessDefinitionMapper.selectWfProcessDefinitionById(id);
+        if (definition != null)
+        {
+            List<WfProcessNode> nodes = wfProcessNodeMapper.selectNodesByProcessDefinitionId(id);
+            List<WfProcessEdge> edges = wfProcessEdgeMapper.selectEdgesByProcessDefinitionId(id);
+            definition.setNodes(nodes);
+            definition.setEdges(edges);
+        }
+        return definition;
     }
 }

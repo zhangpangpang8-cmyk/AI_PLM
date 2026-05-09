@@ -113,6 +113,20 @@ export const dynamicRoutes = [
     ]
   },
   {
+    path: '/system/process/designer',
+    component: Layout,
+    hidden: true,
+    permissions: ['system:process:definition:edit'],
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/system/process/designer/index'),
+        name: 'ProcessDesigner',
+        meta: { title: '流程设计器', activeMenu: '/system/process/definition' }
+      }
+    ]
+  },
+  {
     path: '/system/role-auth',
     component: Layout,
     hidden: true,

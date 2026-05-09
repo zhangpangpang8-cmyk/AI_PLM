@@ -43,6 +43,15 @@ export function delProcessDefinition(id) {
   })
 }
 
+// 保存流程设计（包含节点和连线）
+export function saveProcessDesign(data) {
+  return request({
+    url: '/system/process/definition/saveDesign',
+    method: 'post',
+    data: data
+  })
+}
+
 // 查询我的待办任务
 export function listPendingTasks(query) {
   return request({
