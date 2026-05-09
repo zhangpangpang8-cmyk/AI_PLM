@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ProItemMapper">
+    
+    <resultMap type="ProItem" id="ProItemResult">
+        <result property="id"    column="id"    />
+        <result property="itemCode"    column="item_code"    />
+        <result property="itemName"    column="item_name"    />
+        <result property="itemTypeId"    column="item_type_id"    />
+        <result property="itemTypeCode"    column="item_type_code"    />
+        <result property="itemTypeName"    column="item_type_name"    />
+        <result property="itemVersion"    column="item_version"    />
+        <result property="materialClassifyIds"    column="material_classify_ids"    />
+        <result property="materialClassifyName"    column="material_classify_name"    />
+        <result property="specification"    column="specification"    />
+        <result property="unitId"    column="unit_id"    />
+        <result property="unitName"    column="unit_name"    />
+        <result property="status"    column="status"    />
+        <result property="enable"    column="enable"    />
+        <result property="vendorId"    column="vendor_id"    />
+        <result property="vendorName"    column="vendor_name"    />
+        <result property="material"    column="material"    />
+        <result property="color"    column="color"    />
+        <result property="weight"    column="weight"    />
+        <result property="Info"    column="Info"    />
+        <result property="parametersValues"    column="parameters_values"    />
+        <result property="url"    column="url"    />
+        <result property="latestVersion"    column="latest_version"    />
+        <result property="publishStatus"    column="publish_status"    />
+        <result property="remake"    column="remake"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="flowKey"    column="flow_key"    />
+        <result property="flowInsId"    column="flow_ins_id"    />
+        <result property="billType"    column="bill_type"    />
+        <result property="usedAsParent"    column="used_as_parent"    />
+        <result property="allowChange"    column="allow_change"    />
+        <result property="itemUuid"    column="item_uuid"    />
+        <result property="mesSyncId"    column="mes_sync_id"    />
+    </resultMap>
+
+    <sql id="selectProItemVo">
+        select id, item_code, item_name, item_type_id, item_type_code, item_type_name, item_version, material_classify_ids, material_classify_name, specification, unit_id, unit_name, status, enable, vendor_id, vendor_name, material, color, weight, Info, parameters_values, url, latest_version, publish_status, remake, create_by, create_time, update_by, update_time, flow_key, flow_ins_id, bill_type, used_as_parent, allow_change, item_uuid, mes_sync_id from pro_item
+    </sql>
+
+    <select id="selectProItemList" parameterType="ProItem" resultMap="ProItemResult">
+        <include refid="selectProItemVo"/>
+        <where>  
+            <if test="itemCode != null  and itemCode != ''"> and item_code = #{itemCode}</if>
+            <if test="itemName != null  and itemName != ''"> and item_name like concat('%', #{itemName}, '%')</if>
+            <if test="itemTypeId != null "> and item_type_id = #{itemTypeId}</if>
+            <if test="itemTypeCode != null  and itemTypeCode != ''"> and item_type_code = #{itemTypeCode}</if>
+            <if test="itemTypeName != null  and itemTypeName != ''"> and item_type_name like concat('%', #{itemTypeName}, '%')</if>
+            <if test="itemVersion != null  and itemVersion != ''"> and item_version = #{itemVersion}</if>
+            <if test="materialClassifyIds != null  and materialClassifyIds != ''"> and material_classify_ids = #{materialClassifyIds}</if>
+            <if test="materialClassifyName != null  and materialClassifyName != ''"> and material_classify_name like concat('%', #{materialClassifyName}, '%')</if>
+            <if test="specification != null  and specification != ''"> and specification = #{specification}</if>
+            <if test="unitId != null "> and unit_id = #{unitId}</if>
+            <if test="unitName != null  and unitName != ''"> and unit_name like concat('%', #{unitName}, '%')</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="enable != null  and enable != ''"> and enable = #{enable}</if>
+            <if test="vendorId != null "> and vendor_id = #{vendorId}</if>
+            <if test="vendorName != null  and vendorName != ''"> and vendor_name like concat('%', #{vendorName}, '%')</if>
+            <if test="material != null  and material != ''"> and material = #{material}</if>
+            <if test="color != null  and color != ''"> and color = #{color}</if>
+            <if test="weight != null "> and weight = #{weight}</if>
+            <if test="Info != null  and Info != ''"> and Info = #{Info}</if>
+            <if test="parametersValues != null  and parametersValues != ''"> and parameters_values = #{parametersValues}</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="latestVersion != null  and latestVersion != ''"> and latest_version = #{latestVersion}</if>
+            <if test="publishStatus != null  and publishStatus != ''"> and publish_status = #{publishStatus}</if>
+            <if test="remake != null  and remake != ''"> and remake = #{remake}</if>
+            <if test="flowKey != null  and flowKey != ''"> and flow_key = #{flowKey}</if>
+            <if test="flowInsId != null  and flowInsId != ''"> and flow_ins_id = #{flowInsId}</if>
+            <if test="billType != null  and billType != ''"> and bill_type = #{billType}</if>
+            <if test="usedAsParent != null  and usedAsParent != ''"> and used_as_parent = #{usedAsParent}</if>
+            <if test="allowChange != null  and allowChange != ''"> and allow_change = #{allowChange}</if>
+            <if test="itemUuid != null  and itemUuid != ''"> and item_uuid = #{itemUuid}</if>
+            <if test="mesSyncId != null  and mesSyncId != ''"> and mes_sync_id = #{mesSyncId}</if>
+        </where>
+    </select>
+    
+    <select id="selectProItemById" parameterType="Long" resultMap="ProItemResult">
+        <include refid="selectProItemVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertProItem" parameterType="ProItem" useGeneratedKeys="true" keyProperty="id">
+        insert into pro_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="itemCode != null and itemCode != ''">item_code,</if>
+            <if test="itemName != null and itemName != ''">item_name,</if>
+            <if test="itemTypeId != null">item_type_id,</if>
+            <if test="itemTypeCode != null and itemTypeCode != ''">item_type_code,</if>
+            <if test="itemTypeName != null and itemTypeName != ''">item_type_name,</if>
+            <if test="itemVersion != null and itemVersion != ''">item_version,</if>
+            <if test="materialClassifyIds != null and materialClassifyIds != ''">material_classify_ids,</if>
+            <if test="materialClassifyName != null and materialClassifyName != ''">material_classify_name,</if>
+            <if test="specification != null">specification,</if>
+            <if test="unitId != null">unit_id,</if>
+            <if test="unitName != null and unitName != ''">unit_name,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="enable != null and enable != ''">enable,</if>
+            <if test="vendorId != null">vendor_id,</if>
+            <if test="vendorName != null">vendor_name,</if>
+            <if test="material != null">material,</if>
+            <if test="color != null">color,</if>
+            <if test="weight != null">weight,</if>
+            <if test="Info != null">Info,</if>
+            <if test="parametersValues != null">parameters_values,</if>
+            <if test="url != null">url,</if>
+            <if test="latestVersion != null and latestVersion != ''">latest_version,</if>
+            <if test="publishStatus != null and publishStatus != ''">publish_status,</if>
+            <if test="remake != null">remake,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="flowKey != null">flow_key,</if>
+            <if test="flowInsId != null">flow_ins_id,</if>
+            <if test="billType != null">bill_type,</if>
+            <if test="usedAsParent != null">used_as_parent,</if>
+            <if test="allowChange != null">allow_change,</if>
+            <if test="itemUuid != null">item_uuid,</if>
+            <if test="mesSyncId != null">mes_sync_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="itemCode != null and itemCode != ''">#{itemCode},</if>
+            <if test="itemName != null and itemName != ''">#{itemName},</if>
+            <if test="itemTypeId != null">#{itemTypeId},</if>
+            <if test="itemTypeCode != null and itemTypeCode != ''">#{itemTypeCode},</if>
+            <if test="itemTypeName != null and itemTypeName != ''">#{itemTypeName},</if>
+            <if test="itemVersion != null and itemVersion != ''">#{itemVersion},</if>
+            <if test="materialClassifyIds != null and materialClassifyIds != ''">#{materialClassifyIds},</if>
+            <if test="materialClassifyName != null and materialClassifyName != ''">#{materialClassifyName},</if>
+            <if test="specification != null">#{specification},</if>
+            <if test="unitId != null">#{unitId},</if>
+            <if test="unitName != null and unitName != ''">#{unitName},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="enable != null and enable != ''">#{enable},</if>
+            <if test="vendorId != null">#{vendorId},</if>
+            <if test="vendorName != null">#{vendorName},</if>
+            <if test="material != null">#{material},</if>
+            <if test="color != null">#{color},</if>
+            <if test="weight != null">#{weight},</if>
+            <if test="Info != null">#{Info},</if>
+            <if test="parametersValues != null">#{parametersValues},</if>
+            <if test="url != null">#{url},</if>
+            <if test="latestVersion != null and latestVersion != ''">#{latestVersion},</if>
+            <if test="publishStatus != null and publishStatus != ''">#{publishStatus},</if>
+            <if test="remake != null">#{remake},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="flowKey != null">#{flowKey},</if>
+            <if test="flowInsId != null">#{flowInsId},</if>
+            <if test="billType != null">#{billType},</if>
+            <if test="usedAsParent != null">#{usedAsParent},</if>
+            <if test="allowChange != null">#{allowChange},</if>
+            <if test="itemUuid != null">#{itemUuid},</if>
+            <if test="mesSyncId != null">#{mesSyncId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProItem" parameterType="ProItem">
+        update pro_item
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="itemCode != null and itemCode != ''">item_code = #{itemCode},</if>
+            <if test="itemName != null and itemName != ''">item_name = #{itemName},</if>
+            <if test="itemTypeId != null">item_type_id = #{itemTypeId},</if>
+            <if test="itemTypeCode != null and itemTypeCode != ''">item_type_code = #{itemTypeCode},</if>
+            <if test="itemTypeName != null and itemTypeName != ''">item_type_name = #{itemTypeName},</if>
+            <if test="itemVersion != null and itemVersion != ''">item_version = #{itemVersion},</if>
+            <if test="materialClassifyIds != null and materialClassifyIds != ''">material_classify_ids = #{materialClassifyIds},</if>
+            <if test="materialClassifyName != null and materialClassifyName != ''">material_classify_name = #{materialClassifyName},</if>
+            <if test="specification != null">specification = #{specification},</if>
+            <if test="unitId != null">unit_id = #{unitId},</if>
+            <if test="unitName != null and unitName != ''">unit_name = #{unitName},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="enable != null and enable != ''">enable = #{enable},</if>
+            <if test="vendorId != null">vendor_id = #{vendorId},</if>
+            <if test="vendorName != null">vendor_name = #{vendorName},</if>
+            <if test="material != null">material = #{material},</if>
+            <if test="color != null">color = #{color},</if>
+            <if test="weight != null">weight = #{weight},</if>
+            <if test="Info != null">Info = #{Info},</if>
+            <if test="parametersValues != null">parameters_values = #{parametersValues},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="latestVersion != null and latestVersion != ''">latest_version = #{latestVersion},</if>
+            <if test="publishStatus != null and publishStatus != ''">publish_status = #{publishStatus},</if>
+            <if test="remake != null">remake = #{remake},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="flowKey != null">flow_key = #{flowKey},</if>
+            <if test="flowInsId != null">flow_ins_id = #{flowInsId},</if>
+            <if test="billType != null">bill_type = #{billType},</if>
+            <if test="usedAsParent != null">used_as_parent = #{usedAsParent},</if>
+            <if test="allowChange != null">allow_change = #{allowChange},</if>
+            <if test="itemUuid != null">item_uuid = #{itemUuid},</if>
+            <if test="mesSyncId != null">mes_sync_id = #{mesSyncId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProItemById" parameterType="Long">
+        delete from pro_item where id = #{id}
+    </delete>
+
+    <delete id="deleteProItemByIds" parameterType="String">
+        delete from pro_item where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

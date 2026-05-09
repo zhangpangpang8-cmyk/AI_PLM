@@ -80,16 +80,7 @@
                 >http://www.ruoyi.vip</el-link
               >
             </p>
-            <p>
-              <i class="el-icon-user-solid"></i> QQ群：<s> 满937441 </s> <s> 满887144332 </s>
-              <s> 满180251782 </s> <s> 满104180207 </s> <s> 满186866453 </s> <s> 满201396349 </s>
-              <s> 满101456076 </s> <s> 满101539465 </s> <s> 满264312783 </s> <s> 满167385320 </s> 
-              <s> 满104748341 </s> <s> 满160110482 </s> <s> 满170801498 </s> <s> 满108482800 </s> 
-              <s> 满101046199 </s> <s> 满136919097 </s> <s> 满143961921 </s> <s> 满174951577 </s> 
-              <s> 满161281055 </s> <s> 满138988063 </s> <s> 满151450850 </s> <s> 满224622315 </s>
-              <s> 满287842588 </s> <s> 满187944233 </s> <s> 满228578329 </s> <s> 满191164766 </s>
-              <s> 满174569686 </s> <a href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=M9y5NjAl44lAL_Vh2crmEehZU_PMU6KS&authKey=ZSDz8hEREWSaPuxQV3gEwqGIaGjfRNnkB4rJjf0IvXhrSUGSGwQFmBA%2Boe8HFxyl&noverify=0&group_code=127358632" target="_blank">127358632</a>
-            </p>
+           
             <p>
               <i class="el-icon-chat-dot-round"></i> 微信：<a
                 href="javascript:;"
@@ -185,7 +176,7 @@
             </el-collapse-item>
             <el-collapse-item title="v3.9.0 - 2025-05-28">
               <ol>
-                <li>优化菜单搜索查询页</li>
+                <li>优化菜单搜索查询页</li>/
                 <li>导航栏显示昵称&设置</li>
                 <li>菜单管理新增路由名称</li>
                 <li>添加底部版权信息&开关</li>

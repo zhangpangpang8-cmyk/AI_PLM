@@ -568,7 +568,12 @@ export default {
         return
       }
       if (this.connecting && this.connectingSourceNode) {
-        this.completeConnect(node)
+        const targetDirection = this.calculateBestTargetDirection(
+          this.connectingSourceNode,
+          node,
+          this.connectingSourceDirection
+        )
+        this.completeConnect(node, targetDirection)
       } else {
         this.selectNode(node)
       }
@@ -972,6 +977,27 @@ export default {
       } else {
         return dy > 0 ? 'bottom' : 'top'
       }
+    },
+
+    calculateBestTargetDirection(sourceNode, targetNode, sourceDirection) {
+      const sourceCenter = this.getNodeConnectPoint(sourceNode, sourceDirection)
+      const targetCenter = {
+        x: targetNode.nodeX + 60,
+        y: targetNode.nodeY + 35
+      }
+
+      const dx = targetCenter.x - sourceCenter.x
+      const dy = targetCenter.y - sourceCenter.y
+
+      let bestDirection
+
+      if (Math.abs(dx) > Math.abs(dy)) {
+        bestDirection = dx > 0 ? 'left' : 'right'
+      } else {
+        bestDirection = dy > 0 ? 'top' : 'bottom'
+      }
+
+      return bestDirection
     },
 
     canvasKeyDown(e) {
