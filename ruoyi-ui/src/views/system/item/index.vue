@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="auto">
       <el-form-item label="物料编码" prop="itemCode">
         <el-input
           v-model="queryParams.itemCode"
@@ -17,42 +17,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="物料类型ID" prop="itemTypeId">
-        <el-input
-          v-model="queryParams.itemTypeId"
-          placeholder="请输入物料类型ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="物料类型编码" prop="itemTypeCode">
-        <el-input
-          v-model="queryParams.itemTypeCode"
-          placeholder="请输入物料类型编码"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="物料类型名称" prop="itemTypeName">
         <el-input
           v-model="queryParams.itemTypeName"
           placeholder="请输入物料类型名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="物料版本号" prop="itemVersion">
-        <el-input
-          v-model="queryParams.itemVersion"
-          placeholder="请输入物料版本号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="物料分类ids" prop="materialClassifyIds">
-        <el-input
-          v-model="queryParams.materialClassifyIds"
-          placeholder="请输入物料分类ids"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -65,138 +33,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="单位ID" prop="unitId">
-        <el-input
-          v-model="queryParams.unitId"
-          placeholder="请输入单位ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="单位名称" prop="unitName">
-        <el-input
-          v-model="queryParams.unitName"
-          placeholder="请输入单位名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="是否启用" prop="enable">
         <el-input
           v-model="queryParams.enable"
           placeholder="请输入是否启用"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="供应商ID" prop="vendorId">
-        <el-input
-          v-model="queryParams.vendorId"
-          placeholder="请输入供应商ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="供应商名称" prop="vendorName">
-        <el-input
-          v-model="queryParams.vendorName"
-          placeholder="请输入供应商名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="材质" prop="material">
-        <el-input
-          v-model="queryParams.material"
-          placeholder="请输入材质"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="颜色" prop="color">
-        <el-input
-          v-model="queryParams.color"
-          placeholder="请输入颜色"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="重量" prop="weight">
-        <el-input
-          v-model="queryParams.weight"
-          placeholder="请输入重量"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="图片URL" prop="url">
-        <el-input
-          v-model="queryParams.url"
-          placeholder="请输入图片URL"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="是否最新版本" prop="latestVersion">
-        <el-input
-          v-model="queryParams.latestVersion"
-          placeholder="请输入是否最新版本"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="备注" prop="remake">
-        <el-input
-          v-model="queryParams.remake"
-          placeholder="请输入备注"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="申请流程" prop="flowKey">
-        <el-input
-          v-model="queryParams.flowKey"
-          placeholder="请输入申请流程"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="流程实例ID" prop="flowInsId">
-        <el-input
-          v-model="queryParams.flowInsId"
-          placeholder="请输入流程实例ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="能否作为Bom的父件" prop="usedAsParent">
-        <el-input
-          v-model="queryParams.usedAsParent"
-          placeholder="请输入能否作为Bom的父件"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="能否进行变更" prop="allowChange">
-        <el-input
-          v-model="queryParams.allowChange"
-          placeholder="请输入能否进行变更"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="物料同步UUID" prop="itemUuid">
-        <el-input
-          v-model="queryParams.itemUuid"
-          placeholder="请输入物料同步UUID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="物料同步MESID" prop="mesSyncId">
-        <el-input
-          v-model="queryParams.mesSyncId"
-          placeholder="请输入物料同步MESID"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -255,38 +95,17 @@
 
     <el-table v-loading="loading" :data="itemList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键ID" align="center" prop="id" />
       <el-table-column label="物料编码" align="center" prop="itemCode" />
       <el-table-column label="物料名称" align="center" prop="itemName" />
-      <el-table-column label="物料类型ID" align="center" prop="itemTypeId" />
       <el-table-column label="物料类型编码" align="center" prop="itemTypeCode" />
       <el-table-column label="物料类型名称" align="center" prop="itemTypeName" />
       <el-table-column label="物料版本号" align="center" prop="itemVersion" />
-      <el-table-column label="物料分类ids" align="center" prop="materialClassifyIds" />
       <el-table-column label="物料分类名称" align="center" prop="materialClassifyName" />
       <el-table-column label="规格型号" align="center" prop="specification" />
-      <el-table-column label="单位ID" align="center" prop="unitId" />
       <el-table-column label="单位名称" align="center" prop="unitName" />
       <el-table-column label="状态" align="center" prop="status" />
       <el-table-column label="是否启用" align="center" prop="enable" />
-      <el-table-column label="供应商ID" align="center" prop="vendorId" />
-      <el-table-column label="供应商名称" align="center" prop="vendorName" />
-      <el-table-column label="材质" align="center" prop="material" />
-      <el-table-column label="颜色" align="center" prop="color" />
-      <el-table-column label="重量" align="center" prop="weight" />
-      <el-table-column label="描述" align="center" prop="Info" />
-      <el-table-column label="技术参数数组" align="center" prop="parametersValues" />
-      <el-table-column label="图片URL" align="center" prop="url" />
-      <el-table-column label="是否最新版本" align="center" prop="latestVersion" />
       <el-table-column label="发布状态" align="center" prop="publishStatus" />
-      <el-table-column label="备注" align="center" prop="remake" />
-      <el-table-column label="申请流程" align="center" prop="flowKey" />
-      <el-table-column label="流程实例ID" align="center" prop="flowInsId" />
-      <el-table-column label="单据类型" align="center" prop="billType" />
-      <el-table-column label="能否作为Bom的父件" align="center" prop="usedAsParent" />
-      <el-table-column label="能否进行变更" align="center" prop="allowChange" />
-      <el-table-column label="物料同步UUID" align="center" prop="itemUuid" />
-      <el-table-column label="物料同步MESID" align="center" prop="mesSyncId" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -306,7 +125,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"

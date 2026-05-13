@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ProItemBomMapper">
+    
+    <resultMap type="ProItemBom" id="ProItemBomResult">
+        <result property="id"    column="id"    />
+        <result property="bomCode"    column="bom_code"    />
+        <result property="bomName"    column="bom_name"    />
+        <result property="bomVersion"    column="bom_version"    />
+        <result property="basicsBom"    column="basics_bom"    />
+        <result property="itemId"    column="item_id"    />
+        <result property="itemCode"    column="item_code"    />
+        <result property="itemName"    column="item_name"    />
+        <result property="itemVersion"    column="item_version"    />
+        <result property="hierarchy"    column="hierarchy"    />
+        <result property="parentNode"    column="parent_node"    />
+        <result property="productId"    column="product_id"    />
+        <result property="productCode"    column="product_code"    />
+        <result property="productName"    column="product_name"    />
+        <result property="nodePath"    column="node_path"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="dosage"    column="dosage"    />
+        <result property="latestVersion"    column="latest_version"    />
+        <result property="flowKey"    column="flow_key"    />
+        <result property="flowInsId"    column="flow_ins_id"    />
+        <result property="billtype"    column="billtype"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="status"    column="status"    />
+        <result property="versionBriefly"    column="version_briefly"    />
+        <result property="versionDetails"    column="version_details"    />
+        <result property="enable"    column="enable"    />
+        <result property="bomUuid"    column="bom_uuid"    />
+    </resultMap>
+
+    <sql id="selectProItemBomVo">
+        select id, bom_code, bom_name, bom_version, basics_bom, item_id, item_code, item_name, item_version, hierarchy, parent_node, product_id, product_code, product_name, node_path, order_num, dosage, latest_version, flow_key, flow_ins_id, billtype, create_by, create_time, update_by, update_time, remark, status, version_briefly, version_details, enable, bom_uuid from pro_item_bom
+    </sql>
+
+    <select id="selectProItemBomList" parameterType="ProItemBom" resultMap="ProItemBomResult">
+        <include refid="selectProItemBomVo"/>
+        <where>  
+            <if test="bomCode != null  and bomCode != ''"> and bom_code = #{bomCode}</if>
+            <if test="bomName != null  and bomName != ''"> and bom_name like concat('%', #{bomName}, '%')</if>
+            <if test="bomVersion != null  and bomVersion != ''"> and bom_version = #{bomVersion}</if>
+            <if test="basicsBom != null  and basicsBom != ''"> and basics_bom = #{basicsBom}</if>
+            <if test="itemId != null "> and item_id = #{itemId}</if>
+            <if test="itemCode != null  and itemCode != ''"> and item_code = #{itemCode}</if>
+            <if test="itemName != null  and itemName != ''"> and item_name like concat('%', #{itemName}, '%')</if>
+            <if test="itemVersion != null  and itemVersion != ''"> and item_version = #{itemVersion}</if>
+            <if test="hierarchy != null "> and hierarchy = #{hierarchy}</if>
+            <if test="parentNode != null  and parentNode != ''"> and parent_node = #{parentNode}</if>
+            <if test="productId != null "> and product_id = #{productId}</if>
+            <if test="productCode != null  and productCode != ''"> and product_code = #{productCode}</if>
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+            <if test="nodePath != null  and nodePath != ''"> and node_path = #{nodePath}</if>
+            <if test="orderNum != null "> and order_num = #{orderNum}</if>
+            <if test="dosage != null "> and dosage = #{dosage}</if>
+            <if test="latestVersion != null  and latestVersion != ''"> and latest_version = #{latestVersion}</if>
+            <if test="flowKey != null  and flowKey != ''"> and flow_key = #{flowKey}</if>
+            <if test="flowInsId != null  and flowInsId != ''"> and flow_ins_id = #{flowInsId}</if>
+            <if test="billtype != null  and billtype != ''"> and billtype = #{billtype}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="versionBriefly != null  and versionBriefly != ''"> and version_briefly = #{versionBriefly}</if>
+            <if test="versionDetails != null  and versionDetails != ''"> and version_details = #{versionDetails}</if>
+            <if test="enable != null  and enable != ''"> and enable = #{enable}</if>
+            <if test="bomUuid != null  and bomUuid != ''"> and bom_uuid = #{bomUuid}</if>
+        </where>
+    </select>
+    
+    <select id="selectProItemBomById" parameterType="Long" resultMap="ProItemBomResult">
+        <include refid="selectProItemBomVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertProItemBom" parameterType="ProItemBom" useGeneratedKeys="true" keyProperty="id">
+        insert into pro_item_bom
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bomCode != null and bomCode != ''">bom_code,</if>
+            <if test="bomName != null and bomName != ''">bom_name,</if>
+            <if test="bomVersion != null and bomVersion != ''">bom_version,</if>
+            <if test="basicsBom != null and basicsBom != ''">basics_bom,</if>
+            <if test="itemId != null">item_id,</if>
+            <if test="itemCode != null and itemCode != ''">item_code,</if>
+            <if test="itemName != null and itemName != ''">item_name,</if>
+            <if test="itemVersion != null and itemVersion != ''">item_version,</if>
+            <if test="hierarchy != null">hierarchy,</if>
+            <if test="parentNode != null and parentNode != ''">parent_node,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="productCode != null and productCode != ''">product_code,</if>
+            <if test="productName != null and productName != ''">product_name,</if>
+            <if test="nodePath != null">node_path,</if>
+            <if test="orderNum != null">order_num,</if>
+            <if test="dosage != null">dosage,</if>
+            <if test="latestVersion != null and latestVersion != ''">latest_version,</if>
+            <if test="flowKey != null">flow_key,</if>
+            <if test="flowInsId != null">flow_ins_id,</if>
+            <if test="billtype != null">billtype,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="versionBriefly != null">version_briefly,</if>
+            <if test="versionDetails != null">version_details,</if>
+            <if test="enable != null">enable,</if>
+            <if test="bomUuid != null">bom_uuid,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bomCode != null and bomCode != ''">#{bomCode},</if>
+            <if test="bomName != null and bomName != ''">#{bomName},</if>
+            <if test="bomVersion != null and bomVersion != ''">#{bomVersion},</if>
+            <if test="basicsBom != null and basicsBom != ''">#{basicsBom},</if>
+            <if test="itemId != null">#{itemId},</if>
+            <if test="itemCode != null and itemCode != ''">#{itemCode},</if>
+            <if test="itemName != null and itemName != ''">#{itemName},</if>
+            <if test="itemVersion != null and itemVersion != ''">#{itemVersion},</if>
+            <if test="hierarchy != null">#{hierarchy},</if>
+            <if test="parentNode != null and parentNode != ''">#{parentNode},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="productCode != null and productCode != ''">#{productCode},</if>
+            <if test="productName != null and productName != ''">#{productName},</if>
+            <if test="nodePath != null">#{nodePath},</if>
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="dosage != null">#{dosage},</if>
+            <if test="latestVersion != null and latestVersion != ''">#{latestVersion},</if>
+            <if test="flowKey != null">#{flowKey},</if>
+            <if test="flowInsId != null">#{flowInsId},</if>
+            <if test="billtype != null">#{billtype},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="versionBriefly != null">#{versionBriefly},</if>
+            <if test="versionDetails != null">#{versionDetails},</if>
+            <if test="enable != null">#{enable},</if>
+            <if test="bomUuid != null">#{bomUuid},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProItemBom" parameterType="ProItemBom">
+        update pro_item_bom
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bomCode != null and bomCode != ''">bom_code = #{bomCode},</if>
+            <if test="bomName != null and bomName != ''">bom_name = #{bomName},</if>
+            <if test="bomVersion != null and bomVersion != ''">bom_version = #{bomVersion},</if>
+            <if test="basicsBom != null and basicsBom != ''">basics_bom = #{basicsBom},</if>
+            <if test="itemId != null">item_id = #{itemId},</if>
+            <if test="itemCode != null and itemCode != ''">item_code = #{itemCode},</if>
+            <if test="itemName != null and itemName != ''">item_name = #{itemName},</if>
+            <if test="itemVersion != null and itemVersion != ''">item_version = #{itemVersion},</if>
+            <if test="hierarchy != null">hierarchy = #{hierarchy},</if>
+            <if test="parentNode != null and parentNode != ''">parent_node = #{parentNode},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="productCode != null and productCode != ''">product_code = #{productCode},</if>
+            <if test="productName != null and productName != ''">product_name = #{productName},</if>
+            <if test="nodePath != null">node_path = #{nodePath},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="dosage != null">dosage = #{dosage},</if>
+            <if test="latestVersion != null and latestVersion != ''">latest_version = #{latestVersion},</if>
+            <if test="flowKey != null">flow_key = #{flowKey},</if>
+            <if test="flowInsId != null">flow_ins_id = #{flowInsId},</if>
+            <if test="billtype != null">billtype = #{billtype},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="versionBriefly != null">version_briefly = #{versionBriefly},</if>
+            <if test="versionDetails != null">version_details = #{versionDetails},</if>
+            <if test="enable != null">enable = #{enable},</if>
+            <if test="bomUuid != null">bom_uuid = #{bomUuid},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProItemBomById" parameterType="Long">
+        delete from pro_item_bom where id = #{id}
+    </delete>
+
+    <delete id="deleteProItemBomByIds" parameterType="String">
+        delete from pro_item_bom where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

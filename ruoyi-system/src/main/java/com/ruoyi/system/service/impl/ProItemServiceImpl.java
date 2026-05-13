@@ -9,7 +9,7 @@ import com.ruoyi.system.domain.ProItem;
 import com.ruoyi.system.service.IProItemService;
 
 /**
- * 物料管理（仅存储激活版本）Service业务层处理
+ * 物料管理Service业务层处理
  * 
  * @author ruoyi
  * @date 2026-05-09
@@ -21,10 +21,10 @@ public class ProItemServiceImpl implements IProItemService
     private ProItemMapper proItemMapper;
 
     /**
-     * 查询物料管理（仅存储激活版本）
+     * 查询物料管理
      * 
-     * @param id 物料管理（仅存储激活版本）主键
-     * @return 物料管理（仅存储激活版本）
+     * @param id 物料管理主键
+     * @return 物料管理
      */
     @Override
     public ProItem selectProItemById(Long id)
@@ -33,10 +33,10 @@ public class ProItemServiceImpl implements IProItemService
     }
 
     /**
-     * 查询物料管理（仅存储激活版本）列表
+     * 查询物料管理列表
      * 
-     * @param proItem 物料管理（仅存储激活版本）
-     * @return 物料管理（仅存储激活版本）
+     * @param proItem 物料管理
+     * @return 物料管理
      */
     @Override
     public List<ProItem> selectProItemList(ProItem proItem)
@@ -45,9 +45,9 @@ public class ProItemServiceImpl implements IProItemService
     }
 
     /**
-     * 新增物料管理（仅存储激活版本）
+     * 新增物料管理
      * 
-     * @param proItem 物料管理（仅存储激活版本）
+     * @param proItem 物料管理
      * @return 结果
      */
     @Override
@@ -58,9 +58,9 @@ public class ProItemServiceImpl implements IProItemService
     }
 
     /**
-     * 修改物料管理（仅存储激活版本）
+     * 修改物料管理
      * 
-     * @param proItem 物料管理（仅存储激活版本）
+     * @param proItem 物料管理
      * @return 结果
      */
     @Override
@@ -71,9 +71,9 @@ public class ProItemServiceImpl implements IProItemService
     }
 
     /**
-     * 批量删除物料管理（仅存储激活版本）
+     * 批量删除物料管理
      * 
-     * @param ids 需要删除的物料管理（仅存储激活版本）主键
+     * @param ids 需要删除的物料管理主键
      * @return 结果
      */
     @Override
@@ -83,9 +83,9 @@ public class ProItemServiceImpl implements IProItemService
     }
 
     /**
-     * 删除物料管理（仅存储激活版本）信息
+     * 删除物料管理信息
      * 
-     * @param id 物料管理（仅存储激活版本）主键
+     * @param id 物料管理主键
      * @return 结果
      */
     @Override
