@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PjOverviewMapper">
+    
+    <resultMap type="PjOverview" id="PjOverviewResult">
+        <result property="id"    column="id"    />
+        <result property="projectCode"    column="project_code"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="classificationId"    column="classification_id"    />
+        <result property="classificationName"    column="classification_name"    />
+        <result property="userId"    column="user_id"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="status"    column="status"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="projectProgress"    column="project_progress"    />
+        <result property="projectInfo"    column="project_info"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="flowKey"    column="flow_key"    />
+        <result property="flowInsId"    column="flow_ins_id"    />
+        <result property="billType"    column="bill_type"    />
+    </resultMap>
+
+    <sql id="selectPjOverviewVo">
+        select id, project_code, project_name, classification_id, classification_name, user_id, nick_name, status, start_time, end_time, project_progress, project_info, create_by, create_time, update_by, update_time, flow_key, flow_ins_id, bill_type from pj_overview
+    </sql>
+
+    <select id="selectPjOverviewList" parameterType="PjOverview" resultMap="PjOverviewResult">
+        <include refid="selectPjOverviewVo"/>
+        <where>  
+            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="classificationId != null "> and classification_id = #{classificationId}</if>
+            <if test="classificationName != null  and classificationName != ''"> and classification_name like concat('%', #{classificationName}, '%')</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="nickName != null  and nickName != ''"> and nick_name like concat('%', #{nickName}, '%')</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="projectProgress != null "> and project_progress = #{projectProgress}</if>
+            <if test="projectInfo != null  and projectInfo != ''"> and project_info = #{projectInfo}</if>
+            <if test="flowKey != null  and flowKey != ''"> and flow_key = #{flowKey}</if>
+            <if test="flowInsId != null  and flowInsId != ''"> and flow_ins_id = #{flowInsId}</if>
+            <if test="billType != null  and billType != ''"> and bill_type = #{billType}</if>
+        </where>
+    </select>
+    
+    <select id="selectPjOverviewById" parameterType="Long" resultMap="PjOverviewResult">
+        <include refid="selectPjOverviewVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertPjOverview" parameterType="PjOverview" useGeneratedKeys="true" keyProperty="id">
+        insert into pj_overview
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="projectCode != null and projectCode != ''">project_code,</if>
+            <if test="projectName != null and projectName != ''">project_name,</if>
+            <if test="classificationId != null">classification_id,</if>
+            <if test="classificationName != null">classification_name,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="nickName != null">nick_name,</if>
+            <if test="status != null">status,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="projectProgress != null">project_progress,</if>
+            <if test="projectInfo != null">project_info,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="flowKey != null">flow_key,</if>
+            <if test="flowInsId != null">flow_ins_id,</if>
+            <if test="billType != null">bill_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="projectCode != null and projectCode != ''">#{projectCode},</if>
+            <if test="projectName != null and projectName != ''">#{projectName},</if>
+            <if test="classificationId != null">#{classificationId},</if>
+            <if test="classificationName != null">#{classificationName},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="nickName != null">#{nickName},</if>
+            <if test="status != null">#{status},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="projectProgress != null">#{projectProgress},</if>
+            <if test="projectInfo != null">#{projectInfo},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="flowKey != null">#{flowKey},</if>
+            <if test="flowInsId != null">#{flowInsId},</if>
+            <if test="billType != null">#{billType},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePjOverview" parameterType="PjOverview">
+        update pj_overview
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectCode != null and projectCode != ''">project_code = #{projectCode},</if>
+            <if test="projectName != null and projectName != ''">project_name = #{projectName},</if>
+            <if test="classificationId != null">classification_id = #{classificationId},</if>
+            <if test="classificationName != null">classification_name = #{classificationName},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="nickName != null">nick_name = #{nickName},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="projectProgress != null">project_progress = #{projectProgress},</if>
+            <if test="projectInfo != null">project_info = #{projectInfo},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="flowKey != null">flow_key = #{flowKey},</if>
+            <if test="flowInsId != null">flow_ins_id = #{flowInsId},</if>
+            <if test="billType != null">bill_type = #{billType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePjOverviewById" parameterType="Long">
+        delete from pj_overview where id = #{id}
+    </delete>
+
+    <delete id="deletePjOverviewByIds" parameterType="String">
+        delete from pj_overview where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
