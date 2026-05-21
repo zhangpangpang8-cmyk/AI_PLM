@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DmTestReportMapper">
+    
+    <resultMap type="DmTestReport" id="DmTestReportResult">
+        <result property="id"    column="id"    />
+        <result property="testCode"    column="test_code"    />
+        <result property="bomId"    column="bom_id"    />
+        <result property="bomName"    column="bom_name"    />
+        <result property="bomCode"    column="bom_code"    />
+        <result property="testType"    column="test_type"    />
+        <result property="testDate"    column="test_date"    />
+        <result property="testers"    column="testers"    />
+        <result property="testEnvironment"    column="test_environment"    />
+        <result property="testPurpose"    column="test_purpose"    />
+        <result property="hardware"    column="hardware"    />
+        <result property="software"    column="software"    />
+        <result property="testTools"    column="test_tools"    />
+        <result property="inConclusion"    column="in_conclusion"    />
+        <result property="actualResults"    column="actual_results"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="flowKey"    column="flow_key"    />
+        <result property="flowInsId"    column="flow_ins_id"    />
+        <result property="billType"    column="bill_type"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectDmTestReportVo">
+        select id, test_code, bom_id, bom_name, bom_code, test_type, test_date, testers, test_environment, test_purpose, hardware, software, test_tools, in_conclusion, actual_results, create_by, create_time, update_by, update_time, flow_key, flow_ins_id, bill_type, status from dm_test_report
+    </sql>
+
+    <select id="selectDmTestReportList" parameterType="DmTestReport" resultMap="DmTestReportResult">
+        <include refid="selectDmTestReportVo"/>
+        <where>  
+            <if test="testCode != null  and testCode != ''"> and test_code = #{testCode}</if>
+            <if test="bomId != null "> and bom_id = #{bomId}</if>
+            <if test="bomName != null  and bomName != ''"> and bom_name like concat('%', #{bomName}, '%')</if>
+            <if test="bomCode != null  and bomCode != ''"> and bom_code = #{bomCode}</if>
+            <if test="testType != null  and testType != ''"> and test_type = #{testType}</if>
+            <if test="testDate != null "> and test_date = #{testDate}</if>
+            <if test="testers != null  and testers != ''"> and testers = #{testers}</if>
+            <if test="testEnvironment != null  and testEnvironment != ''"> and test_environment = #{testEnvironment}</if>
+            <if test="testPurpose != null  and testPurpose != ''"> and test_purpose = #{testPurpose}</if>
+            <if test="hardware != null  and hardware != ''"> and hardware = #{hardware}</if>
+            <if test="software != null  and software != ''"> and software = #{software}</if>
+            <if test="testTools != null  and testTools != ''"> and test_tools = #{testTools}</if>
+            <if test="inConclusion != null  and inConclusion != ''"> and in_conclusion = #{inConclusion}</if>
+            <if test="actualResults != null  and actualResults != ''"> and actual_results = #{actualResults}</if>
+            <if test="flowKey != null  and flowKey != ''"> and flow_key = #{flowKey}</if>
+            <if test="flowInsId != null  and flowInsId != ''"> and flow_ins_id = #{flowInsId}</if>
+            <if test="billType != null  and billType != ''"> and bill_type = #{billType}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectDmTestReportById" parameterType="Long" resultMap="DmTestReportResult">
+        <include refid="selectDmTestReportVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertDmTestReport" parameterType="DmTestReport" useGeneratedKeys="true" keyProperty="id">
+        insert into dm_test_report
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="testCode != null and testCode != ''">test_code,</if>
+            <if test="bomId != null">bom_id,</if>
+            <if test="bomName != null and bomName != ''">bom_name,</if>
+            <if test="bomCode != null and bomCode != ''">bom_code,</if>
+            <if test="testType != null and testType != ''">test_type,</if>
+            <if test="testDate != null">test_date,</if>
+            <if test="testers != null">testers,</if>
+            <if test="testEnvironment != null">test_environment,</if>
+            <if test="testPurpose != null">test_purpose,</if>
+            <if test="hardware != null">hardware,</if>
+            <if test="software != null">software,</if>
+            <if test="testTools != null">test_tools,</if>
+            <if test="inConclusion != null">in_conclusion,</if>
+            <if test="actualResults != null">actual_results,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="flowKey != null">flow_key,</if>
+            <if test="flowInsId != null">flow_ins_id,</if>
+            <if test="billType != null">bill_type,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="testCode != null and testCode != ''">#{testCode},</if>
+            <if test="bomId != null">#{bomId},</if>
+            <if test="bomName != null and bomName != ''">#{bomName},</if>
+            <if test="bomCode != null and bomCode != ''">#{bomCode},</if>
+            <if test="testType != null and testType != ''">#{testType},</if>
+            <if test="testDate != null">#{testDate},</if>
+            <if test="testers != null">#{testers},</if>
+            <if test="testEnvironment != null">#{testEnvironment},</if>
+            <if test="testPurpose != null">#{testPurpose},</if>
+            <if test="hardware != null">#{hardware},</if>
+            <if test="software != null">#{software},</if>
+            <if test="testTools != null">#{testTools},</if>
+            <if test="inConclusion != null">#{inConclusion},</if>
+            <if test="actualResults != null">#{actualResults},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="flowKey != null">#{flowKey},</if>
+            <if test="flowInsId != null">#{flowInsId},</if>
+            <if test="billType != null">#{billType},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDmTestReport" parameterType="DmTestReport">
+        update dm_test_report
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="testCode != null and testCode != ''">test_code = #{testCode},</if>
+            <if test="bomId != null">bom_id = #{bomId},</if>
+            <if test="bomName != null and bomName != ''">bom_name = #{bomName},</if>
+            <if test="bomCode != null and bomCode != ''">bom_code = #{bomCode},</if>
+            <if test="testType != null and testType != ''">test_type = #{testType},</if>
+            <if test="testDate != null">test_date = #{testDate},</if>
+            <if test="testers != null">testers = #{testers},</if>
+            <if test="testEnvironment != null">test_environment = #{testEnvironment},</if>
+            <if test="testPurpose != null">test_purpose = #{testPurpose},</if>
+            <if test="hardware != null">hardware = #{hardware},</if>
+            <if test="software != null">software = #{software},</if>
+            <if test="testTools != null">test_tools = #{testTools},</if>
+            <if test="inConclusion != null">in_conclusion = #{inConclusion},</if>
+            <if test="actualResults != null">actual_results = #{actualResults},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="flowKey != null">flow_key = #{flowKey},</if>
+            <if test="flowInsId != null">flow_ins_id = #{flowInsId},</if>
+            <if test="billType != null">bill_type = #{billType},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDmTestReportById" parameterType="Long">
+        delete from dm_test_report where id = #{id}
+    </delete>
+
+    <delete id="deleteDmTestReportByIds" parameterType="String">
+        delete from dm_test_report where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
