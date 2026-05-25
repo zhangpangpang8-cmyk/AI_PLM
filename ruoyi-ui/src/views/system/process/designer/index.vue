@@ -249,7 +249,7 @@
                     v-for="user in userList"
                     :key="user.userId"
                     :label="user.nickName + '(' + user.userName + ')'"
-                    :value="user.user.userName()">
+                    :value="user.userName">
                     <span style="float: left">{{ user.nickName }}</span>
                     <span style="float: right; color: #8492a6; font-size: 13px">{{ user.userName }}</span>
                   </el-option>
