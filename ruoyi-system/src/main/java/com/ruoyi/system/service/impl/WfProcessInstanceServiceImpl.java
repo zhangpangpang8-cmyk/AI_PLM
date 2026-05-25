@@ -7,8 +7,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.ruoyi.system.mapper.WfProcessInstanceMapper;
 import com.ruoyi.system.mapper.WfProcessTaskMapper;
+import com.ruoyi.system.mapper.WfProcessDefinitionMapper;
+import com.ruoyi.system.mapper.WfProcessNodeMapper;
+import com.ruoyi.system.mapper.WfProcessEdgeMapper;
 import com.ruoyi.system.domain.WfProcessInstance;
 import com.ruoyi.system.domain.WfProcessTask;
+import com.ruoyi.system.domain.WfProcessDefinition;
+import com.ruoyi.system.domain.WfProcessNode;
+import com.ruoyi.system.domain.WfProcessEdge;
 import com.ruoyi.system.service.IWfProcessInstanceService;
 
 /**
@@ -24,6 +30,15 @@ public class WfProcessInstanceServiceImpl implements IWfProcessInstanceService
 
     @Autowired
     private WfProcessTaskMapper wfProcessTaskMapper;
+
+    @Autowired
+    private WfProcessDefinitionMapper wfProcessDefinitionMapper;
+
+    @Autowired
+    private WfProcessNodeMapper wfProcessNodeMapper;
+
+    @Autowired
+    private WfProcessEdgeMapper wfProcessEdgeMapper;
 
     /**
      * 查询流程实例
@@ -77,9 +92,19 @@ public class WfProcessInstanceServiceImpl implements IWfProcessInstanceService
     @Transactional
     public WfProcessInstance startProcessInstance(String processKey, String businessType, Long businessId, String businessNo, String title, String initiator)
     {
-        // 创建流程实例
+        WfProcessDefinition query = new WfProcessDefinition();
+        query.setProcessKey(processKey);
+        query.setStatus("0");
+        List<WfProcessDefinition> definitions = wfProcessDefinitionMapper.selectWfProcessDefinitionList(query);
+
+        if (definitions == null || definitions.isEmpty()) {
+            throw new RuntimeException("未找到流程标识为 " + processKey + " 的有效流程定义");
+        }
+
+        WfProcessDefinition definition = definitions.get(0);
+
         WfProcessInstance instance = new WfProcessInstance();
-        instance.setProcessDefinitionId(1L); // 默认流程定义ID，实际应该根据processKey查询
+        instance.setProcessDefinitionId(definition.getId());
         instance.setBusinessType(businessType);
         instance.setBusinessId(businessId);
         instance.setBusinessNo(businessNo);
@@ -91,18 +116,52 @@ public class WfProcessInstanceServiceImpl implements IWfProcessInstanceService
 
         wfProcessInstanceMapper.insertWfProcessInstance(instance);
 
-        // 创建第一个任务（这里简化处理，实际应该根据流程定义创建）
+        createFirstTask(instance, definition);
+
+        return instance;
+    }
+
+    private void createFirstTask(WfProcessInstance instance, WfProcessDefinition definition)
+    {
+        WfProcessNode startNode = wfProcessNodeMapper.selectStartNodeByDefinitionId(definition.getId());
+
+        if (startNode == null) {
+            throw new RuntimeException("流程定义中未找到开始节点");
+        }
+
+        WfProcessEdge edge = wfProcessEdgeMapper.selectEdgeBySourceNodeId(startNode.getId());
+
+        if (edge == null) {
+            throw new RuntimeException("流程定义中未配置从开始节点出发的连线");
+        }
+
+        WfProcessNode firstTaskNode = wfProcessNodeMapper.selectWfProcessNodeById(edge.getTargetNodeId());
+
+        if (firstTaskNode == null) {
+            throw new RuntimeException("流程定义中未找到第一个任务节点");
+        }
+
         WfProcessTask task = new WfProcessTask();
         task.setInstanceId(instance.getId());
-        task.setNodeName("部门经理审批");
-        task.setAssignee("manager"); // 实际应该根据流程配置分配
+        task.setNodeName(firstTaskNode.getNodeName());
+
+        if ("user".equals(firstTaskNode.getAssigneeType())) {
+            task.setAssignee(firstTaskNode.getAssigneeValue());
+        } else if ("role".equals(firstTaskNode.getAssigneeType())) {
+            task.setCandidateUsers(firstTaskNode.getAssigneeValue());
+        }
+
         task.setTaskStatus("pending");
         task.setStartTime(new Date());
 
         wfProcessTaskMapper.insertWfProcessTask(task);
 
-        return instance;
+        instance.setCurrentNode(firstTaskNode.getNodeName());
+        wfProcessInstanceMapper.updateWfProcessInstance(instance);
     }
+
+
+
 
     /**
      * 删除流程实例信息
@@ -115,4 +174,5 @@ public class WfProcessInstanceServiceImpl implements IWfProcessInstanceService
     {
         return wfProcessInstanceMapper.deleteWfProcessInstanceById(id);
     }
+
 }

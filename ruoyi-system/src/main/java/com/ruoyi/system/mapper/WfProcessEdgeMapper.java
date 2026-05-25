@@ -73,4 +73,12 @@ public interface WfProcessEdgeMapper {
      * @return 结果
      */
     public int deleteEdgesByProcessDefinitionId(Long processDefinitionId);
+
+    /**
+     * 根据源节点ID查询连线
+     *
+     * @param sourceNodeId 源节点ID
+     * @return 流程连线
+     */
+    public WfProcessEdge selectEdgeBySourceNodeId(Long sourceNodeId);
 }

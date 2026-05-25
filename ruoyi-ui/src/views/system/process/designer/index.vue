@@ -24,7 +24,8 @@
               <el-button size="small" icon="el-icon-link" @click="startConnect" :disabled="!selectedNode">
                 连线
               </el-button>
-              <el-button size="small" icon="el-icon-delete" @click="deleteSelected" :disabled="!selectedNode && !selectedEdge">
+              <el-button size="small" icon="el-icon-delete" @click="deleteSelected"
+                         :disabled="!selectedNode && !selectedEdge">
                 删除
               </el-button>
             </el-button-group>
@@ -89,10 +90,11 @@
 
             <div class="grid-background"></div>
 
-            <svg class="edges-layer" width="3000" height="2000" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
+            <svg class="edges-layer" width="3000" height="2000"
+                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
               <defs>
                 <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                  <polygon points="0 0, 10 3.5, 0 7" fill="#409EFF" />
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#409EFF"/>
                 </marker>
               </defs>
 
@@ -247,7 +249,7 @@
                     v-for="user in userList"
                     :key="user.userId"
                     :label="user.nickName + '(' + user.userName + ')'"
-                    :value="user.userId.toString()">
+                    :value="user.user.userName()">
                     <span style="float: left">{{ user.nickName }}</span>
                     <span style="float: right; color: #8492a6; font-size: 13px">{{ user.userName }}</span>
                   </el-option>
@@ -329,10 +331,10 @@
 </template>
 
 <script>
-import { getProcessDefinition, saveProcessDesign } from "@/api/system/process"
-import { listUser } from "@/api/system/user"
-import { listRole } from "@/api/system/role"
-import { deptTreeSelect } from "@/api/system/user"
+import {getProcessDefinition, saveProcessDesign} from "@/api/system/process"
+import {listUser} from "@/api/system/user"
+import {listRole} from "@/api/system/role"
+import {deptTreeSelect} from "@/api/system/user"
 
 export default {
   name: "ProcessDesigner",
@@ -364,13 +366,13 @@ export default {
       translateY: 0,
 
       draggingNode: null,
-      dragOffset: { x: 0, y: 0 },
+      dragOffset: {x: 0, y: 0},
       isDraggingCanvas: false,
-      canvasStartPos: { x: 0, y: 0 },
+      canvasStartPos: {x: 0, y: 0},
 
       connecting: false,
-      connectingStart: { x: 0, y: 0 },
-      connectingEnd: { x: 0, y: 0 },
+      connectingStart: {x: 0, y: 0},
+      connectingEnd: {x: 0, y: 0},
       connectingSourceNode: null,
       connectingSourceDirection: null,
       isConnectingPoint: false,
@@ -414,13 +416,13 @@ export default {
     },
 
     loadUserList() {
-      listUser({ pageSize: 1000 }).then(response => {
+      listUser({pageSize: 1000}).then(response => {
         this.userList = response.rows || []
       })
     },
 
     loadRoleList() {
-      listRole({ pageSize: 1000 }).then(response => {
+      listRole({pageSize: 1000}).then(response => {
         this.roleList = response.rows || []
       })
     },
@@ -469,12 +471,12 @@ export default {
 
         this.nodes = (data.nodes || []).map((node, index) => ({
           ...node,
-          tempId: node.id ? 'node_' + node.id : 'node_new_' + index
+          tempId: node.id
         }))
 
         this.edges = (data.edges || []).map((edge, index) => ({
           ...edge,
-          tempId: edge.id ? 'edge_' + edge.id : 'edge_new_' + index
+          tempId: edge.id
         }))
 
         this.nodeCounter = this.nodes.length
@@ -490,10 +492,13 @@ export default {
         'endEvent': '结束'
       }
 
+      const isStartEvent = nodeType === 'startEvent'
+
       const newNode = {
+        id: null,
         tempId: 'node_' + Date.now(),
-        nodeKey: `${nodeType}_${this.nodeCounter}`,
-        nodeName: nodeTypeNames[nodeType] + this.nodeCounter,
+        nodeKey: isStartEvent ? 'start_event' : `${nodeType}_${this.nodeCounter}`,
+        nodeName: isStartEvent ? '开始' : (nodeTypeNames[nodeType] + this.nodeCounter),
         nodeType: nodeType,
         nodeX: 100 + Math.floor(Math.random() * 500),
         nodeY: 100 + Math.floor(Math.random() * 300),
@@ -623,12 +628,12 @@ export default {
     },
 
     getNodeConnectPoint(node, direction) {
-      if (!node) return { x: 0, y: 0 }
+      if (!node) return {x: 0, y: 0}
 
       const nodeWidth = 120
       const nodeHeight = 70
 
-      switch(direction) {
+      switch (direction) {
         case 'top':
           return {
             x: node.nodeX + nodeWidth / 2,
@@ -680,33 +685,33 @@ export default {
 
       let controlPoint1, controlPoint2
 
-      switch(sourceDir) {
+      switch (sourceDir) {
         case 'right':
-          controlPoint1 = { x: startPoint.x + offset, y: startPoint.y }
+          controlPoint1 = {x: startPoint.x + offset, y: startPoint.y}
           break
         case 'left':
-          controlPoint1 = { x: startPoint.x - offset, y: startPoint.y }
+          controlPoint1 = {x: startPoint.x - offset, y: startPoint.y}
           break
         case 'top':
-          controlPoint1 = { x: startPoint.x, y: startPoint.y - offset }
+          controlPoint1 = {x: startPoint.x, y: startPoint.y - offset}
           break
         case 'bottom':
-          controlPoint1 = { x: startPoint.x, y: startPoint.y + offset }
+          controlPoint1 = {x: startPoint.x, y: startPoint.y + offset}
           break
       }
 
-      switch(targetDir) {
+      switch (targetDir) {
         case 'right':
-          controlPoint2 = { x: endPoint.x + offset, y: endPoint.y }
+          controlPoint2 = {x: endPoint.x + offset, y: endPoint.y}
           break
         case 'left':
-          controlPoint2 = { x: endPoint.x - offset, y: endPoint.y }
+          controlPoint2 = {x: endPoint.x - offset, y: endPoint.y}
           break
         case 'top':
-          controlPoint2 = { x: endPoint.x, y: endPoint.y - offset }
+          controlPoint2 = {x: endPoint.x, y: endPoint.y - offset}
           break
         case 'bottom':
-          controlPoint2 = { x: endPoint.x, y: endPoint.y + offset }
+          controlPoint2 = {x: endPoint.x, y: endPoint.y + offset}
           break
       }
 
@@ -756,22 +761,22 @@ export default {
 
       let controlPoint1, controlPoint2
 
-      switch(this.connectingSourceDirection) {
+      switch (this.connectingSourceDirection) {
         case 'right':
-          controlPoint1 = { x: startPoint.x + offset, y: startPoint.y }
+          controlPoint1 = {x: startPoint.x + offset, y: startPoint.y}
           break
         case 'left':
-          controlPoint1 = { x: startPoint.x - offset, y: startPoint.y }
+          controlPoint1 = {x: startPoint.x - offset, y: startPoint.y}
           break
         case 'top':
-          controlPoint1 = { x: startPoint.x, y: startPoint.y - offset }
+          controlPoint1 = {x: startPoint.x, y: startPoint.y - offset}
           break
         case 'bottom':
-          controlPoint1 = { x: startPoint.x, y: startPoint.y + offset }
+          controlPoint1 = {x: startPoint.x, y: startPoint.y + offset}
           break
       }
 
-      controlPoint2 = { x: endPoint.x, y: endPoint.y }
+      controlPoint2 = {x: endPoint.x, y: endPoint.y}
 
       return `M ${startPoint.x} ${startPoint.y} C ${controlPoint1.x} ${controlPoint1.y}, ${controlPoint2.x} ${controlPoint2.y}, ${endPoint.x} ${endPoint.y}`
     },
@@ -798,7 +803,7 @@ export default {
         this.draggingNode.$el.classList.add('dragging')
       }
 
-      document.addEventListener('mousemove', this.nodeDragMove, { passive: false })
+      document.addEventListener('mousemove', this.nodeDragMove, {passive: false})
       document.addEventListener('mouseup', this.nodeDragEnd)
     },
 
@@ -911,7 +916,7 @@ export default {
           y: e.clientY - this.translateY
         }
 
-        document.addEventListener('mousemove', this.canvasDragMove, { passive: false })
+        document.addEventListener('mousemove', this.canvasDragMove, {passive: false})
         document.addEventListener('mouseup', this.canvasDragEnd)
       }
     },
@@ -1032,8 +1037,8 @@ export default {
       this.connectingSourceDirection = 'right'
 
       const startPoint = this.getNodeConnectPoint(this.selectedNode, 'right')
-      this.connectingStart = { x: startPoint.x, y: startPoint.y }
-      this.connectingEnd = { ...this.connectingStart }
+      this.connectingStart = {x: startPoint.x, y: startPoint.y}
+      this.connectingEnd = {...this.connectingStart}
 
       this.$message.info('请点击目标节点完成连线，或按ESC取消')
     },
@@ -1044,8 +1049,8 @@ export default {
       this.connectingSourceDirection = direction
 
       const startPoint = this.getNodeConnectPoint(node, direction)
-      this.connectingStart = { x: startPoint.x, y: startPoint.y }
-      this.connectingEnd = { ...this.connectingStart }
+      this.connectingStart = {x: startPoint.x, y: startPoint.y}
+      this.connectingEnd = {...this.connectingStart}
     },
 
     completeConnect(targetNode, targetDirection = 'left') {
@@ -1073,7 +1078,7 @@ export default {
         return
       }
 
-      this.edgeCounter++
+      // 创建新的连线
       const newEdge = {
         tempId: 'edge_' + Date.now(),
         edgeKey: 'flow_' + this.edgeCounter,
@@ -1086,17 +1091,35 @@ export default {
         sort: this.edges.length
       }
 
-      this.edges.push(newEdge)
-      this.cancelConnect()
-      this.$message.success('连线成功')
+      // 弹出对话框让用户输入连线 ID
+      this.$prompt('请输入连线 ID（可选）', '连线 ID', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputValue: newEdge.tempId // 默认值为临时 ID
+      }).then(({value}) => {
+        // 用户点击了确定
+        if (value && value.trim() !== '') {
+          // 用户输入了 ID，更新连线
+          newEdge.id = value.trim()
+          newEdge.tempId = value.trim()
+        }
+        // 将连线添加到列表
+        this.edges.push(newEdge)
+        this.cancelConnect()
+        this.$message.success('连线成功')
+      }).catch(() => {
+        // 用户点击了取消，不添加连线
+        this.cancelConnect()
+        this.$message.info('已取消添加连线')
+      })
     },
 
     cancelConnect() {
       this.connecting = false
       this.connectingSourceNode = null
       this.connectingSourceDirection = null
-      this.connectingStart = { x: 0, y: 0 }
-      this.connectingEnd = { x: 0, y: 0 }
+      this.connectingStart = {x: 0, y: 0}
+      this.connectingEnd = {x: 0, y: 0}
     },
 
     saveProcess() {
@@ -1115,10 +1138,9 @@ export default {
 
       this.saving = true
 
-      const params = {
-        definition: this.processForm,
-        nodes: this.nodes.map(node => ({
-          id: node.id || null,
+      const nodesPayload = this.nodes.map(node => {
+        return {
+          id: (typeof node.id === 'number') ? node.id : null,
           nodeKey: node.nodeKey,
           nodeName: node.nodeName,
           nodeType: node.nodeType,
@@ -1130,26 +1152,43 @@ export default {
           conditionExpr: node.conditionExpr,
           remark: node.remark,
           sort: node.sort
-        })),
-        edges: this.edges.map(edge => ({
-          id: edge.id || null,
+        }
+      })
+
+      const edgesPayload = this.edges.map(edge => {
+        const sourceNode = this.nodes.find(n => n.tempId === edge.sourceNodeId)
+        const targetNode = this.nodes.find(n => n.tempId === edge.targetNodeId)
+
+        return {
+          id: (typeof edge.id === 'number') ? edge.id : null,
           edgeKey: edge.edgeKey,
-          sourceNodeId: edge.sourceNodeId,
-          sourceDirection: edge.sourceDirection || 'right',
-          targetNodeId: edge.targetNodeId,
-          targetDirection: edge.targetDirection || 'left',
+          sourceNodeId: sourceNode && typeof sourceNode.id === 'number' ? sourceNode.id : null,
+          sourceNodeKey: sourceNode ? sourceNode.nodeKey : null,
+          targetNodeId: targetNode && typeof targetNode.id === 'number' ? targetNode.id : null,
+          targetNodeKey: targetNode ? targetNode.nodeKey : null,
           conditionText: edge.conditionText,
           conditionExpr: edge.conditionExpr,
           sort: edge.sort
-        }))
+        }
+      })
+
+      const params = {
+        definition: this.processForm,
+        nodes: nodesPayload,
+        edges: edgesPayload
       }
+
+      console.log('提交给后端的参数:', JSON.stringify(params))
+
       saveProcessDesign(params).then(response => {
         this.$modal.msgSuccess('保存成功')
         this.saving = false
         setTimeout(() => {
           this.goBack()
         }, 500)
-      }).catch(() => {
+      }).catch((error) => {
+        console.error(error)
+        this.$modal.msgError(error.message || '保存失败')
         this.saving = false
       })
     }
@@ -1233,9 +1272,8 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image:
-    linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
   background-size: 20px 20px;
   pointer-events: none;
 }

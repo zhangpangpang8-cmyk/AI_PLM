@@ -73,4 +73,12 @@ public interface WfProcessNodeMapper {
      * @return 结果
      */
     public int deleteNodesByProcessDefinitionId(Long processDefinitionId);
+
+    /**
+     * 根据流程定义ID查询开始节点
+     *
+     * @param processDefinitionId 流程定义ID
+     * @return 流程节点
+     */
+    public WfProcessNode selectStartNodeByDefinitionId(Long processDefinitionId);
 }

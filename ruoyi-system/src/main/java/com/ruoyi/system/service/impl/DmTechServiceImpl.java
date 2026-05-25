@@ -2,11 +2,17 @@ package com.ruoyi.system.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.ruoyi.system.mapper.DmTechMapper;
 import com.ruoyi.system.domain.DmTech;
 import com.ruoyi.system.service.IDmTechService;
+import com.ruoyi.system.service.IWfProcessInstanceService;
+import com.ruoyi.system.service.IWfProcessDefinitionService;
+import com.ruoyi.system.domain.WfProcessInstance;
+import com.ruoyi.system.domain.WfProcessDefinition;
 
 /**
  * 技术文档Service业务层处理
@@ -19,6 +25,15 @@ public class DmTechServiceImpl implements IDmTechService
 {
     @Autowired
     private DmTechMapper dmTechMapper;
+
+    @Autowired
+    private IWfProcessInstanceService processInstanceService;
+
+    @Autowired
+    private IWfProcessDefinitionService processDefinitionService;
+
+    private static final String DEFAULT_TECH_FLOW_KEY = "tech_approval";
+
 
     /**
      * 查询技术文档
@@ -51,12 +66,57 @@ public class DmTechServiceImpl implements IDmTechService
      * @return 结果
      */
     @Override
+    @Transactional
     public int insertDmTech(DmTech dmTech)
     {
         dmTech.setCreateTime(DateUtils.getNowDate());
-        return dmTechMapper.insertDmTech(dmTech);
-    }
 
+        if (dmTech.getStatus() == null) {
+            dmTech.setStatus("0");
+        }
+
+        if (dmTech.getPublishStatus() == null) {
+            dmTech.setPublishStatus("draft");
+        }
+
+        if (dmTech.getFlowKey() == null || dmTech.getFlowKey().isEmpty()) {
+            dmTech.setFlowKey(DEFAULT_TECH_FLOW_KEY);
+        }
+
+        WfProcessDefinition processDef = processDefinitionService.selectWfProcessDefinitionByKey(dmTech.getFlowKey());
+
+        if (processDef == null || !"0".equals(processDef.getStatus())) {
+            throw new RuntimeException("流程未定义或已停用，请联系管理员配置流程标识：" + dmTech.getFlowKey());
+        }
+
+        int result = dmTechMapper.insertDmTech(dmTech);
+
+        if (result > 0) {
+            try {
+                String currentUser = SecurityUtils.getUsername();
+
+                WfProcessInstance instance = processInstanceService.startProcessInstance(
+                        dmTech.getFlowKey(),
+                        "tech_doc",
+                        dmTech.getId(),
+                        dmTech.getTechCode(),
+                        "技术文档审批-" + dmTech.getTechName(),
+                        currentUser
+                );
+
+                if (instance != null) {
+                    dmTech.setFlowInsId(instance.getId().toString());
+                    dmTech.setStatus("1");
+                    dmTech.setUpdateTime(DateUtils.getNowDate());
+                    dmTechMapper.updateDmTech(dmTech);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("启动审批流程失败：" + e.getMessage());
+            }
+        }
+
+        return result;
+    }
     /**
      * 修改技术文档
      * 

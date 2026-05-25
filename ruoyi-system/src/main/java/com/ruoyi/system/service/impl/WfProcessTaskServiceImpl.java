@@ -2,6 +2,9 @@ package com.ruoyi.system.service.impl;
 
 import java.util.Date;
 import java.util.List;
+
+import com.ruoyi.system.domain.DmTech;
+import com.ruoyi.system.service.IDmTechService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +27,9 @@ public class WfProcessTaskServiceImpl implements IWfProcessTaskService
 
     @Autowired
     private WfProcessInstanceMapper wfProcessInstanceMapper;
+
+    @Autowired
+    private IDmTechService dmTechService;
 
     /**
      * 查询流程任务
@@ -86,7 +92,6 @@ public class WfProcessTaskServiceImpl implements IWfProcessTaskService
     @Transactional
     public int approveTask(Long taskId, boolean approved, String opinion, String approver)
     {
-        // 更新任务状态
         WfProcessTask task = wfProcessTaskMapper.selectWfProcessTaskById(taskId);
         if (task == null) {
             return 0;
@@ -99,26 +104,67 @@ public class WfProcessTaskServiceImpl implements IWfProcessTaskService
 
         int result = wfProcessTaskMapper.updateWfProcessTask(task);
 
-        // 如果审批通过，创建下一个任务或结束流程
-        if (approved) {
-            WfProcessInstance instance = wfProcessInstanceMapper.selectWfProcessInstanceById(task.getInstanceId());
-            if (instance != null) {
-                // 这里简化处理，实际应该根据流程定义判断是否有下一个节点
+        WfProcessInstance instance = wfProcessInstanceMapper.selectWfProcessInstanceById(task.getInstanceId());
+        if (instance != null) {
+            if (approved) {
                 instance.setCurrentNode("已完成");
                 instance.setStatus("approved");
                 instance.setEndTime(new Date());
                 wfProcessInstanceMapper.updateWfProcessInstance(instance);
-            }
-        } else {
-            // 审批驳回，更新流程状态
-            WfProcessInstance instance = wfProcessInstanceMapper.selectWfProcessInstanceById(task.getInstanceId());
-            if (instance != null) {
+
+                updateBusinessStatus(instance.getBusinessType(), instance.getBusinessId(), true);
+            } else {
                 instance.setStatus("rejected");
                 instance.setEndTime(new Date());
                 wfProcessInstanceMapper.updateWfProcessInstance(instance);
+
+                updateBusinessStatus(instance.getBusinessType(), instance.getBusinessId(), false);
             }
         }
 
         return result;
+    }
+
+    private void updateBusinessStatus(String businessType, Long businessId, boolean approved) {
+        System.out.println("=== 更新业务状态 ===");
+        System.out.println("businessType: " + businessType);
+        System.out.println("businessId: " + businessId);
+        System.out.println("approved: " + approved);
+
+        if (businessId == null || businessType == null) {
+            System.out.println("businessType 或 businessId 为空，跳过更新");
+            return;
+        }
+
+        try {
+            if ("tech_doc".equals(businessType)) {
+                DmTech dmTech = dmTechService.selectDmTechById(businessId);
+                if (dmTech != null) {
+                    System.out.println("找到技术文档: id=" + dmTech.getId() + ", techCode=" + dmTech.getTechCode());
+                    System.out.println("更新前: publishStatus=" + dmTech.getPublishStatus() + ", status=" + dmTech.getStatus());
+
+                    if (approved) {
+                        dmTech.setPublishStatus("approved");
+                        dmTech.setStatus("2");
+                    } else {
+                        dmTech.setPublishStatus("rejected");
+                        dmTech.setStatus("0");
+                    }
+
+                    System.out.println("更新后: publishStatus=" + dmTech.getPublishStatus() + ", status=" + dmTech.getStatus());
+
+                    int updateResult = dmTechService.updateDmTech(dmTech);
+                    System.out.println("更新结果: " + updateResult);
+                } else {
+                    System.out.println("未找到技术文档，businessId: " + businessId);
+                }
+            } else {
+                System.out.println("businessType 不匹配: " + businessType);
+            }
+        } catch (Exception e) {
+            System.err.println("更新业务状态失败: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("更新业务状态失败: " + e.getMessage(), e);
+        }
     }
 }

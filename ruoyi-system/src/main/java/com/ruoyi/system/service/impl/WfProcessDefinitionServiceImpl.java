@@ -133,7 +133,9 @@ public class WfProcessDefinitionServiceImpl implements IWfProcessDefinitionServi
     @Transactional
     public int saveProcessDesign(WfProcessDefinition wfProcessDefinition, List<WfProcessNode> nodes, List<WfProcessEdge> edges)
     {
-        int result = 0;
+        if (wfProcessDefinition.getStatus() == null || wfProcessDefinition.getStatus().isEmpty()) {
+            wfProcessDefinition.setStatus("0");
+        }
 
         if (wfProcessDefinition.getId() == null)
         {
@@ -148,12 +150,22 @@ public class WfProcessDefinitionServiceImpl implements IWfProcessDefinitionServi
 
         Long processDefinitionId = wfProcessDefinition.getId();
 
+        if (processDefinitionId == null) {
+            throw new RuntimeException("流程定义保存失败，未获取到主键ID");
+        }
+
+        java.util.Map<String, Long> nodeKeyToIdMap = new java.util.HashMap<>();
+
         if (nodes != null && !nodes.isEmpty())
         {
             for (WfProcessNode node : nodes)
             {
                 node.setProcessDefinitionId(processDefinitionId);
+                node.setId(null);
                 wfProcessNodeMapper.insertWfProcessNode(node);
+                if (node.getNodeKey() != null && node.getId() != null) {
+                    nodeKeyToIdMap.put(node.getNodeKey(), node.getId());
+                }
             }
         }
 
@@ -162,11 +174,21 @@ public class WfProcessDefinitionServiceImpl implements IWfProcessDefinitionServi
             for (WfProcessEdge edge : edges)
             {
                 edge.setProcessDefinitionId(processDefinitionId);
+                edge.setId(null);
+
+                if (edge.getSourceNodeId() == null && edge.getSourceNodeKey() != null) {
+                    edge.setSourceNodeId(nodeKeyToIdMap.get(edge.getSourceNodeKey()));
+                }
+                if (edge.getTargetNodeId() == null && edge.getTargetNodeKey() != null) {
+                    edge.setTargetNodeId(nodeKeyToIdMap.get(edge.getTargetNodeKey()));
+                }
+
                 wfProcessEdgeMapper.insertWfProcessEdge(edge);
             }
         }
 
         return 1;
+
     }
 
     /**

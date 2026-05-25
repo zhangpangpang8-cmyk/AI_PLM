@@ -70,6 +70,18 @@ public class WfProcessEdge extends BaseEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
+    private transient String sourceNodeKey;
+
+    private transient String targetNodeKey;
+
+    public String getTargetNodeKey() {
+        return targetNodeKey;
+    }
+
+    public String getSourceNodeKey() {
+        return sourceNodeKey;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -92,6 +104,14 @@ public class WfProcessEdge extends BaseEntity {
 
     public String getEdgeKey() {
         return edgeKey;
+    }
+
+    public void setSourceNodeKey(String sourceNodeKey) {
+        this.sourceNodeKey = sourceNodeKey;
+    }
+
+    public void setTargetNodeKey(String targetNodeKey) {
+        this.targetNodeKey = targetNodeKey;
     }
 
     public void setSourceNodeId(Long sourceNodeId) {
@@ -154,6 +174,9 @@ public class WfProcessEdge extends BaseEntity {
                 .append("conditionText", getConditionText())
                 .append("sort", getSort())
                 .append("createTime", getCreateTime())
+                .append("sourceNodeKey", getSourceNodeKey())
+                .append("targetNodeKey", getTargetNodeKey())
                 .toString();
+
     }
 }

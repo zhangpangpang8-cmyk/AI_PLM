@@ -96,4 +96,10 @@
     <delete id="deleteEdgesByProcessDefinitionId" parameterType="Long">
         delete from wf_process_edge where process_definition_id = #{processDefinitionId}
     </delete>
+    <select id="selectEdgeBySourceNodeId" parameterType="Long" resultMap="WfProcessEdgeResult">
+        <include refid="selectWfProcessEdgeVo"/>
+        where source_node_id = #{sourceNodeId}
+        order by sort asc
+        limit 1
+    </select>
 </mapper>

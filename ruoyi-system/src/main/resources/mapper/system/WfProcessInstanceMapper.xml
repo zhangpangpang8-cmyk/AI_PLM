@@ -84,7 +84,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">status = #{status},</if>
             <if test="endTime != null">end_time = #{endTime},</if>
             <if test="duration != null">duration = #{duration},</if>
-            update_time = sysdate()
+<!--            update_time = sysdate()-->
         </trim>
         where id = #{id}
     </update>

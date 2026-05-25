@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-table v-loading="loading" :data="taskList" style="width: 100%">
-      <el-table-column label="流程标题" align="center" prop="title" min-width="200" show-overflow-tooltip />
+      <el-table-column label="流程标题" align="center" prop="title" min-width="150" show-overflow-tooltip />
       <el-table-column label="业务类型" align="center" prop="businessType" width="120">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.businessType === 'drawing'" type="primary">图纸</el-tag>
