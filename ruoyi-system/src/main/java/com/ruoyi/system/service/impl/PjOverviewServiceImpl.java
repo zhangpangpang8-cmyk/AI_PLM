@@ -12,7 +12,7 @@ import com.ruoyi.system.service.IPjOverviewService;
  * 项目概述Service业务层处理
  * 
  * @author ruoyi
- * @date 2026-05-13
+ * @date 2026-05-28
  */
 @Service
 public class PjOverviewServiceImpl implements IPjOverviewService 

@@ -110,12 +110,24 @@ public class WfProcessTaskServiceImpl implements IWfProcessTaskService
                 instance.setCurrentNode("已完成");
                 instance.setStatus("approved");
                 instance.setEndTime(new Date());
+
+                long durationSeconds = (instance.getEndTime().getTime() - instance.getStartTime().getTime()) / 1000;
+                if (durationSeconds > 0) {
+                    instance.setDuration(durationSeconds);
+                } else {
+                    instance.setDuration(60L); // 默认设置为60秒，避免负数或0的情况
+                }
+
                 wfProcessInstanceMapper.updateWfProcessInstance(instance);
 
                 updateBusinessStatus(instance.getBusinessType(), instance.getBusinessId(), true);
             } else {
                 instance.setStatus("rejected");
                 instance.setEndTime(new Date());
+
+                long durationSeconds = (instance.getEndTime().getTime() - instance.getStartTime().getTime()) / 1000;
+                instance.setDuration(durationSeconds);
+
                 wfProcessInstanceMapper.updateWfProcessInstance(instance);
 
                 updateBusinessStatus(instance.getBusinessType(), instance.getBusinessId(), false);

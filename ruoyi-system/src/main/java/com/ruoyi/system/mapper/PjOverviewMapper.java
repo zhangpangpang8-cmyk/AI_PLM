@@ -7,7 +7,7 @@ import com.ruoyi.system.domain.PjOverview;
  * 项目概述Mapper接口
  * 
  * @author ruoyi
- * @date 2026-05-13
+ * @date 2026-05-28
  */
 public interface PjOverviewMapper 
 {

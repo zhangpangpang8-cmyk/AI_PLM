@@ -12,7 +12,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 项目概述对象 pj_overview
  * 
  * @author ruoyi
- * @date 2026-05-13
+ * @date 2026-05-28
  */
 public class PjOverview extends BaseEntity
 {
@@ -78,6 +78,59 @@ public class PjOverview extends BaseEntity
     /** 单据类型 */
     @Excel(name = "单据类型")
     private String billType;
+
+    /** 优先级（0紧急 1高 2中 3低） */
+    @Excel(name = "优先级", readConverterExp = "0=紧急,1=高,2=中,3=低")
+    private String priority;
+
+    /** 项目类型（new_product=新产品, improvement=改进, research=研发） */
+    @Excel(name = "项目类型", readConverterExp = "n=ew_product=新产品,,i=mprovement=改进,,r=esearch=研发")
+    private String projectType;
+
+    /** 计划开始日期 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "计划开始日期", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date planStartTime;
+
+    /** 计划结束日期 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "计划结束日期", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date planEndTime;
+
+    /** 实际开始日期 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "实际开始日期", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date actualStartTime;
+
+    /** 实际结束日期 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "实际结束日期", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date actualEndTime;
+
+    /** 项目预算（元） */
+    @Excel(name = "项目预算", readConverterExp = "元=")
+    private BigDecimal budget;
+
+    /** 实际成本（元） */
+    @Excel(name = "实际成本", readConverterExp = "元=")
+    private BigDecimal actualCost;
+
+    /** 完成率（%） */
+    @Excel(name = "完成率", readConverterExp = "%=")
+    private BigDecimal completionRate;
+
+    /** 健康度（0正常 1预警 2危险） */
+    @Excel(name = "健康度", readConverterExp = "0=正常,1=预警,2=危险")
+    private String healthStatus;
+
+    /** 结项时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "结项时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date closeTime;
+
+    /** 结项说明 */
+    @Excel(name = "结项说明")
+    private String closeReason;
 
     public void setId(Long id) 
     {
@@ -229,6 +282,126 @@ public class PjOverview extends BaseEntity
         return billType;
     }
 
+    public void setPriority(String priority) 
+    {
+        this.priority = priority;
+    }
+
+    public String getPriority() 
+    {
+        return priority;
+    }
+
+    public void setProjectType(String projectType) 
+    {
+        this.projectType = projectType;
+    }
+
+    public String getProjectType() 
+    {
+        return projectType;
+    }
+
+    public void setPlanStartTime(Date planStartTime) 
+    {
+        this.planStartTime = planStartTime;
+    }
+
+    public Date getPlanStartTime() 
+    {
+        return planStartTime;
+    }
+
+    public void setPlanEndTime(Date planEndTime) 
+    {
+        this.planEndTime = planEndTime;
+    }
+
+    public Date getPlanEndTime() 
+    {
+        return planEndTime;
+    }
+
+    public void setActualStartTime(Date actualStartTime) 
+    {
+        this.actualStartTime = actualStartTime;
+    }
+
+    public Date getActualStartTime() 
+    {
+        return actualStartTime;
+    }
+
+    public void setActualEndTime(Date actualEndTime) 
+    {
+        this.actualEndTime = actualEndTime;
+    }
+
+    public Date getActualEndTime() 
+    {
+        return actualEndTime;
+    }
+
+    public void setBudget(BigDecimal budget) 
+    {
+        this.budget = budget;
+    }
+
+    public BigDecimal getBudget() 
+    {
+        return budget;
+    }
+
+    public void setActualCost(BigDecimal actualCost) 
+    {
+        this.actualCost = actualCost;
+    }
+
+    public BigDecimal getActualCost() 
+    {
+        return actualCost;
+    }
+
+    public void setCompletionRate(BigDecimal completionRate) 
+    {
+        this.completionRate = completionRate;
+    }
+
+    public BigDecimal getCompletionRate() 
+    {
+        return completionRate;
+    }
+
+    public void setHealthStatus(String healthStatus) 
+    {
+        this.healthStatus = healthStatus;
+    }
+
+    public String getHealthStatus() 
+    {
+        return healthStatus;
+    }
+
+    public void setCloseTime(Date closeTime) 
+    {
+        this.closeTime = closeTime;
+    }
+
+    public Date getCloseTime() 
+    {
+        return closeTime;
+    }
+
+    public void setCloseReason(String closeReason) 
+    {
+        this.closeReason = closeReason;
+    }
+
+    public String getCloseReason() 
+    {
+        return closeReason;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -251,6 +424,18 @@ public class PjOverview extends BaseEntity
             .append("flowKey", getFlowKey())
             .append("flowInsId", getFlowInsId())
             .append("billType", getBillType())
+            .append("priority", getPriority())
+            .append("projectType", getProjectType())
+            .append("planStartTime", getPlanStartTime())
+            .append("planEndTime", getPlanEndTime())
+            .append("actualStartTime", getActualStartTime())
+            .append("actualEndTime", getActualEndTime())
+            .append("budget", getBudget())
+            .append("actualCost", getActualCost())
+            .append("completionRate", getCompletionRate())
+            .append("healthStatus", getHealthStatus())
+            .append("closeTime", getCloseTime())
+            .append("closeReason", getCloseReason())
             .toString();
     }
 }

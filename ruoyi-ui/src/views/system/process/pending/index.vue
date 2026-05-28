@@ -1,23 +1,24 @@
 <template>
   <div class="app-container">
-    <el-table v-loading="loading" :data="taskList" style="width: 100%">
+    <el-table v-loading="loading" :data="taskList" border>
       <el-table-column label="流程标题" align="center" prop="title" min-width="150" show-overflow-tooltip />
-      <el-table-column label="业务类型" align="center" prop="businessType" width="120">
+      <el-table-column label="业务类型" align="center" prop="businessType" min-width="100">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.businessType === 'drawing'" type="primary">图纸</el-tag>
           <el-tag v-else-if="scope.row.businessType === 'document'" type="success">文档</el-tag>
+          <el-tag v-else-if="scope.row.businessType === 'tech_doc'" type="warning">技术文档</el-tag>
           <span v-else>{{ scope.row.businessType }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="业务编号" align="center" prop="businessNo" width="150" show-overflow-tooltip />
-      <el-table-column label="当前节点" align="center" prop="nodeName" width="150" />
-      <el-table-column label="发起人" align="center" prop="initiator" width="120" />
-      <el-table-column label="发起时间" align="center" prop="startTime" width="180">
+      <el-table-column label="业务编号" align="center" prop="businessNo" min-width="120" show-overflow-tooltip />
+      <el-table-column label="当前节点" align="center" prop="nodeName" min-width="120" />
+      <el-table-column label="发起人" align="center" prop="initiator" min-width="100" />
+      <el-table-column label="发起时间" align="center" prop="startTime" min-width="160">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.startTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="220" fixed="right">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" min-width="200">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -42,6 +43,7 @@
         </template>
       </el-table-column>
     </el-table>
+
 
     <pagination
       v-show="total>0"
@@ -103,11 +105,11 @@ export default {
       })
     },
     handleView(row) {
-      // 查看业务详情，根据业务类型跳转到不同页面
       if (row.businessType === 'drawing') {
         this.$router.push({ path: '/system/drawing', query: { id: row.businessId }})
+      } else if (row.businessType === 'tech_doc') {
+        this.$router.push({ path: '/system/tech-detail/' + row.businessId })
       } else if (row.businessType === 'document') {
-        // 文档跳转
         this.$modal.msgInfo("文档详情页面待开发")
       }
     },

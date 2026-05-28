@@ -45,33 +45,94 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectDmDrawingList" parameterType="DmDrawing" resultMap="DmDrawingResult">
         <include refid="selectDmDrawingVo"/>
-        <where>  
-            <if test="drawingCode != null  and drawingCode != ''"> and drawing_code = #{drawingCode}</if>
-            <if test="drawingName != null  and drawingName != ''"> and drawing_name like concat('%', #{drawingName}, '%')</if>
-            <if test="drawingType != null  and drawingType != ''"> and drawing_type = #{drawingType}</if>
-            <if test="drawingVersion != null  and drawingVersion != ''"> and drawing_version = #{drawingVersion}</if>
-            <if test="latestVersion != null  and latestVersion != ''"> and latest_version = #{latestVersion}</if>
-            <if test="status != null  and status != ''"> and status = #{status}</if>
-            <if test="projectId != null "> and project_id = #{projectId}</if>
-            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
-            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
-            <if test="projectTaskId != null "> and project_task_id = #{projectTaskId}</if>
-            <if test="projectTaskCode != null  and projectTaskCode != ''"> and project_task_code = #{projectTaskCode}</if>
-            <if test="projectTaskName != null  and projectTaskName != ''"> and project_task_name like concat('%', #{projectTaskName}, '%')</if>
-            <if test="ecoId != null "> and eco_id = #{ecoId}</if>
-            <if test="ecoTitle != null  and ecoTitle != ''"> and eco_title = #{ecoTitle}</if>
-            <if test="ecoCode != null  and ecoCode != ''"> and eco_code = #{ecoCode}</if>
-            <if test="ecoDescription != null  and ecoDescription != ''"> and eco_description = #{ecoDescription}</if>
-            <if test="publishStatus != null  and publishStatus != ''"> and publish_status = #{publishStatus}</if>
-            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
-            <if test="fileSuffix != null  and fileSuffix != ''"> and file_suffix = #{fileSuffix}</if>
-            <if test="fileSize != null  and fileSize != ''"> and file_size = #{fileSize}</if>
-            <if test="filePath != null  and filePath != ''"> and file_path = #{filePath}</if>
-            <if test="size != null "> and size = #{size}</if>
-            <if test="flowKey != null  and flowKey != ''"> and flow_key = #{flowKey}</if>
-            <if test="flowInsId != null  and flowInsId != ''"> and flow_ins_id = #{flowInsId}</if>
-            <if test="billType != null  and billType != ''"> and bill_type = #{billType}</if>
-            <if test="allowChange != null  and allowChange != ''"> and allow_change = #{allowChange}</if>
+        <where>
+            <!-- 精确匹配字段：去掉多余的 and，MyBatis <where> 标签会自动处理 -->
+            <if test="drawingCode != null and drawingCode != ''">
+                drawing_code = #{drawingCode}
+            </if>
+            <if test="drawingType != null and drawingType != ''">
+                AND drawing_type = #{drawingType}
+            </if>
+            <if test="drawingVersion != null and drawingVersion != ''">
+                AND drawing_version = #{drawingVersion}
+            </if>
+            <if test="latestVersion != null and latestVersion != ''">
+                AND latest_version = #{latestVersion}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                AND project_code = #{projectCode}
+            </if>
+            <if test="projectTaskCode != null and projectTaskCode != ''">
+                AND project_task_code = #{projectTaskCode}
+            </if>
+            <if test="ecoTitle != null and ecoTitle != ''">
+                AND eco_title = #{ecoTitle}
+            </if>
+            <if test="ecoCode != null and ecoCode != ''">
+                AND eco_code = #{ecoCode}
+            </if>
+            <if test="publishStatus != null and publishStatus != ''">
+                AND publish_status = #{publishStatus}
+            </if>
+            <if test="fileSuffix != null and fileSuffix != ''">
+                AND file_suffix = #{fileSuffix}
+            </if>
+            <if test="filePath != null and filePath != ''">
+                AND file_path = #{filePath}
+            </if>
+            <if test="flowKey != null and flowKey != ''">
+                AND flow_key = #{flowKey}
+            </if>
+            <if test="flowInsId != null and flowInsId != ''">
+                AND flow_ins_id = #{flowInsId}
+            </if>
+            <if test="billType != null and billType != ''">
+                AND bill_type = #{billType}
+            </if>
+            <if test="allowChange != null and allowChange != ''">
+                AND allow_change = #{allowChange}
+            </if>
+
+            <!-- 数值/Long类型字段：去掉 != '' 判断，避免类型转换异常 -->
+            <if test="projectId != null">
+                AND project_id = #{projectId}
+            </if>
+            <if test="projectTaskId != null">
+                AND project_task_id = #{projectTaskId}
+            </if>
+            <if test="ecoId != null">
+                AND eco_id = #{ecoId}
+            </if>
+            <if test="size != null">
+                AND `size` = #{size}
+            </if>
+
+            <!-- ⚠️ 关键修复：fileSize 是数值类型，不能用 != '' 判断 -->
+            <if test="fileSize != null">
+                AND file_size = #{fileSize}
+            </if>
+
+            <!-- 模糊查询字段 -->
+            <if test="drawingName != null and drawingName != ''">
+                AND drawing_name LIKE CONCAT('%', #{drawingName}, '%')
+            </if>
+            <if test="projectName != null and projectName != ''">
+                AND project_name LIKE CONCAT('%', #{projectName}, '%')
+            </if>
+            <if test="projectTaskName != null and projectTaskName != ''">
+                AND project_task_name LIKE CONCAT('%', #{projectTaskName}, '%')
+            </if>
+            <if test="fileName != null and fileName != ''">
+                AND file_name LIKE CONCAT('%', #{fileName}, '%')
+            </if>
+
+            <!-- ⚠️ 逻辑优化：描述类字段通常应该用模糊查询而非精确匹配 -->
+            <if test="ecoDescription != null and ecoDescription != ''">
+                AND eco_description LIKE CONCAT('%', #{ecoDescription}, '%')
+            </if>
         </where>
     </select>
     

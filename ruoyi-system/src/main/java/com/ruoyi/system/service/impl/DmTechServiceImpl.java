@@ -1,6 +1,7 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.List;
+
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +17,12 @@ import com.ruoyi.system.domain.WfProcessDefinition;
 
 /**
  * 技术文档Service业务层处理
- * 
+ *
  * @author ruoyi
  * @date 2026-05-06
  */
 @Service
-public class DmTechServiceImpl implements IDmTechService 
-{
+public class DmTechServiceImpl implements IDmTechService {
     @Autowired
     private DmTechMapper dmTechMapper;
 
@@ -37,38 +37,35 @@ public class DmTechServiceImpl implements IDmTechService
 
     /**
      * 查询技术文档
-     * 
+     *
      * @param id 技术文档主键
      * @return 技术文档
      */
     @Override
-    public DmTech selectDmTechById(Long id)
-    {
+    public DmTech selectDmTechById(Long id) {
         return dmTechMapper.selectDmTechById(id);
     }
 
     /**
      * 查询技术文档列表
-     * 
+     *
      * @param dmTech 技术文档
      * @return 技术文档
      */
     @Override
-    public List<DmTech> selectDmTechList(DmTech dmTech)
-    {
+    public List<DmTech> selectDmTechList(DmTech dmTech) {
         return dmTechMapper.selectDmTechList(dmTech);
     }
 
     /**
      * 新增技术文档
-     * 
+     *
      * @param dmTech 技术文档
      * @return 结果
      */
     @Override
     @Transactional
-    public int insertDmTech(DmTech dmTech)
-    {
+    public int insertDmTech(DmTech dmTech) {
         dmTech.setCreateTime(DateUtils.getNowDate());
 
         if (dmTech.getStatus() == null) {
@@ -81,6 +78,10 @@ public class DmTechServiceImpl implements IDmTechService
 
         if (dmTech.getFlowKey() == null || dmTech.getFlowKey().isEmpty()) {
             dmTech.setFlowKey(DEFAULT_TECH_FLOW_KEY);
+        }
+
+        if (dmTech.getTechVersion() == null || dmTech.getTechVersion().isEmpty()) {
+            dmTech.setTechVersion("1.0");
         }
 
         WfProcessDefinition processDef = processDefinitionService.selectWfProcessDefinitionByKey(dmTech.getFlowKey());
@@ -117,40 +118,69 @@ public class DmTechServiceImpl implements IDmTechService
 
         return result;
     }
+
     /**
      * 修改技术文档
-     * 
+     *
      * @param dmTech 技术文档
      * @return 结果
      */
     @Override
-    public int updateDmTech(DmTech dmTech)
-    {
+    public int updateDmTech(DmTech dmTech) {
         dmTech.setUpdateTime(DateUtils.getNowDate());
+
+        if (dmTech.getId() != null) {
+            DmTech oldTech = dmTechMapper.selectDmTechById(dmTech.getId());
+            if (oldTech != null && oldTech.getTechVersion() != null) {
+                String newVersion = calculateNextVersion(oldTech.getTechVersion());
+                dmTech.setTechVersion(newVersion);
+            }
+        }
+
         return dmTechMapper.updateDmTech(dmTech);
+    }
+
+    private String calculateNextVersion(String currentVersion) {
+        try {
+            String[] parts = currentVersion.split("\\.");
+            if (parts.length != 2) {
+                return "1.0";
+            }
+
+            int major = Integer.parseInt(parts[0]);
+            int minor = Integer.parseInt(parts[1]);
+
+            minor++;
+            if (minor >= 10) {
+                minor = 0;
+                major++;
+            }
+
+            return major + "." + minor;
+        } catch (Exception e) {
+            return "1.0";
+        }
     }
 
     /**
      * 批量删除技术文档
-     * 
+     *
      * @param ids 需要删除的技术文档主键
      * @return 结果
      */
     @Override
-    public int deleteDmTechByIds(Long[] ids)
-    {
+    public int deleteDmTechByIds(Long[] ids) {
         return dmTechMapper.deleteDmTechByIds(ids);
     }
 
     /**
      * 删除技术文档信息
-     * 
+     *
      * @param id 技术文档主键
      * @return 结果
      */
     @Override
-    public int deleteDmTechById(Long id)
-    {
+    public int deleteDmTechById(Long id) {
         return dmTechMapper.deleteDmTechById(id);
     }
 }

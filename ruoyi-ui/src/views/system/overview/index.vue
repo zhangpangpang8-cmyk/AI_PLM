@@ -89,6 +89,78 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="优先级" prop="priority">
+        <el-input
+          v-model="queryParams.priority"
+          placeholder="请输入优先级"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="计划开始日期" prop="planStartTime">
+        <el-date-picker clearable
+          v-model="queryParams.planStartTime"
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="请选择计划开始日期">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="计划结束日期" prop="planEndTime">
+        <el-date-picker clearable
+          v-model="queryParams.planEndTime"
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="请选择计划结束日期">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="实际开始日期" prop="actualStartTime">
+        <el-date-picker clearable
+          v-model="queryParams.actualStartTime"
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="请选择实际开始日期">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="实际结束日期" prop="actualEndTime">
+        <el-date-picker clearable
+          v-model="queryParams.actualEndTime"
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="请选择实际结束日期">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="项目预算" prop="budget">
+        <el-input
+          v-model="queryParams.budget"
+          placeholder="请输入项目预算"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="实际成本" prop="actualCost">
+        <el-input
+          v-model="queryParams.actualCost"
+          placeholder="请输入实际成本"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="完成率" prop="completionRate">
+        <el-input
+          v-model="queryParams.completionRate"
+          placeholder="请输入完成率"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="结项时间" prop="closeTime">
+        <el-date-picker clearable
+          v-model="queryParams.closeTime"
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="请选择结项时间">
+        </el-date-picker>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -166,6 +238,38 @@
       <el-table-column label="申请流程" align="center" prop="flowKey" />
       <el-table-column label="流程实例id" align="center" prop="flowInsId" />
       <el-table-column label="单据类型" align="center" prop="billType" />
+      <el-table-column label="优先级" align="center" prop="priority" />
+      <el-table-column label="项目类型" align="center" prop="projectType" />
+      <el-table-column label="计划开始日期" align="center" prop="planStartTime" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.planStartTime, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="计划结束日期" align="center" prop="planEndTime" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.planEndTime, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="实际开始日期" align="center" prop="actualStartTime" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.actualStartTime, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="实际结束日期" align="center" prop="actualEndTime" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.actualEndTime, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="项目预算" align="center" prop="budget" />
+      <el-table-column label="实际成本" align="center" prop="actualCost" />
+      <el-table-column label="完成率" align="center" prop="completionRate" />
+      <el-table-column label="健康度" align="center" prop="healthStatus" />
+      <el-table-column label="结项时间" align="center" prop="closeTime" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.closeTime, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="结项说明" align="center" prop="closeReason" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -268,6 +372,81 @@
               <el-input v-model="form.flowInsId" placeholder="请输入流程实例id" />
             </el-form-item>
           </el-col>
+          <el-col :span="24">
+            <el-form-item label="优先级" prop="priority">
+              <el-input v-model="form.priority" placeholder="请输入优先级" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="计划开始日期" prop="planStartTime">
+              <el-date-picker clearable
+                v-model="form.planStartTime"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="请选择计划开始日期">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="计划结束日期" prop="planEndTime">
+              <el-date-picker clearable
+                v-model="form.planEndTime"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="请选择计划结束日期">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="实际开始日期" prop="actualStartTime">
+              <el-date-picker clearable
+                v-model="form.actualStartTime"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="请选择实际开始日期">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="实际结束日期" prop="actualEndTime">
+              <el-date-picker clearable
+                v-model="form.actualEndTime"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="请选择实际结束日期">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="项目预算" prop="budget">
+              <el-input v-model="form.budget" placeholder="请输入项目预算" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="实际成本" prop="actualCost">
+              <el-input v-model="form.actualCost" placeholder="请输入实际成本" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="完成率" prop="completionRate">
+              <el-input v-model="form.completionRate" placeholder="请输入完成率" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="结项时间" prop="closeTime">
+              <el-date-picker clearable
+                v-model="form.closeTime"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="请选择结项时间">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="结项说明" prop="closeReason">
+              <el-input v-model="form.closeReason" type="textarea" placeholder="请输入内容" />
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -320,7 +499,19 @@ export default {
         projectInfo: null,
         flowKey: null,
         flowInsId: null,
-        billType: null
+        billType: null,
+        priority: null,
+        projectType: null,
+        planStartTime: null,
+        planEndTime: null,
+        actualStartTime: null,
+        actualEndTime: null,
+        budget: null,
+        actualCost: null,
+        completionRate: null,
+        healthStatus: null,
+        closeTime: null,
+        closeReason: null
       },
       // 表单参数
       form: {},
@@ -392,7 +583,19 @@ export default {
         updateTime: null,
         flowKey: null,
         flowInsId: null,
-        billType: null
+        billType: null,
+        priority: null,
+        projectType: null,
+        planStartTime: null,
+        planEndTime: null,
+        actualStartTime: null,
+        actualEndTime: null,
+        budget: null,
+        actualCost: null,
+        completionRate: null,
+        healthStatus: null,
+        closeTime: null,
+        closeReason: null
       }
       this.resetForm("form")
     },

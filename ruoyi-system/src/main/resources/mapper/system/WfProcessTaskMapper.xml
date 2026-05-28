@@ -16,6 +16,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="startTime"       column="start_time"      />
         <result property="endTime"         column="end_time"        />
         <result property="createTime"      column="create_time"     />
+        <result property="title"           column="title"           />
+        <result property="businessType"    column="business_type"   />
+        <result property="businessId"      column="business_id"     />
+        <result property="businessNo"      column="business_no"     />
+        <result property="initiator"       column="initiator"       />
     </resultMap>
 
     <sql id="selectWfProcessTaskVo">
@@ -41,15 +46,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectPendingTasksByUserId" parameterType="String" resultMap="WfProcessTaskResult">
-        <include refid="selectWfProcessTaskVo"/>
-        where assignee = #{userId} and task_status = 'pending'
-        order by create_time asc
+        select t.id, t.instance_id, t.node_name, t.assignee, t.candidate_users, t.task_status,
+               t.approval_opinion, t.approval_time, t.start_time, t.end_time, t.create_time,
+               i.title, i.business_type, i.business_id, i.business_no, i.initiator
+        from wf_process_task t
+                 left join wf_process_instance i on t.instance_id = i.id
+        where t.assignee = #{userId} and t.task_status = 'pending'
+        order by t.create_time asc
     </select>
 
     <select id="selectCompletedTasksByUserId" parameterType="String" resultMap="WfProcessTaskResult">
-        <include refid="selectWfProcessTaskVo"/>
-        where assignee = #{userId} and task_status in ('approved', 'rejected')
-        order by approval_time desc
+        select t.id, t.instance_id, t.node_name, t.assignee, t.candidate_users, t.task_status,
+               t.approval_opinion, t.approval_time, t.start_time, t.end_time, t.create_time,
+               i.title, i.business_type, i.business_id, i.business_no, i.initiator
+        from wf_process_task t
+                 left join wf_process_instance i on t.instance_id = i.id
+        where t.assignee = #{userId} and t.task_status in ('approved', 'rejected')
+        order by t.approval_time desc
     </select>
 
     <insert id="insertWfProcessTask" parameterType="WfProcessTask" useGeneratedKeys="true" keyProperty="id">

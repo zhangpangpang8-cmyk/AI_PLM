@@ -1,33 +1,34 @@
 <template>
   <div class="app-container">
-    <el-table v-loading="loading" :data="instanceList">
-      <el-table-column label="流程标题" align="center" prop="title" width="200" />
-      <el-table-column label="业务类型" align="center" prop="businessType" width="100">
+    <el-table v-loading="loading" :data="instanceList" border>
+      <el-table-column label="流程标题" align="center" prop="title" min-width="150" />
+      <el-table-column label="业务类型" align="center" prop="businessType" min-width="100">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.businessType === 'drawing'" type="primary">图纸</el-tag>
           <el-tag v-else-if="scope.row.businessType === 'document'" type="success">文档</el-tag>
+          <el-tag v-else-if="scope.row.businessType === 'tech_doc'" type="warning">技术文档</el-tag>
+          <span v-else>{{ scope.row.businessType }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="业务编号" align="center" prop="businessNo" width="150" />
-      <el-table-column label="当前节点" align="center" prop="currentNode" width="150" />
-      <el-table-column label="流程状态" align="center" prop="status" width="100">
+      <el-table-column label="当前节点" align="center" prop="currentNode" min-width="120" />
+      <el-table-column label="流程状态" align="center" prop="status" min-width="100">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 'running'" type="warning">进行中</el-tag>
           <el-tag v-else-if="scope.row.status === 'approved'" type="success">已通过</el-tag>
           <el-tag v-else-if="scope.row.status === 'rejected'" type="danger">已驳回</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="发起时间" align="center" prop="startTime" width="180">
+      <el-table-column label="发起时间" align="center" prop="startTime" min-width="160">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.startTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="耗时" align="center" prop="duration" width="100">
+      <el-table-column label="耗时" align="center" prop="duration" min-width="100">
         <template slot-scope="scope">
           <span v-if="scope.row.duration">{{ formatDuration(scope.row.duration) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" min-width="100">
         <template slot-scope="scope">
           <el-button
             size="mini"

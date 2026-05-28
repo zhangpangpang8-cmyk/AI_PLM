@@ -24,10 +24,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="flowKey"    column="flow_key"    />
         <result property="flowInsId"    column="flow_ins_id"    />
         <result property="billType"    column="bill_type"    />
+        <result property="priority"    column="priority"    />
+        <result property="projectType"    column="project_type"    />
+        <result property="planStartTime"    column="plan_start_time"    />
+        <result property="planEndTime"    column="plan_end_time"    />
+        <result property="actualStartTime"    column="actual_start_time"    />
+        <result property="actualEndTime"    column="actual_end_time"    />
+        <result property="budget"    column="budget"    />
+        <result property="actualCost"    column="actual_cost"    />
+        <result property="completionRate"    column="completion_rate"    />
+        <result property="healthStatus"    column="health_status"    />
+        <result property="closeTime"    column="close_time"    />
+        <result property="closeReason"    column="close_reason"    />
     </resultMap>
 
     <sql id="selectPjOverviewVo">
-        select id, project_code, project_name, classification_id, classification_name, user_id, nick_name, status, start_time, end_time, project_progress, project_info, create_by, create_time, update_by, update_time, flow_key, flow_ins_id, bill_type from pj_overview
+        select id, project_code, project_name, classification_id, classification_name, user_id, nick_name, status, start_time, end_time, project_progress, project_info, create_by, create_time, update_by, update_time, flow_key, flow_ins_id, bill_type, priority, project_type, plan_start_time, plan_end_time, actual_start_time, actual_end_time, budget, actual_cost, completion_rate, health_status, close_time, close_reason from pj_overview
     </sql>
 
     <select id="selectPjOverviewList" parameterType="PjOverview" resultMap="PjOverviewResult">
@@ -47,6 +59,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="flowKey != null  and flowKey != ''"> and flow_key = #{flowKey}</if>
             <if test="flowInsId != null  and flowInsId != ''"> and flow_ins_id = #{flowInsId}</if>
             <if test="billType != null  and billType != ''"> and bill_type = #{billType}</if>
+            <if test="priority != null  and priority != ''"> and priority = #{priority}</if>
+            <if test="projectType != null  and projectType != ''"> and project_type = #{projectType}</if>
+            <if test="planStartTime != null "> and plan_start_time = #{planStartTime}</if>
+            <if test="planEndTime != null "> and plan_end_time = #{planEndTime}</if>
+            <if test="actualStartTime != null "> and actual_start_time = #{actualStartTime}</if>
+            <if test="actualEndTime != null "> and actual_end_time = #{actualEndTime}</if>
+            <if test="budget != null "> and budget = #{budget}</if>
+            <if test="actualCost != null "> and actual_cost = #{actualCost}</if>
+            <if test="completionRate != null "> and completion_rate = #{completionRate}</if>
+            <if test="healthStatus != null  and healthStatus != ''"> and health_status = #{healthStatus}</if>
+            <if test="closeTime != null "> and close_time = #{closeTime}</if>
+            <if test="closeReason != null  and closeReason != ''"> and close_reason = #{closeReason}</if>
         </where>
     </select>
     
@@ -76,6 +100,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="flowKey != null">flow_key,</if>
             <if test="flowInsId != null">flow_ins_id,</if>
             <if test="billType != null">bill_type,</if>
+            <if test="priority != null">priority,</if>
+            <if test="projectType != null">project_type,</if>
+            <if test="planStartTime != null">plan_start_time,</if>
+            <if test="planEndTime != null">plan_end_time,</if>
+            <if test="actualStartTime != null">actual_start_time,</if>
+            <if test="actualEndTime != null">actual_end_time,</if>
+            <if test="budget != null">budget,</if>
+            <if test="actualCost != null">actual_cost,</if>
+            <if test="completionRate != null">completion_rate,</if>
+            <if test="healthStatus != null">health_status,</if>
+            <if test="closeTime != null">close_time,</if>
+            <if test="closeReason != null">close_reason,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="projectCode != null and projectCode != ''">#{projectCode},</if>
@@ -96,6 +132,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="flowKey != null">#{flowKey},</if>
             <if test="flowInsId != null">#{flowInsId},</if>
             <if test="billType != null">#{billType},</if>
+            <if test="priority != null">#{priority},</if>
+            <if test="projectType != null">#{projectType},</if>
+            <if test="planStartTime != null">#{planStartTime},</if>
+            <if test="planEndTime != null">#{planEndTime},</if>
+            <if test="actualStartTime != null">#{actualStartTime},</if>
+            <if test="actualEndTime != null">#{actualEndTime},</if>
+            <if test="budget != null">#{budget},</if>
+            <if test="actualCost != null">#{actualCost},</if>
+            <if test="completionRate != null">#{completionRate},</if>
+            <if test="healthStatus != null">#{healthStatus},</if>
+            <if test="closeTime != null">#{closeTime},</if>
+            <if test="closeReason != null">#{closeReason},</if>
          </trim>
     </insert>
 
@@ -120,6 +168,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="flowKey != null">flow_key = #{flowKey},</if>
             <if test="flowInsId != null">flow_ins_id = #{flowInsId},</if>
             <if test="billType != null">bill_type = #{billType},</if>
+            <if test="priority != null">priority = #{priority},</if>
+            <if test="projectType != null">project_type = #{projectType},</if>
+            <if test="planStartTime != null">plan_start_time = #{planStartTime},</if>
+            <if test="planEndTime != null">plan_end_time = #{planEndTime},</if>
+            <if test="actualStartTime != null">actual_start_time = #{actualStartTime},</if>
+            <if test="actualEndTime != null">actual_end_time = #{actualEndTime},</if>
+            <if test="budget != null">budget = #{budget},</if>
+            <if test="actualCost != null">actual_cost = #{actualCost},</if>
+            <if test="completionRate != null">completion_rate = #{completionRate},</if>
+            <if test="healthStatus != null">health_status = #{healthStatus},</if>
+            <if test="closeTime != null">close_time = #{closeTime},</if>
+            <if test="closeReason != null">close_reason = #{closeReason},</if>
         </trim>
         where id = #{id}
     </update>

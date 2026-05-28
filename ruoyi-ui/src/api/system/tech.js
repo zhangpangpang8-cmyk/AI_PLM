@@ -22,6 +22,7 @@ export function addTech(data) {
   return request({
     url: '/system/tech',
     method: 'post',
+    headers: { 'Content-Type': 'multipart/form-data' },
     data: data
   })
 }

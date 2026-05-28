@@ -25,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 项目概述Controller
  * 
  * @author ruoyi
- * @date 2026-05-13
+ * @date 2026-05-28
  */
 @RestController
 @RequestMapping("/system/overview")

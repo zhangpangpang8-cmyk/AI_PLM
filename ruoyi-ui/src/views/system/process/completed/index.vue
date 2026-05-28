@@ -1,28 +1,30 @@
 <template>
   <div class="app-container">
-    <el-table v-loading="loading" :data="taskList">
-      <el-table-column label="流程标题" align="center" prop="title" width="200" />
-      <el-table-column label="业务类型" align="center" prop="businessType" width="100">
+    <el-table v-loading="loading" :data="taskList" border>
+      <el-table-column label="流程标题" align="center" prop="title" min-width="150" />
+      <el-table-column label="业务类型" align="center" prop="businessType" min-width="100">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.businessType === 'drawing'" type="primary">图纸</el-tag>
           <el-tag v-else-if="scope.row.businessType === 'document'" type="success">文档</el-tag>
+          <el-tag v-else-if="scope.row.businessType === 'tech_doc'" type="warning">技术文档</el-tag>
+          <span v-else>{{ scope.row.businessType }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="业务编号" align="center" prop="businessNo" width="150" />
-      <el-table-column label="审批节点" align="center" prop="nodeName" width="150" />
-      <el-table-column label="审批结果" align="center" prop="taskStatus" width="100">
+      <el-table-column label="业务编号" align="center" prop="businessNo" min-width="120" />
+      <el-table-column label="审批节点" align="center" prop="nodeName" min-width="120" />
+      <el-table-column label="审批结果" align="center" prop="taskStatus" min-width="100">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.taskStatus === 'approved'" type="success">通过</el-tag>
           <el-tag v-else-if="scope.row.taskStatus === 'rejected'" type="danger">驳回</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="审批意见" align="center" prop="approvalOpinion" show-overflow-tooltip />
-      <el-table-column label="审批时间" align="center" prop="approvalTime" width="180">
+      <el-table-column label="审批意见" align="center" prop="approvalOpinion" min-width="150" show-overflow-tooltip />
+      <el-table-column label="审批时间" align="center" prop="approvalTime" min-width="160">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.approvalTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" min-width="100">
         <template slot-scope="scope">
           <el-button
             size="mini"

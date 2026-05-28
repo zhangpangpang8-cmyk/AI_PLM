@@ -3,17 +3,21 @@
     <!-- 第一行：搜索表单（整行） -->
     <el-row class="mb8">
       <el-col :xs="24" :sm="24" :md="24">
-        <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="100px" class="search-form-inline">
+        <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch"
+                 label-width="100px" class="search-form-inline">
           <el-form-item label="技术文档名称" prop="techName">
-            <el-input v-model="queryParams.techName" placeholder="请输入技术文档名称" clearable @keyup.enter.native="handleQuery" />
+            <el-input v-model="queryParams.techName" placeholder="请输入技术文档名称" clearable
+                      @keyup.enter.native="handleQuery"/>
           </el-form-item>
 
           <el-form-item label="文件名称" prop="fileName">
-            <el-input v-model="queryParams.fileName" placeholder="请输入文件名称" clearable @keyup.enter.native="handleQuery" />
+            <el-input v-model="queryParams.fileName" placeholder="请输入文件名称" clearable
+                      @keyup.enter.native="handleQuery"/>
           </el-form-item>
 
           <el-form-item label="项目名称" prop="projectName">
-            <el-input v-model="queryParams.projectName" placeholder="请输入项目名称" clearable @keyup.enter.native="handleQuery" />
+            <el-input v-model="queryParams.projectName" placeholder="请输入项目名称" clearable
+                      @keyup.enter.native="handleQuery"/>
           </el-form-item>
 
           <el-form-item>
@@ -28,13 +32,21 @@
     <el-row class="mb8" type="flex" justify="start" align="middle">
       <el-col :xs="24" :sm="24" :md="24">
         <div class="toolbar-actions-left">
-          <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:tech:add']">新增</el-button>
+          <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
+                     v-hasPermi="['system:tech:add']">新增
+          </el-button>
 
-          <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:tech:edit']">修改</el-button>
+          <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate"
+                     v-hasPermi="['system:tech:edit']">修改
+          </el-button>
 
-          <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:tech:remove']">删除</el-button>
+          <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
+                     v-hasPermi="['system:tech:remove']">删除
+          </el-button>
 
-          <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport" v-hasPermi="['system:tech:export']">导出</el-button>
+          <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport"
+                     v-hasPermi="['system:tech:export']">导出
+          </el-button>
 
           <!-- 保留原有 right-toolbar 组件 -->
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -110,28 +122,35 @@
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
-      @pagination="getList"s
+      @pagination="getList" s
     />
 
     <!-- 添加或修改技术文档对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="dialogWidth" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+    <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body :close-on-click-modal="false">
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px" style="margin-bottom: 20px;">
+        <!-- 第一行：技术文档编码 + 版本 -->
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="技术文档编码" prop="techCode">
               <el-input v-model="form.techCode" placeholder="请输入技术文档编码"/>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+        </el-row>
+
+        <!-- 第二行：技术文档名称 -->
+        <el-row>
+          <el-col :span="24">
             <el-form-item label="技术文档名称" prop="techName">
               <el-input v-model="form.techName" placeholder="请输入技术文档名称"/>
             </el-form-item>
           </el-col>
         </el-row>
+
+        <!-- 第三行：技术文档类型 + 语言类型 -->
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="技术文档类型" prop="techType">
-              <el-select v-model="form.techType" placeholder="请选择技术文档类型" style="width: 100%">
+              <el-select v-model="form.techType" placeholder="请选择技术文档类型" style="width: 100%;">
                 <el-option label="需求文档" value="requirement"/>
                 <el-option label="设计文档" value="design"/>
                 <el-option label="测试文档" value="test"/>
@@ -142,61 +161,15 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="语言类型" prop="techLanguage">
-              <el-select v-model="form.techLanguage" placeholder="请选择语言类型" style="width: 100%">
+              <el-select v-model="form.techLanguage" placeholder="请选择语言类型" style="width: 100%;">
                 <el-option label="中文" value="zh-CN"/>
                 <el-option label="English" value="en-US"/>
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="版本" prop="techVersion">
-              <el-input v-model="form.techVersion" placeholder="如: V1.0"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="是否最新版本" prop="latestVersion">
-              <el-radio-group v-model="form.latestVersion">
-                <el-radio label="Y">是</el-radio>
-                <el-radio label="N">否</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="文件名称" prop="fileName">
-              <el-input v-model="form.fileName" placeholder="请输入文件名称"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="文件后缀" prop="fileSuffix">
-              <el-input v-model="form.fileSuffix" placeholder="如: pdf"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="文件大小" prop="fileSize">
-              <el-input v-model="form.fileSize" placeholder="如: 2.5MB"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="文件大小(字节)" prop="size">
-              <el-input-number v-model="form.size" :min="0" style="width: 100%"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="文件路径" prop="filePath">
-          <el-input v-model="form.filePath" placeholder="请输入文件路径"/>
-        </el-form-item>
-        <el-form-item label="文档描述" prop="remark">
-          <el-input v-model="form.remark" type="textarea" :rows="2" placeholder="请输入文档描述"/>
-        </el-form-item>
-        <el-form-item label="版本说明" prop="versionDescription">
-          <el-input v-model="form.versionDescription" type="textarea" :rows="2" placeholder="请输入版本说明"/>
-        </el-form-item>
+
+        <!-- 第四行：项目名称 + 项目编码 -->
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="项目名称" prop="projectName">
@@ -209,24 +182,95 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="是否允许变更" prop="allowChange">
-          <el-radio-group v-model="form.allowChange">
-            <el-radio label="1">允许</el-radio>
-            <el-radio label="0">不允许</el-radio>
-          </el-radio-group>
-        </el-form-item>
+
+        <!-- 第五行：是否最新版本 + 是否允许变更 -->
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="是否最新版本" prop="latestVersion">
+              <el-radio-group v-model="form.latestVersion">
+                <el-radio label="Y">是</el-radio>
+                <el-radio label="N">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否允许变更" prop="allowChange">
+              <el-radio-group v-model="form.allowChange">
+                <el-radio label="1">允许</el-radio>
+                <el-radio label="0">不允许</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <!-- 第六行：上传文件 -->
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="上传文件" prop="file">
+              <div class="upload-container">
+                <el-upload
+                  ref="upload"
+                  :limit="1"
+                  :auto-upload="false"
+                  :on-change="handleFileChange"
+                  :on-remove="handleFileRemove"
+                  :file-list="fileList"
+                  accept=".pdf,.dwg,.dxf,.jpg,.png,.doc,.docx,.xls,.xlsx"
+                  action="#"
+                  drag
+                  :multiple="false"
+                  list-type="text"
+                >
+                  <i class="el-icon-upload"></i>
+                  <div class="el-upload__text">选择文件</div>
+                </el-upload>
+                <div class="upload-tip">
+                  支持 PDF、DWG、DXF、图片、Office 等格式文件
+                </div>
+              </div>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <!-- 第七行：版本说明 -->
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="版本说明" prop="versionDescription">
+              <el-input
+                v-model="form.versionDescription"
+                type="textarea"
+                :rows="3"
+                placeholder="请输入版本说明" style="border-radius: 4px;"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <!-- 第八行：文档描述 -->
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="文档描述" prop="remark">
+              <el-input
+                v-model="form.remark"
+                type="textarea"
+                :rows="3"
+                placeholder="请输入文档描述" style="border-radius: 4px;"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
 
         <el-alert
           v-if="!form.id"
           title="保存后将自动进入审批流程"
           type="info"
           :closable="false"
-          show-icon style="margin-bottom: 15px;">
-        </el-alert>
+          show-icon style="margin-bottom: 15px;"
+        />
       </el-form>
-      <div slot="footer" class="dialog-footer">
+
+      <div slot="footer" class="dialog-footer" style="margin-top: 20px; text-align: right;">
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="submitForm" :loading="submitLoading">保 存</el-button>
+        <el-button type="primary" @click="submitForm" :loading="submitLoading">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -259,6 +303,10 @@ export default {
       open: false,
       // 提交按钮loading
       submitLoading: false,
+      // 选中的文件
+      selectedFile: null,
+      // 文件列表
+      fileList: [],
 
       // 查询参数
       queryParams: {
@@ -356,6 +404,8 @@ export default {
     },
     // 表单重置
     reset() {
+      this.selectedFile = null
+      this.fileList = []
       this.form = {
         id: null,
         techCode: null,
@@ -410,6 +460,14 @@ export default {
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
+    // 文件选择变化
+    handleFileChange(file) {
+      this.selectedFile = file.raw
+    },
+    // 文件移除
+    handleFileRemove() {
+      this.selectedFile = null
+    },
     /** 查看按钮操作 */
     handleView(row) {
       this.$router.push({
@@ -448,7 +506,19 @@ export default {
               this.submitLoading = false
             })
           } else {
-            addTech(this.form).then(response => {
+            if (!this.selectedFile) {
+              this.$modal.msgError("请选择要上传的文件")
+              this.submitLoading = false
+              return
+            }
+            const formData = new FormData()
+            formData.append('file', this.selectedFile)
+            Object.keys(this.form).forEach(key => {
+              if (this.form[key] !== null && this.form[key] !== undefined && this.form[key] !== '') {
+                formData.append(key, this.form[key])
+              }
+            })
+            addTech(formData).then(response => {
               this.$modal.msgSuccess("新增成功，已进入审批流程")
               this.open = false
               this.getList()
@@ -481,4 +551,18 @@ export default {
   }
 }
 </script>
+<style scoped>.upload-container {
+  width: 100%;
+}
+
+.upload-tip {
+  margin-top: 8px;
+  color: #909399;
+  font-size: 12px;
+}
+
+::v-deep .el-upload-list {
+  margin-top: 10px;
+}
+</style>
 
