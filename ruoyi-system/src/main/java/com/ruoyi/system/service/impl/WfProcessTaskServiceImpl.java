@@ -3,8 +3,11 @@ package com.ruoyi.system.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.DmTech;
+import com.ruoyi.system.domain.PjOverview;
 import com.ruoyi.system.service.IDmTechService;
+import com.ruoyi.system.service.IPjOverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +34,8 @@ public class WfProcessTaskServiceImpl implements IWfProcessTaskService
     @Autowired
     private IDmTechService dmTechService;
 
+    @Autowired
+    private IPjOverviewService pjOverviewService;
     /**
      * 查询流程任务
      *
@@ -137,6 +142,7 @@ public class WfProcessTaskServiceImpl implements IWfProcessTaskService
         return result;
     }
 
+
     private void updateBusinessStatus(String businessType, Long businessId, boolean approved) {
         System.out.println("=== 更新业务状态 ===");
         System.out.println("businessType: " + businessType);
@@ -170,6 +176,20 @@ public class WfProcessTaskServiceImpl implements IWfProcessTaskService
                 } else {
                     System.out.println("未找到技术文档，businessId: " + businessId);
                 }
+            }  else if ("project".equals(businessType)) {
+                // 项目审批状态更新
+                PjOverview project = new PjOverview();
+                project.setId(businessId);
+                project.setAuditStatus(approved ? "1" : "2"); // 1通过，2驳回
+                project.setAuditBy(SecurityUtils.getUsername());
+                project.setAuditTime(new Date());
+                project.setAuditRemark(approved ? "审批通过" : "审批驳回"); // 新增这一行
+                project.setStatus(approved ? "1" : "4"); // 1进行中，4已暂停
+
+                System.out.println("更新项目状态: id=" + businessId + ", auditStatus=" + project.getAuditStatus() + ", status=" + project.getStatus());
+
+                int updateResult = pjOverviewService.updatePjOverview(project);
+                System.out.println("更新结果: " + updateResult);
             } else {
                 System.out.println("businessType 不匹配: " + businessType);
             }
@@ -180,3 +200,4 @@ public class WfProcessTaskServiceImpl implements IWfProcessTaskService
         }
     }
 }
+

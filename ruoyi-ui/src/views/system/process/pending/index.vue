@@ -7,6 +7,7 @@
           <el-tag v-if="scope.row.businessType === 'drawing'" type="primary">图纸</el-tag>
           <el-tag v-else-if="scope.row.businessType === 'document'" type="success">文档</el-tag>
           <el-tag v-else-if="scope.row.businessType === 'tech_doc'" type="warning">技术文档</el-tag>
+          <el-tag v-else-if="scope.row.businessType === 'project'" type="danger">项目</el-tag>
           <span v-else>{{ scope.row.businessType }}</span>
         </template>
       </el-table-column>
@@ -109,6 +110,8 @@ export default {
         this.$router.push({ path: '/system/drawing', query: { id: row.businessId }})
       } else if (row.businessType === 'tech_doc') {
         this.$router.push({ path: '/system/tech-detail/' + row.businessId })
+      } else if (row.businessType === 'project') {
+        this.$router.push({ path: '/system/overview', query: { id: row.businessId, view: true }})
       } else if (row.businessType === 'document') {
         this.$modal.msgInfo("文档详情页面待开发")
       }

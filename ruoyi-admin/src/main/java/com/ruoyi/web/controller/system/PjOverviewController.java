@@ -1,6 +1,8 @@
 package com.ruoyi.web.controller.system;
 
 import java.util.List;
+import java.util.Map;
+
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 项目概述Controller
  * 
  * @author ruoyi
- * @date 2026-05-28
+ * &#064;date  2026-05-28
  */
 @RestController
 @RequestMapping("/system/overview")
@@ -96,9 +98,32 @@ public class PjOverviewController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:overview:remove')")
     @Log(title = "项目概述", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
+    @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(pjOverviewService.deletePjOverviewByIds(ids));
+    }
+
+    @PreAuthorize("@ss.hasPermi('system:overview:audit')")
+    @Log(title = "项目审核", businessType = BusinessType.UPDATE)
+    @PutMapping("/audit")
+    public AjaxResult audit(@RequestBody PjOverview pjOverview)
+    {
+        pjOverview.setAuditBy(getUsername());
+        pjOverview.setAuditTime(new java.util.Date());
+        if ("1".equals(pjOverview.getAuditStatus())) {
+            pjOverview.setStatus("1");
+        } else if ("2".equals(pjOverview.getAuditStatus())) {
+            pjOverview.setStatus("4");
+        }
+        return toAjax(pjOverviewService.updatePjOverview(pjOverview));
+    }
+
+    @PreAuthorize("@ss.hasPermi('system:overview:list')")
+    @GetMapping("/statistics")
+    public AjaxResult statistics()
+    {
+        Map<String, Object> data = pjOverviewService.selectProjectStatistics();
+        return success(data);
     }
 }

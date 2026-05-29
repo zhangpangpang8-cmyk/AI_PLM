@@ -1,6 +1,8 @@
 package com.ruoyi.system.mapper;
 
 import java.util.List;
+import java.util.Map;
+
 import com.ruoyi.system.domain.PjOverview;
 
 /**
@@ -58,4 +60,12 @@ public interface PjOverviewMapper
      * @return 结果
      */
     public int deletePjOverviewByIds(Long[] ids);
+
+    /**
+     * 查询项目统计数据
+     *
+     * @return 项目统计数据
+     */
+    public Map<String, Object> selectProjectStatistics();
+
 }

@@ -42,3 +42,9 @@ export function delOverview(id) {
     method: 'delete'
   })
 }
+export function getStatistics() {
+  return request({
+    url: '/system/overview/statistics',
+    method: 'get'
+  })
+}

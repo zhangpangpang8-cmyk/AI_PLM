@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.PjOverviewMapper">
-    
+
     <resultMap type="PjOverview" id="PjOverviewResult">
         <result property="id"    column="id"    />
         <result property="projectCode"    column="project_code"    />
@@ -36,15 +36,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="healthStatus"    column="health_status"    />
         <result property="closeTime"    column="close_time"    />
         <result property="closeReason"    column="close_reason"    />
+        <result property="auditStatus"    column="audit_status"    />
+        <result property="auditBy"    column="audit_by"    />
+        <result property="auditTime"    column="audit_time"    />
+        <result property="auditRemark"    column="audit_remark"    />
     </resultMap>
 
     <sql id="selectPjOverviewVo">
-        select id, project_code, project_name, classification_id, classification_name, user_id, nick_name, status, start_time, end_time, project_progress, project_info, create_by, create_time, update_by, update_time, flow_key, flow_ins_id, bill_type, priority, project_type, plan_start_time, plan_end_time, actual_start_time, actual_end_time, budget, actual_cost, completion_rate, health_status, close_time, close_reason from pj_overview
+        select id, project_code, project_name, classification_id, classification_name, user_id, nick_name, status, audit_status, audit_by, audit_time, audit_remark, start_time, end_time, project_progress, project_info, create_by, create_time, update_by, update_time, flow_key, flow_ins_id, bill_type, priority, project_type, plan_start_time, plan_end_time, actual_start_time, actual_end_time, budget, actual_cost, completion_rate, health_status, close_time, close_reason from pj_overview
     </sql>
 
     <select id="selectPjOverviewList" parameterType="PjOverview" resultMap="PjOverviewResult">
         <include refid="selectPjOverviewVo"/>
-        <where>  
+        <where>
             <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
             <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
             <if test="classificationId != null "> and classification_id = #{classificationId}</if>
@@ -52,8 +56,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userId != null "> and user_id = #{userId}</if>
             <if test="nickName != null  and nickName != ''"> and nick_name like concat('%', #{nickName}, '%')</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
-            <if test="startTime != null "> and start_time = #{startTime}</if>
-            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="startTime != null "> and start_time &gt;= #{startTime}</if>
+            <if test="endTime != null "> and end_time &lt;= #{endTime}</if>
             <if test="projectProgress != null "> and project_progress = #{projectProgress}</if>
             <if test="projectInfo != null  and projectInfo != ''"> and project_info = #{projectInfo}</if>
             <if test="flowKey != null  and flowKey != ''"> and flow_key = #{flowKey}</if>
@@ -72,11 +76,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="closeTime != null "> and close_time = #{closeTime}</if>
             <if test="closeReason != null  and closeReason != ''"> and close_reason = #{closeReason}</if>
         </where>
+            order by create_time desc
     </select>
-    
+
+
     <select id="selectPjOverviewById" parameterType="Long" resultMap="PjOverviewResult">
         <include refid="selectPjOverviewVo"/>
         where id = #{id}
+    </select>
+
+    <!-- 项目统计数据查询 -->
+    <select id="selectProjectStatistics" resultType="java.util.HashMap">
+        select
+                (select count(*) from pj_overview where status = '2') as auditingCount,
+                (select count(*) from pj_overview where DATE_FORMAT(create_time, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')) as newThisMonth,
+                (select IFNULL(ROUND(AVG(project_progress), 2), 0) from pj_overview where project_progress is not null and project_progress > 0) as totalProgress,
+                (select count(*) from pj_overview where health_status = '2') as riskCount
     </select>
 
     <insert id="insertPjOverview" parameterType="PjOverview" useGeneratedKeys="true" keyProperty="id">
@@ -89,6 +104,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userId != null">user_id,</if>
             <if test="nickName != null">nick_name,</if>
             <if test="status != null">status,</if>
+            <if test="auditStatus != null">audit_status,</if>
+            <if test="auditBy != null">audit_by,</if>
+            <if test="auditTime != null">audit_time,</if>
+            <if test="auditRemark != null">audit_remark,</if>
             <if test="startTime != null">start_time,</if>
             <if test="endTime != null">end_time,</if>
             <if test="projectProgress != null">project_progress,</if>
@@ -112,7 +131,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="healthStatus != null">health_status,</if>
             <if test="closeTime != null">close_time,</if>
             <if test="closeReason != null">close_reason,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="projectCode != null and projectCode != ''">#{projectCode},</if>
             <if test="projectName != null and projectName != ''">#{projectName},</if>
@@ -121,6 +140,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userId != null">#{userId},</if>
             <if test="nickName != null">#{nickName},</if>
             <if test="status != null">#{status},</if>
+            <if test="auditStatus != null">#{auditStatus},</if>
+            <if test="auditBy != null">#{auditBy},</if>
+            <if test="auditTime != null">#{auditTime},</if>
+            <if test="auditRemark != null">#{auditRemark},</if>
             <if test="startTime != null">#{startTime},</if>
             <if test="endTime != null">#{endTime},</if>
             <if test="projectProgress != null">#{projectProgress},</if>
@@ -144,7 +167,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="healthStatus != null">#{healthStatus},</if>
             <if test="closeTime != null">#{closeTime},</if>
             <if test="closeReason != null">#{closeReason},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updatePjOverview" parameterType="PjOverview">
@@ -157,6 +180,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userId != null">user_id = #{userId},</if>
             <if test="nickName != null">nick_name = #{nickName},</if>
             <if test="status != null">status = #{status},</if>
+            <if test="auditStatus != null">audit_status = #{auditStatus},</if>
+            <if test="auditBy != null">audit_by = #{auditBy},</if>
+            <if test="auditTime != null">audit_time = #{auditTime},</if>
+            <if test="auditRemark != null">audit_remark = #{auditRemark},</if>
             <if test="startTime != null">start_time = #{startTime},</if>
             <if test="endTime != null">end_time = #{endTime},</if>
             <if test="projectProgress != null">project_progress = #{projectProgress},</if>
@@ -189,7 +216,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deletePjOverviewByIds" parameterType="String">
-        delete from pj_overview where id in 
+        delete from pj_overview where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
