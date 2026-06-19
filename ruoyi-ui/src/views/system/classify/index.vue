@@ -1,213 +1,237 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="物料类型编码" prop="materialClassifyCode">
-        <el-input
-          v-model="queryParams.materialClassifyCode"
-          placeholder="请输入物料类型编码"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="物料类型名称" prop="materialClassifyName">
-        <el-input
-          v-model="queryParams.materialClassifyName"
-          placeholder="请输入物料类型名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="父类型ID" prop="parentClassifyId">
-        <el-input
-          v-model="queryParams.parentClassifyId"
-          placeholder="请输入父类型ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="所有层级父节点ID，用逗号分隔" prop="ancestors">
-        <el-input
-          v-model="queryParams.ancestors"
-          placeholder="请输入所有层级父节点ID，用逗号分隔"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="显示顺序" prop="orderNum">
-        <el-input
-          v-model="queryParams.orderNum"
-          placeholder="请输入显示顺序"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="是否启用" prop="enable">
-        <el-input
-          v-model="queryParams.enable"
-          placeholder="请输入是否启用"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="MES同步id" prop="mesSyncId">
-        <el-input
-          v-model="queryParams.mesSyncId"
-          placeholder="请输入MES同步id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
+    <!-- 面包屑导航 -->
+    <el-breadcrumb separator="/" class="breadcrumb">
+      <el-breadcrumb-item>
+        <router-link to="/">首页</router-link>
+      </el-breadcrumb-item>
+      <el-breadcrumb-item>产品管理</el-breadcrumb-item>
+      <el-breadcrumb-item>物料分类</el-breadcrumb-item>
+    </el-breadcrumb>
 
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:classify:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:classify:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:classify:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['system:classify:export']"
-        >导出</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+    <!-- 页面标题和操作按钮 -->
+    <div class="page-header">
+      <h2 class="page-title">物料分类</h2>
+      <div class="header-actions">
+        <el-button type="primary" icon="el-icon-plus" @click="handleAdd">新增分类</el-button>
+        <el-button type="primary" icon="el-icon-upload2" @click="handleImport">批量导入</el-button>
+      </div>
+    </div>
 
-    <el-table v-loading="loading" :data="classifyList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键ID" align="center" prop="id" />
-      <el-table-column label="物料类型编码" align="center" prop="materialClassifyCode" />
-      <el-table-column label="物料类型名称" align="center" prop="materialClassifyName" />
-      <el-table-column label="父类型ID" align="center" prop="parentClassifyId" />
-      <el-table-column label="所有层级父节点ID，用逗号分隔" align="center" prop="ancestors" />
-      <el-table-column label="所有层级父节点名称用/分隔" align="center" prop="ancestorsName" />
-      <el-table-column label="显示顺序" align="center" prop="orderNum" />
-      <el-table-column label="是否启用" align="center" prop="enable" />
-      <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="MES同步id" align="center" prop="mesSyncId" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+    <!-- 搜索区域 -->
+    <el-card class="search-card" shadow="never">
+      <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" label-width="auto">
+        <el-form-item prop="materialClassifyName">
+          <el-input
+            v-model="queryParams.materialClassifyName"
+            placeholder="搜索分类名称"
+            clearable
+            prefix-icon="el-icon-search"
+            style="width: 200px"
+            @keyup.enter.native="handleQuery"
+          />
+        </el-form-item>
+        <el-form-item prop="enable">
+          <el-select
+            v-model="queryParams.enable"
+            placeholder="是否启用"
+            clearable
+            style="width: 150px"
+          >
+            <el-option label="是" value="1"></el-option>
+            <el-option label="否" value="0"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
+          <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
+        </el-form-item>
+      </el-form>
+      <div class="expand-btn">
+        <el-button size="small" icon="el-icon-sort" @click="toggleExpandAll">{{
+            expandAll ? '折叠' : '展开'
+          }}
+        </el-button>
+      </div>
+    </el-card>
+
+    <!-- 数据表格 -->
+    <el-table
+      v-if="refreshTable"
+      v-loading="loading"
+      :data="classifyList"
+      row-key="id"
+      :default-expand-all="expandAll"
+      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+      border
+      stripe
+      style="width: 100%"
+    >
+      <el-table-column
+        label="物料类型名称"
+        prop="materialClassifyName"
+        min-width="200"
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.parentClassifyId === 0 || !scope.row.parentClassifyId">
+            <i class="el-icon-folder-opened" style="color: #409EFF; margin-right: 5px;"></i>
+          </span>
+          <span v-else>
+            <i class="el-icon-folder" style="color: #909399; margin-right: 5px;"></i>
+          </span>
+          {{ scope.row.materialClassifyName }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="物料类型编码"
+        prop="materialClassifyCode"
+        width="150"
+        show-overflow-tooltip
+      />
+      <el-table-column
+        label="排序"
+        prop="orderNum"
+        width="100"
+        align="center"
+      />
+      <el-table-column
+        label="是否启用"
+        prop="enable"
+        width="100"
+        align="center"
+      >
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.enable === '1' ? 'success' : 'info'" size="small">
+            {{ scope.row.enable === '1' ? '是' : '否' }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="操作"
+        align="center"
+        width="280"
+        fixed="right"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
+            type="default"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:classify:edit']"
-          >修改</el-button>
+            v-hasPermi="['system:classify:edit']" style="margin-right: 5px;"
+          >编辑
+          </el-button>
           <el-button
             size="mini"
-            type="text"
+            type="primary"
+            icon="el-icon-plus"
+            @click="handleAddChild(scope.row)"
+            v-hasPermi="['system:classify:add']" style="margin-right: 5px;"
+          >新增
+          </el-button>
+          <el-button
+            size="mini"
+            type="danger"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:classify:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
-    
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
 
-    <!-- 添加或修改物料分类（支持多级分类）对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="物料类型编码" prop="materialClassifyCode">
-              <el-input v-model="form.materialClassifyCode" placeholder="请输入物料类型编码" />
-            </el-form-item>
-          </el-col>
+    <el-dialog :title="title" :visible.sync="open" width="900px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+        <el-row :gutter="20">
           <el-col :span="24">
             <el-form-item label="物料类型名称" prop="materialClassifyName">
-              <el-input v-model="form.materialClassifyName" placeholder="请输入物料类型名称" />
+              <el-input v-model="form.materialClassifyName" placeholder="请输入物料类型名称"/>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="父类型ID" prop="parentClassifyId">
-              <el-input v-model="form.parentClassifyId" placeholder="请输入父类型ID" />
+            <el-form-item label="物料类型编码" prop="materialClassifyCode">
+              <el-input v-model="form.materialClassifyCode" placeholder="请输入物料类型编码"/>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
-            <el-form-item label="所有层级父节点名称用/分隔" prop="ancestorsName">
-              <el-input v-model="form.ancestorsName" type="textarea" placeholder="请输入内容" />
+          <el-col :span="8">
+            <el-form-item label="显示排序" prop="orderNum">
+              <el-input-number v-model="form.orderNum" :min="0" :max="999" controls-position="right"
+                               style="width: 100%"/>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
-            <el-form-item label="显示顺序" prop="orderNum">
-              <el-input v-model="form.orderNum" placeholder="请输入显示顺序" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="是否启用" prop="enable">
-              <el-input v-model="form.enable" placeholder="请输入是否启用" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="备注" prop="remark">
-              <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="MES同步id" prop="mesSyncId">
-              <el-input v-model="form.mesSyncId" placeholder="请输入MES同步id" />
+          <el-col :span="16">
+            <el-form-item label="启用状态" prop="enable">
+              <el-radio-group v-model="form.enable">
+                <el-radio label="1">是</el-radio>
+                <el-radio label="0">否</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
+
+        <!-- 技术参数区域 -->
+        <el-divider content-position="left">技术参数</el-divider>
+        <el-table :data="parameterList" border stripe style="width: 100%; margin-bottom: 15px;">
+          <el-table-column label="参数名称" min-width="150">
+            <template slot-scope="scope">
+              <el-input
+                v-model="scope.row.paramName"
+                placeholder="请输入参数名称"
+                size="small"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column label="输入提示" min-width="200">
+            <template slot-scope="scope">
+              <el-input
+                v-model="scope.row.inputTip"
+                placeholder="请输入输入提示"
+                size="small"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column label="单位" width="120">
+            <template slot-scope="scope">
+              <el-input
+                v-model="scope.row.unit"
+                placeholder="请输入单位"
+                size="small"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="100" align="center">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-delete"
+                @click="handleDeleteParameter(scope.$index)" style="color: #F56C6C;"
+              >删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div v-if="parameterList.length === 0" class="empty-tip">暂无数据</div>
+        <el-button type="primary" size="small" icon="el-icon-plus" @click="handleAddParameter">添加参数</el-button>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" @click="submitForm">确定</el-button>
+        <el-button @click="cancel">取消</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { listClassify, getClassify, delClassify, addClassify, updateClassify } from "@/api/system/classify"
+import {listClassify, getClassify, delClassify, addClassify, updateClassify} from "@/api/system/classify"
+import Treeselect from "@riophae/vue-treeselect"
+import "@riophae/vue-treeselect/dist/vue-treeselect.css"
 
 export default {
-  name: "Classify",
+  name: "MaterialClassify",
+  components: {Treeselect},
   data() {
     return {
       // 遮罩层
@@ -218,45 +242,43 @@ export default {
       single: true,
       // 非多个禁用
       multiple: true,
-      // 显示搜索条件
-      showSearch: true,
       // 总条数
       total: 0,
-      // 物料分类（支持多级分类）表格数据
+      // 物料分类表格数据
       classifyList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
+      // 是否展开所有
+      expandAll: false,
+      // 刷新表格
+      refreshTable: true,
+      // 分类选项（用于树形选择器）
+      classifyOptions: [],
       // 查询参数
       queryParams: {
-        pageNum: 1,
-        pageSize: 10,
-        materialClassifyCode: null,
         materialClassifyName: null,
-        parentClassifyId: null,
-        ancestors: null,
-        ancestorsName: null,
-        orderNum: null,
-        enable: null,
-        mesSyncId: null
+        enable: null
       },
       // 表单参数
       form: {},
+      // 技术参数列表
+      parameterList: [],
       // 表单校验
       rules: {
-        materialClassifyCode: [
-          { required: true, message: "物料类型编码不能为空", trigger: "blur" }
-        ],
         materialClassifyName: [
-          { required: true, message: "物料类型名称不能为空", trigger: "blur" }
+          {required: true, message: "物料类型名称不能为空", trigger: "blur"}
         ],
-        createBy: [
-          { required: true, message: "创建人不能为空", trigger: "blur" }
+        materialClassifyCode: [
+          {required: true, message: "物料类型编码不能为空", trigger: "blur"}
         ],
-        createTime: [
-          { required: true, message: "创建时间不能为空", trigger: "blur" }
+        orderNum: [
+          {required: true, message: "显示顺序不能为空", trigger: "blur"}
         ],
+        enable: [
+          {required: true, message: "是否启用不能为空", trigger: "change"}
+        ]
       }
     }
   },
@@ -264,76 +286,178 @@ export default {
     this.getList()
   },
   methods: {
-    /** 查询物料分类（支持多级分类）列表 */
+    /** 查询物料分类列表 */
     getList() {
       this.loading = true
       listClassify(this.queryParams).then(response => {
-        this.classifyList = response.rows
-        this.total = response.total
+        const dataList = response.data || []
+
+        if (dataList && dataList.length > 0) {
+          this.classifyList = this.handleTree(dataList, "id", "parentClassifyId")
+        } else {
+          this.classifyList = []
+        }
+
+        this.total = dataList.length
+        this.loading = false
+      }).catch(error => {
+        console.error('获取数据失败:', error)
         this.loading = false
       })
     },
+
+    /** 转换树形数据 */
+    handleTree(data, id, parentId, children) {
+      const config = {
+        id: id || 'id',
+        parentId: parentId || 'parentId',
+        childrenList: children || 'children'
+      }
+
+      const childrenListMap = {}
+      const nodeIds = {}
+      const tree = []
+
+      for (const d of data) {
+        const parentId = d[config.parentId]
+        if (childrenListMap[parentId] == null) {
+          childrenListMap[parentId] = []
+        }
+        nodeIds[d[config.id]] = d
+        childrenListMap[parentId].push(d)
+      }
+
+      for (const d of data) {
+        const parentId = d[config.parentId]
+        if (nodeIds[parentId] == null) {
+          tree.push(d)
+        }
+      }
+
+      for (const t of tree) {
+        adaptToChildrenList(t)
+      }
+
+      function adaptToChildrenList(o) {
+        if (childrenListMap[o[config.id]] !== null) {
+          o[config.childrenList] = childrenListMap[o[config.id]]
+        }
+        if (o[config.childrenList]) {
+          for (const c of o[config.childrenList]) {
+            adaptToChildrenList(c)
+          }
+        }
+      }
+
+      return tree
+    },
+
+    toggleExpandAll() {
+      this.refreshTable = false
+      this.expandAll = !this.expandAll
+      this.$nextTick(() => {
+        this.refreshTable = true
+      })
+    },
+
     // 取消按钮
     cancel() {
       this.open = false
       this.reset()
     },
+
     // 表单重置
     reset() {
       this.form = {
         id: null,
         materialClassifyCode: null,
         materialClassifyName: null,
-        parentClassifyId: null,
+        parentClassifyId: 0,
         ancestors: null,
         ancestorsName: null,
-        orderNum: null,
-        enable: null,
-        createBy: null,
-        createTime: null,
-        updateBy: null,
-        updateTime: null,
+        orderNum: 0,
+        enable: '1',
         remark: null,
         mesSyncId: null
       }
+      this.parameterList = []
       this.resetForm("form")
     },
+
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.pageNum = 1
       this.getList()
     },
+
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm")
       this.handleQuery()
     },
+
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
+
     /** 新增按钮操作 */
     handleAdd() {
       this.reset()
       this.open = true
-      this.title = "添加物料分类（支持多级分类）"
+      this.title = "添加分类"
     },
+
+    /** 新增子分类 */
+    handleAddChild(row) {
+      this.reset()
+      this.form.parentClassifyId = row.id
+      this.open = true
+      this.title = "添加分类"
+    },
+
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset()
-      const id = row.id || this.ids
-      getClassify(id).then(response => {
+      getClassify(row.id).then(response => {
         this.form = response.data
+        // 解析技术参数JSON
+        if (this.form.parameters) {
+          try {
+            this.parameterList = JSON.parse(this.form.parameters)
+          } catch (e) {
+            this.parameterList = []
+          }
+        } else {
+          this.parameterList = []
+        }
         this.open = true
-        this.title = "修改物料分类（支持多级分类）"
+        this.title = "修改分类"
       })
     },
+
+    /** 添加参数 */
+    handleAddParameter() {
+      this.parameterList.push({
+        paramName: '',
+        inputTip: '',
+        unit: ''
+      })
+    },
+
+    /** 删除参数 */
+    handleDeleteParameter(index) {
+      this.parameterList.splice(index, 1)
+    },
+
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          // 将技术参数列表转换为JSON字符串
+          this.form.parameters = JSON.stringify(this.parameterList)
+
           if (this.form.id != null) {
             updateClassify(this.form).then(response => {
               this.$modal.msgSuccess("修改成功")
@@ -350,22 +474,140 @@ export default {
         }
       })
     },
+
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.id || this.ids
-      this.$modal.confirm('是否确认删除物料分类（支持多级分类）编号为"' + ids + '"的数据项？').then(function() {
-        return delClassify(ids)
+      this.$modal.confirm('是否确认删除分类名称为"' + row.materialClassifyName + '"的数据项？').then(function () {
+        return delClassify(row.id)
       }).then(() => {
         this.getList()
         this.$modal.msgSuccess("删除成功")
-      }).catch(() => {})
+      }).catch(() => {
+      })
     },
+
     /** 导出按钮操作 */
     handleExport() {
       this.download('system/classify/export', {
         ...this.queryParams
-      }, `classify_${new Date().getTime()}.xlsx`)
+      }, `物料分类_${new Date().getTime()}.xlsx`)
+    },
+
+    /** 批量导入 */
+    handleImport() {
+      this.$message.info('批量导入功能开发中')
     }
   }
 }
 </script>
+
+<style scoped>.breadcrumb {
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #303133;
+  margin: 0;
+}
+
+.header-actions .el-button {
+  margin-left: 10px;
+}
+
+/* 搜索卡片样式 */
+.search-card {
+  margin-bottom: 20px;
+  border-radius: 8px;
+  position: relative;
+}
+
+.search-card .el-form {
+  margin-bottom: 0;
+}
+
+.expand-btn {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* 表格样式优化 */
+.el-table {
+  font-size: 14px;
+}
+
+.el-table th {
+  background-color: #f5f7fa;
+  color: #606266;
+  font-weight: 500;
+}
+
+/* 空数据提示 */
+.empty-tip {
+  text-align: center;
+  padding: 40px;
+  color: #909399;
+  font-size: 14px;
+}
+
+/* 对话框底部样式 */
+.dialog-footer {
+  text-align: right;
+}
+
+.dialog-footer .el-button {
+  margin-left: 10px;
+}
+
+/* 分隔线样式 */
+::v-deep .el-divider__text {
+  font-weight: 500;
+  color: #303133;
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-actions {
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .header-actions .el-button {
+    margin-left: 0;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+
+  .search-card .el-input,
+  .search-card .el-select {
+    width: 100%;
+  }
+
+  .search-card .el-form-item {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .expand-btn {
+    position: static;
+    transform: none;
+    margin-top: 10px;
+  }
+}
+</style>

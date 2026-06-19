@@ -2,6 +2,7 @@ package com.ruoyi.system.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.ProMaterialClassifyMapper;
@@ -53,6 +54,7 @@ public class ProMaterialClassifyServiceImpl implements IProMaterialClassifyServi
     @Override
     public int insertProMaterialClassify(ProMaterialClassify proMaterialClassify)
     {
+        proMaterialClassify.setCreateBy(SecurityUtils.getUsername());
         proMaterialClassify.setCreateTime(DateUtils.getNowDate());
         return proMaterialClassifyMapper.insertProMaterialClassify(proMaterialClassify);
     }
@@ -66,10 +68,10 @@ public class ProMaterialClassifyServiceImpl implements IProMaterialClassifyServi
     @Override
     public int updateProMaterialClassify(ProMaterialClassify proMaterialClassify)
     {
+        proMaterialClassify.setUpdateBy(SecurityUtils.getUsername());
         proMaterialClassify.setUpdateTime(DateUtils.getNowDate());
         return proMaterialClassifyMapper.updateProMaterialClassify(proMaterialClassify);
     }
-
     /**
      * 批量删除物料分类（支持多级分类）
      * 

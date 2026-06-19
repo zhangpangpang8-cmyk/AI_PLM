@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PjPhaseMapper">
+    
+    <resultMap type="PjPhase" id="PjPhaseResult">
+        <result property="id"    column="id"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="phaseCode"    column="phase_code"    />
+        <result property="phaseName"    column="phase_name"    />
+        <result property="phaseType"    column="phase_type"    />
+        <result property="planStartDate"    column="plan_start_date"    />
+        <result property="planEndDate"    column="plan_end_date"    />
+        <result property="actualStartDate"    column="actual_start_date"    />
+        <result property="actualEndDate"    column="actual_end_date"    />
+        <result property="phaseStatus"    column="phase_status"    />
+        <result property="deliverables"    column="deliverables"    />
+        <result property="entryCriteria"    column="entry_criteria"    />
+        <result property="exitCriteria"    column="exit_criteria"    />
+        <result property="sortOrder"    column="sort_order"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectPjPhaseVo">
+        select id, project_id, phase_code, phase_name, phase_type, plan_start_date, plan_end_date, actual_start_date, actual_end_date, phase_status, deliverables, entry_criteria, exit_criteria, sort_order, create_by, create_time, update_by, update_time, remark from pj_phase
+    </sql>
+
+    <select id="selectPjPhaseList" parameterType="PjPhase" resultMap="PjPhaseResult">
+        <include refid="selectPjPhaseVo"/>
+        <where>  
+            <if test="projectId != null "> and project_id = #{projectId}</if>
+            <if test="phaseCode != null  and phaseCode != ''"> and phase_code = #{phaseCode}</if>
+            <if test="phaseName != null  and phaseName != ''"> and phase_name like concat('%', #{phaseName}, '%')</if>
+            <if test="phaseType != null  and phaseType != ''"> and phase_type = #{phaseType}</if>
+            <if test="planStartDate != null "> and plan_start_date = #{planStartDate}</if>
+            <if test="planEndDate != null "> and plan_end_date = #{planEndDate}</if>
+            <if test="actualStartDate != null "> and actual_start_date = #{actualStartDate}</if>
+            <if test="actualEndDate != null "> and actual_end_date = #{actualEndDate}</if>
+            <if test="phaseStatus != null  and phaseStatus != ''"> and phase_status = #{phaseStatus}</if>
+            <if test="deliverables != null  and deliverables != ''"> and deliverables = #{deliverables}</if>
+            <if test="entryCriteria != null  and entryCriteria != ''"> and entry_criteria = #{entryCriteria}</if>
+            <if test="exitCriteria != null  and exitCriteria != ''"> and exit_criteria = #{exitCriteria}</if>
+            <if test="sortOrder != null "> and sort_order = #{sortOrder}</if>
+        </where>
+    </select>
+    
+    <select id="selectPjPhaseById" parameterType="Long" resultMap="PjPhaseResult">
+        <include refid="selectPjPhaseVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertPjPhase" parameterType="PjPhase" useGeneratedKeys="true" keyProperty="id">
+        insert into pj_phase
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="projectId != null">project_id,</if>
+            <if test="phaseCode != null">phase_code,</if>
+            <if test="phaseName != null and phaseName != ''">phase_name,</if>
+            <if test="phaseType != null">phase_type,</if>
+            <if test="planStartDate != null">plan_start_date,</if>
+            <if test="planEndDate != null">plan_end_date,</if>
+            <if test="actualStartDate != null">actual_start_date,</if>
+            <if test="actualEndDate != null">actual_end_date,</if>
+            <if test="phaseStatus != null">phase_status,</if>
+            <if test="deliverables != null">deliverables,</if>
+            <if test="entryCriteria != null">entry_criteria,</if>
+            <if test="exitCriteria != null">exit_criteria,</if>
+            <if test="sortOrder != null">sort_order,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="projectId != null">#{projectId},</if>
+            <if test="phaseCode != null">#{phaseCode},</if>
+            <if test="phaseName != null and phaseName != ''">#{phaseName},</if>
+            <if test="phaseType != null">#{phaseType},</if>
+            <if test="planStartDate != null">#{planStartDate},</if>
+            <if test="planEndDate != null">#{planEndDate},</if>
+            <if test="actualStartDate != null">#{actualStartDate},</if>
+            <if test="actualEndDate != null">#{actualEndDate},</if>
+            <if test="phaseStatus != null">#{phaseStatus},</if>
+            <if test="deliverables != null">#{deliverables},</if>
+            <if test="entryCriteria != null">#{entryCriteria},</if>
+            <if test="exitCriteria != null">#{exitCriteria},</if>
+            <if test="sortOrder != null">#{sortOrder},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePjPhase" parameterType="PjPhase">
+        update pj_phase
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="phaseCode != null">phase_code = #{phaseCode},</if>
+            <if test="phaseName != null and phaseName != ''">phase_name = #{phaseName},</if>
+            <if test="phaseType != null">phase_type = #{phaseType},</if>
+            <if test="planStartDate != null">plan_start_date = #{planStartDate},</if>
+            <if test="planEndDate != null">plan_end_date = #{planEndDate},</if>
+            <if test="actualStartDate != null">actual_start_date = #{actualStartDate},</if>
+            <if test="actualEndDate != null">actual_end_date = #{actualEndDate},</if>
+            <if test="phaseStatus != null">phase_status = #{phaseStatus},</if>
+            <if test="deliverables != null">deliverables = #{deliverables},</if>
+            <if test="entryCriteria != null">entry_criteria = #{entryCriteria},</if>
+            <if test="exitCriteria != null">exit_criteria = #{exitCriteria},</if>
+            <if test="sortOrder != null">sort_order = #{sortOrder},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePjPhaseById" parameterType="Long">
+        delete from pj_phase where id = #{id}
+    </delete>
+
+    <delete id="deletePjPhaseByIds" parameterType="String">
+        delete from pj_phase where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

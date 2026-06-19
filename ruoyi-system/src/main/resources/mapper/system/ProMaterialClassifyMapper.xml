@@ -1,44 +1,67 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.ProMaterialClassifyMapper">
-    
+
     <resultMap type="ProMaterialClassify" id="ProMaterialClassifyResult">
-        <result property="id"    column="id"    />
-        <result property="materialClassifyCode"    column="material_classify_code"    />
-        <result property="materialClassifyName"    column="material_classify_name"    />
-        <result property="parentClassifyId"    column="parent_classify_id"    />
-        <result property="ancestors"    column="ancestors"    />
-        <result property="ancestorsName"    column="ancestors_name"    />
-        <result property="orderNum"    column="order_num"    />
-        <result property="enable"    column="enable"    />
-        <result property="createBy"    column="create_by"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateBy"    column="update_by"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="remark"    column="remark"    />
-        <result property="mesSyncId"    column="mes_sync_id"    />
+        <result property="id" column="id"/>
+        <result property="materialClassifyCode" column="material_classify_code"/>
+        <result property="materialClassifyName" column="material_classify_name"/>
+        <result property="parentClassifyId" column="parent_classify_id"/>
+        <result property="ancestors" column="ancestors"/>
+        <result property="ancestorsName" column="ancestors_name"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="enable" column="enable"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <result property="mesSyncId" column="mes_sync_id"/>
+        <result property="parameters" column="parameters"/>
     </resultMap>
 
     <sql id="selectProMaterialClassifyVo">
-        select id, material_classify_code, material_classify_name, parent_classify_id, ancestors, ancestors_name, order_num, enable, create_by, create_time, update_by, update_time, remark, mes_sync_id from pro_material_classify
+        select id,
+               material_classify_code,
+               material_classify_name,
+               parent_classify_id,
+               ancestors,
+               ancestors_name,
+               order_num,
+               enable,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               remark,
+               mes_sync_id,
+               parameters
+        from pro_material_classify
     </sql>
 
-    <select id="selectProMaterialClassifyList" parameterType="ProMaterialClassify" resultMap="ProMaterialClassifyResult">
+    <select id="selectProMaterialClassifyList" parameterType="ProMaterialClassify"
+            resultMap="ProMaterialClassifyResult">
         <include refid="selectProMaterialClassifyVo"/>
-        <where>  
-            <if test="materialClassifyCode != null  and materialClassifyCode != ''"> and material_classify_code = #{materialClassifyCode}</if>
-            <if test="materialClassifyName != null  and materialClassifyName != ''"> and material_classify_name like concat('%', #{materialClassifyName}, '%')</if>
-            <if test="parentClassifyId != null "> and parent_classify_id = #{parentClassifyId}</if>
-            <if test="ancestors != null  and ancestors != ''"> and ancestors = #{ancestors}</if>
-            <if test="ancestorsName != null  and ancestorsName != ''"> and ancestors_name like concat('%', #{ancestorsName}, '%')</if>
-            <if test="orderNum != null "> and order_num = #{orderNum}</if>
-            <if test="enable != null  and enable != ''"> and enable = #{enable}</if>
-            <if test="mesSyncId != null  and mesSyncId != ''"> and mes_sync_id = #{mesSyncId}</if>
+        <where>
+            <if test="materialClassifyCode != null  and materialClassifyCode != ''">and material_classify_code =
+                #{materialClassifyCode}
+            </if>
+            <if test="materialClassifyName != null  and materialClassifyName != ''">and material_classify_name like
+                concat('%', #{materialClassifyName}, '%')
+            </if>
+            <if test="parentClassifyId != null ">and parent_classify_id = #{parentClassifyId}</if>
+            <if test="ancestors != null  and ancestors != ''">and ancestors = #{ancestors}</if>
+            <if test="ancestorsName != null  and ancestorsName != ''">and ancestors_name like concat('%',
+                #{ancestorsName}, '%')
+            </if>
+            <if test="orderNum != null ">and order_num = #{orderNum}</if>
+            <if test="enable != null  and enable != ''">and enable = #{enable}</if>
+            <if test="mesSyncId != null  and mesSyncId != ''">and mes_sync_id = #{mesSyncId}</if>
         </where>
     </select>
-    
+
     <select id="selectProMaterialClassifyById" parameterType="Long" resultMap="ProMaterialClassifyResult">
         <include refid="selectProMaterialClassifyVo"/>
         where id = #{id}
@@ -60,7 +83,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time,</if>
             <if test="remark != null">remark,</if>
             <if test="mesSyncId != null">mes_sync_id,</if>
-         </trim>
+            <if test="parameters != null">parameters,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="materialClassifyCode != null and materialClassifyCode != ''">#{materialClassifyCode},</if>
             <if test="materialClassifyName != null and materialClassifyName != ''">#{materialClassifyName},</if>
@@ -75,14 +99,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">#{updateTime},</if>
             <if test="remark != null">#{remark},</if>
             <if test="mesSyncId != null">#{mesSyncId},</if>
-         </trim>
+            <if test="parameters != null">#{parameters},</if>
+        </trim>
     </insert>
+
 
     <update id="updateProMaterialClassify" parameterType="ProMaterialClassify">
         update pro_material_classify
         <trim prefix="SET" suffixOverrides=",">
-            <if test="materialClassifyCode != null and materialClassifyCode != ''">material_classify_code = #{materialClassifyCode},</if>
-            <if test="materialClassifyName != null and materialClassifyName != ''">material_classify_name = #{materialClassifyName},</if>
+            <if test="materialClassifyCode != null and materialClassifyCode != ''">material_classify_code =
+                #{materialClassifyCode},
+            </if>
+            <if test="materialClassifyName != null and materialClassifyName != ''">material_classify_name =
+                #{materialClassifyName},
+            </if>
             <if test="parentClassifyId != null">parent_classify_id = #{parentClassifyId},</if>
             <if test="ancestors != null">ancestors = #{ancestors},</if>
             <if test="ancestorsName != null">ancestors_name = #{ancestorsName},</if>
@@ -94,16 +124,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="remark != null">remark = #{remark},</if>
             <if test="mesSyncId != null">mes_sync_id = #{mesSyncId},</if>
+            <if test="parameters != null">parameters = #{parameters},</if>
         </trim>
         where id = #{id}
     </update>
 
     <delete id="deleteProMaterialClassifyById" parameterType="Long">
-        delete from pro_material_classify where id = #{id}
+        delete
+        from pro_material_classify
+        where id = #{id}
     </delete>
 
     <delete id="deleteProMaterialClassifyByIds" parameterType="String">
-        delete from pro_material_classify where id in 
+        delete from pro_material_classify where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

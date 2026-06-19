@@ -39,11 +39,10 @@ public class ProMaterialClassifyController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:classify:list')")
     @GetMapping("/list")
-    public TableDataInfo list(ProMaterialClassify proMaterialClassify)
+    public AjaxResult list(ProMaterialClassify proMaterialClassify)
     {
-        startPage();
         List<ProMaterialClassify> list = proMaterialClassifyService.selectProMaterialClassifyList(proMaterialClassify);
-        return getDataTable(list);
+        return success(list);
     }
 
     /**
