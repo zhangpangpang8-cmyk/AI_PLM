@@ -5,6 +5,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
+import java.util.List;
+
 /**
  * 物料分类（支持多级分类）对象 pro_material_classify
  *
@@ -69,6 +71,8 @@ public class ProMaterialClassify extends BaseEntity {
 
     private String parameters;
 
+    private List<ProMaterialClassify> children;
+
     public String getParameters() {
         return parameters;
     }
@@ -83,6 +87,14 @@ public class ProMaterialClassify extends BaseEntity {
 
     public Long getId() {
         return id;
+    }
+
+    public List<ProMaterialClassify> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<ProMaterialClassify> children) {
+        this.children = children;
     }
 
     public void setMaterialClassifyCode(String materialClassifyCode) {

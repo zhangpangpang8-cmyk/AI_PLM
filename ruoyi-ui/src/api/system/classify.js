@@ -42,3 +42,11 @@ export function delClassify(id) {
     method: 'delete'
   })
 }
+
+// 查询物料分类树
+export function listClassifyTree() {
+  return request({
+    url: '/system/classify/tree',
+    method: 'get'
+  })
+}

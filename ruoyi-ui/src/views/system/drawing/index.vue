@@ -121,9 +121,9 @@
           <el-tag v-else type="info" size="small">否</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center" prop="status">
+      <el-table-column label="审批状态" align="center" prop="approvalStatus">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
+          <dict-tag :options="dict.type.drawing_approval_status" :value="scope.row.approvalStatus"/>
         </template>
       </el-table-column>
       <el-table-column label="项目名称" align="center" prop="projectName" />
@@ -314,7 +314,7 @@ import { listDrawing, getDrawing, delDrawing, addDrawing, updateDrawing } from "
 
 export default {
   name: "Drawing",
-  dicts: ['sys_normal_disable'],
+  dicts: ['sys_normal_disable', 'drawing_approval_status'],
   data() {
     return {
       // 遮罩层

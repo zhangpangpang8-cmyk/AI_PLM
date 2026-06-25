@@ -9,20 +9,23 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
- * 物料管理（仅存储激活版本）对象 pro_item
+ * 物料版本历史对象 pro_item_version
  * 
  * @author ruoyi
  * @date 2026-05-09
  */
-public class ProItem extends BaseEntity
+public class ProItemVersion extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
     /** 主键ID */
     private Long id;
 
-    /** 物料编码（唯一标识） */
-    @Excel(name = "物料编码", readConverterExp = "唯=一标识")
+    /** 关联物料ID */
+    private Long itemId;
+
+    /** 物料编码 */
+    @Excel(name = "物料编码")
     private String itemCode;
 
     /** 物料名称 */
@@ -105,10 +108,6 @@ public class ProItem extends BaseEntity
     @Excel(name = "图片URL")
     private String url;
 
-    /** 是否最新版本（0=否，1=是） */
-    @Excel(name = "是否最新版本", readConverterExp = "0==否，1=是")
-    private String latestVersion;
-
     /** 发布状态 */
     @Excel(name = "发布状态")
     private String publishStatus;
@@ -116,55 +115,6 @@ public class ProItem extends BaseEntity
     /** 备注 */
     @Excel(name = "备注")
     private String remake;
-
-    /** 申请流程 */
-    @Excel(name = "申请流程")
-    private String flowKey;
-
-    /** 流程实例ID */
-    @Excel(name = "流程实例ID")
-    private String flowInsId;
-
-    /** 单据类型 */
-    @Excel(name = "单据类型")
-    private String billType;
-
-    /** 能否作为Bom的父件 */
-    @Excel(name = "能否作为Bom的父件")
-    private String usedAsParent;
-
-    /** 能否进行变更（0=不允许，1=允许） */
-    @Excel(name = "能否进行变更", readConverterExp = "0==不允许，1=允许")
-    private String allowChange;
-
-    /** 物料同步UUID */
-    @Excel(name = "物料同步UUID")
-    private String itemUuid;
-
-    /** 物料同步MESID */
-    @Excel(name = "物料同步MESID")
-    private String mesSyncId;
-
-    /** 审核状态（0待审核 1审核通过 2审核驳回） */
-    @Excel(name = "审核状态", readConverterExp = "0=待审核,1=审核通过,2=审核驳回")
-    private String auditStatus;
-
-    /** 审批状态（0=草稿,1=审批中,2=已通过,3=已驳回,4=已取消） */
-    @Excel(name = "审批状态", readConverterExp = "0=草稿,1=审批中,2=已通过,3=已驳回,4=已取消")
-    private String approvalStatus;
-
-    /** 审核人 */
-    @Excel(name = "审核人")
-    private String auditBy;
-
-    /** 审核时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Excel(name = "审核时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
-    private java.util.Date auditTime;
-
-    /** 审核备注 */
-    @Excel(name = "审核备注")
-    private String auditRemark;
 
     public void setId(Long id) 
     {
@@ -174,6 +124,16 @@ public class ProItem extends BaseEntity
     public Long getId() 
     {
         return id;
+    }
+
+    public void setItemId(Long itemId) 
+    {
+        this.itemId = itemId;
+    }
+
+    public Long getItemId() 
+    {
+        return itemId;
     }
 
     public void setItemCode(String itemCode) 
@@ -386,16 +346,6 @@ public class ProItem extends BaseEntity
         return url;
     }
 
-    public void setLatestVersion(String latestVersion) 
-    {
-        this.latestVersion = latestVersion;
-    }
-
-    public String getLatestVersion() 
-    {
-        return latestVersion;
-    }
-
     public void setPublishStatus(String publishStatus) 
     {
         this.publishStatus = publishStatus;
@@ -416,170 +366,17 @@ public class ProItem extends BaseEntity
         return remake;
     }
 
-    public void setFlowKey(String flowKey) 
-    {
-        this.flowKey = flowKey;
-    }
-
-    public String getFlowKey() 
-    {
-        return flowKey;
-    }
-
-    public void setFlowInsId(String flowInsId) 
-    {
-        this.flowInsId = flowInsId;
-    }
-
-    public String getFlowInsId() 
-    {
-        return flowInsId;
-    }
-
-    public void setBillType(String billType) 
-    {
-        this.billType = billType;
-    }
-
-    public String getBillType() 
-    {
-        return billType;
-    }
-
-    public void setUsedAsParent(String usedAsParent) 
-    {
-        this.usedAsParent = usedAsParent;
-    }
-
-    public String getUsedAsParent() 
-    {
-        return usedAsParent;
-    }
-
-    public void setAllowChange(String allowChange) 
-    {
-        this.allowChange = allowChange;
-    }
-
-    public String getAllowChange() 
-    {
-        return allowChange;
-    }
-
-    public void setItemUuid(String itemUuid) 
-    {
-        this.itemUuid = itemUuid;
-    }
-
-    public String getItemUuid() 
-    {
-        return itemUuid;
-    }
-
-    public void setMesSyncId(String mesSyncId) 
-    {
-        this.mesSyncId = mesSyncId;
-    }
-
-    public String getMesSyncId() 
-    {
-        return mesSyncId;
-    }
-
-    public void setAuditStatus(String auditStatus) 
-    {
-        this.auditStatus = auditStatus;
-    }
-
-    public String getAuditStatus() 
-    {
-        return auditStatus;
-    }
-
-    public void setAuditBy(String auditBy) 
-    {
-        this.auditBy = auditBy;
-    }
-
-    public String getAuditBy() 
-    {
-        return auditBy;
-    }
-
-    public void setAuditTime(java.util.Date auditTime) 
-    {
-        this.auditTime = auditTime;
-    }
-
-    public java.util.Date getAuditTime() 
-    {
-        return auditTime;
-    }
-
-    public void setAuditRemark(String auditRemark) 
-    {
-        this.auditRemark = auditRemark;
-    }
-
-    public String getAuditRemark() 
-    {
-        return auditRemark;
-    }
-
-    public void setApprovalStatus(String approvalStatus) 
-    {
-        this.approvalStatus = approvalStatus;
-    }
-
-    public String getApprovalStatus() 
-    {
-        return approvalStatus;
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
+            .append("itemId", getItemId())
             .append("itemCode", getItemCode())
             .append("itemName", getItemName())
-            .append("itemTypeId", getItemTypeId())
-            .append("itemTypeCode", getItemTypeCode())
-            .append("itemTypeName", getItemTypeName())
             .append("itemVersion", getItemVersion())
-            .append("materialClassifyIds", getMaterialClassifyIds())
-            .append("materialClassifyName", getMaterialClassifyName())
             .append("specification", getSpecification())
-            .append("unitId", getUnitId())
-            .append("unitName", getUnitName())
-            .append("status", getStatus())
-            .append("enable", getEnable())
-            .append("vendorId", getVendorId())
-            .append("vendorName", getVendorName())
-            .append("material", getMaterial())
-            .append("color", getColor())
-            .append("weight", getWeight())
-            .append("Info", getInfo())
-            .append("parametersValues", getParametersValues())
-            .append("url", getUrl())
-            .append("latestVersion", getLatestVersion())
-            .append("publishStatus", getPublishStatus())
-            .append("remake", getRemake())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
-            .append("updateBy", getUpdateBy())
-            .append("updateTime", getUpdateTime())
-            .append("flowKey", getFlowKey())
-            .append("flowInsId", getFlowInsId())
-            .append("billType", getBillType())
-            .append("usedAsParent", getUsedAsParent())
-            .append("allowChange", getAllowChange())
-            .append("itemUuid", getItemUuid())
-            .append("mesSyncId", getMesSyncId())
-            .append("auditStatus", getAuditStatus())
-            .append("auditBy", getAuditBy())
-            .append("auditTime", getAuditTime())
-            .append("auditRemark", getAuditRemark())
-            .append("approvalStatus", getApprovalStatus())
             .toString();
     }
 }

@@ -42,3 +42,29 @@ export function delItem(id) {
     method: 'delete'
   })
 }
+
+// 按一级分类统计物料数量
+export function getStatistics() {
+  return request({
+    url: '/system/item/statistics',
+    method: 'get'
+  })
+}
+
+// 审核物料
+export function auditItem(data) {
+  return request({
+    url: '/system/item/audit',
+    method: 'put',
+    data: data
+  })
+}
+
+// 查询物料版本历史
+export function getVersionHistory(itemId) {
+  return request({
+    url: '/system/item/versionHistory',
+    method: 'get',
+    params: { itemId: itemId }
+  })
+}

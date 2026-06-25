@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.system;
 
 import java.util.List;
+import java.util.Map;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,10 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.system.domain.ProItem;
+import com.ruoyi.system.domain.ProItemVersion;
 import com.ruoyi.system.service.IProItemService;
+import com.ruoyi.system.service.IProItemVersionService;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 
@@ -33,6 +37,9 @@ public class ProItemController extends BaseController
 {
     @Autowired
     private IProItemService proItemService;
+
+    @Autowired
+    private IProItemVersionService proItemVersionService;
 
     /**
      * 查询物料管理（仅存储激活版本）列表
@@ -100,5 +107,42 @@ public class ProItemController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(proItemService.deleteProItemByIds(ids));
+    }
+
+    /**
+     * 审核物料
+     */
+    @PreAuthorize("@ss.hasPermi('system:item:audit')")
+    @Log(title = "物料审核", businessType = BusinessType.UPDATE)
+    @PutMapping("/audit")
+    public AjaxResult audit(@RequestBody ProItem proItem)
+    {
+        proItem.setAuditBy(SecurityUtils.getUsername());
+        proItem.setAuditTime(new java.util.Date());
+        return toAjax(proItemService.updateProItem(proItem));
+    }
+
+    /**
+     * 查询物料版本历史
+     */
+    @PreAuthorize("@ss.hasPermi('system:item:list')")
+    @GetMapping("/versionHistory")
+    public AjaxResult versionHistory(Long itemId)
+    {
+        ProItemVersion query = new ProItemVersion();
+        query.setItemId(itemId);
+        List<ProItemVersion> list = proItemVersionService.selectProItemVersionList(query);
+        return success(list);
+    }
+
+    /**
+     * 按一级分类统计物料数量
+     */
+    @PreAuthorize("@ss.hasPermi('system:item:list')")
+    @GetMapping("/statistics")
+    public AjaxResult statistics()
+    {
+        List<Map<String, Object>> statistics = proItemService.statisticsByFirstClassify();
+        return success(statistics);
     }
 }

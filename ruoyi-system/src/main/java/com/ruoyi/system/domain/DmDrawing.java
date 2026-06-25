@@ -121,6 +121,10 @@ public class DmDrawing extends BaseEntity
     @Excel(name = "能否进行变更", readConverterExp = "0=不允许,1=允许")
     private String allowChange;
 
+    /** 审批状态（0=草稿,1=审批中,2=已通过,3=已驳回,4=已取消） */
+    @Excel(name = "审批状态", readConverterExp = "0=草稿,1=审批中,2=已通过,3=已驳回,4=已取消")
+    private String approvalStatus;
+
     public void setId(Long id)
     {
         this.id = id;
@@ -389,6 +393,16 @@ public class DmDrawing extends BaseEntity
     public String getAllowChange()
     {
         return allowChange;
+    }
+
+    public void setApprovalStatus(String approvalStatus)
+    {
+        this.approvalStatus = approvalStatus;
+    }
+
+    public String getApprovalStatus()
+    {
+        return approvalStatus;
     }
 
     @Override

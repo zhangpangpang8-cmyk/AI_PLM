@@ -51,7 +51,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                i.title, i.business_type, i.business_id, i.business_no, i.initiator
         from wf_process_task t
                  left join wf_process_instance i on t.instance_id = i.id
-        where t.assignee = #{userId} and t.task_status = 'pending'
+        where t.task_status = 'pending'
+          and (
+              t.assignee = #{userId}
+              or exists (
+                  select 1 from sys_user_role ur
+                  join sys_user u on ur.user_id = u.user_id
+                  where u.user_name = #{userId}
+                    and t.assignee = concat('role:', ur.role_id)
+              )
+              or exists (
+                  select 1 from sys_user u
+                  where u.user_name = #{userId}
+                    and t.assignee = concat('dept:', u.dept_id)
+              )
+              or exists (
+                  select 1 from sys_user u
+                  where u.user_name = #{userId}
+                    and t.assignee = concat('leader:', u.dept_id)
+              )
+          )
         order by t.create_time asc
     </select>
 
@@ -61,7 +80,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                i.title, i.business_type, i.business_id, i.business_no, i.initiator
         from wf_process_task t
                  left join wf_process_instance i on t.instance_id = i.id
-        where t.assignee = #{userId} and t.task_status in ('approved', 'rejected')
+        where t.task_status in ('approved', 'rejected')
+          and (
+              t.assignee = #{userId}
+              or exists (
+                  select 1 from sys_user_role ur
+                  join sys_user u on ur.user_id = u.user_id
+                  where u.user_name = #{userId}
+                    and t.assignee = concat('role:', ur.role_id)
+              )
+              or exists (
+                  select 1 from sys_user u
+                  where u.user_name = #{userId}
+                    and t.assignee = concat('dept:', u.dept_id)
+              )
+              or exists (
+                  select 1 from sys_user u
+                  where u.user_name = #{userId}
+                    and t.assignee = concat('leader:', u.dept_id)
+              )
+          )
         order by t.approval_time desc
     </select>
 

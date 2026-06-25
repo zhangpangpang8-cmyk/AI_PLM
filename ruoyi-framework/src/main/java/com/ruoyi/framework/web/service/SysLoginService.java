@@ -120,7 +120,7 @@ public class SysLoginService
                 throw new CaptchaExpireException();
             }
             redisCache.deleteObject(verifyKey);
-            if (!code.equalsIgnoreCase(captcha))
+            if (!code.trim().equalsIgnoreCase(captcha.trim()))
             {
                 AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.error")));
                 throw new CaptchaException();

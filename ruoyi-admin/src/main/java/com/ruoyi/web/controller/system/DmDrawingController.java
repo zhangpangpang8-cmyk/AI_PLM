@@ -86,13 +86,12 @@ public class DmDrawingController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:drawing:add')")
     @Log(title = "图纸管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestParam("file") MultipartFile file) throws Exception
+    public AjaxResult add(@RequestParam("file") MultipartFile file, @ModelAttribute DmDrawing dmDrawing) throws Exception
     {
         // 上传文件到MinIO
         String fileUrl = minioService.uploadFile(file, bucketName);
 
-        // 创建新的DmDrawing对象，只设置必要属性
-        DmDrawing dmDrawing = new DmDrawing();
+        // 将文件信息设置到DmDrawing对象
         dmDrawing.setFileName(file.getOriginalFilename());
         dmDrawing.setFilePath(fileUrl);
 

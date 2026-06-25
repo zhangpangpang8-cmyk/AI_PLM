@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.enums.HttpMethod;
+import org.springframework.http.MediaType;
 
 /**
  * 防止XSS攻击的过滤器
@@ -61,6 +62,11 @@ public class XssFilter implements Filter
         String method = request.getMethod();
         // GET DELETE 不过滤
         if (method == null || HttpMethod.GET.matches(method) || HttpMethod.DELETE.matches(method))
+        {
+            return true;
+        }
+        // multipart/form-data 文件上传不过滤
+        if (StringUtils.startsWithIgnoreCase(request.getContentType(), MediaType.MULTIPART_FORM_DATA_VALUE))
         {
             return true;
         }

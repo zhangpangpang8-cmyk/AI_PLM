@@ -74,6 +74,11 @@ public class CaptchaController
             capStr = code = captchaProducer.createText();
             image = captchaProducer.createImage(capStr);
         }
+        else
+        {
+            capStr = code = captchaProducer.createText();
+            image = captchaProducer.createImage(capStr);
+        }
 
         redisCache.setCacheObject(verifyKey, code, Constants.CAPTCHA_EXPIRATION, TimeUnit.MINUTES);
         // 转换流信息写出

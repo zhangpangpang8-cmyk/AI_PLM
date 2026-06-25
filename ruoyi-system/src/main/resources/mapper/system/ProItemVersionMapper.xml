@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ProItemVersionMapper">
+    
+    <resultMap type="ProItemVersion" id="ProItemVersionResult">
+        <result property="id"    column="id"    />
+        <result property="itemId"    column="item_id"    />
+        <result property="itemCode"    column="item_code"    />
+        <result property="itemName"    column="item_name"    />
+        <result property="itemTypeId"    column="item_type_id"    />
+        <result property="itemTypeCode"    column="item_type_code"    />
+        <result property="itemTypeName"    column="item_type_name"    />
+        <result property="itemVersion"    column="item_version"    />
+        <result property="materialClassifyIds"    column="material_classify_ids"    />
+        <result property="materialClassifyName"    column="material_classify_name"    />
+        <result property="specification"    column="specification"    />
+        <result property="unitId"    column="unit_id"    />
+        <result property="unitName"    column="unit_name"    />
+        <result property="status"    column="status"    />
+        <result property="enable"    column="enable"    />
+        <result property="vendorId"    column="vendor_id"    />
+        <result property="vendorName"    column="vendor_name"    />
+        <result property="material"    column="material"    />
+        <result property="color"    column="color"    />
+        <result property="weight"    column="weight"    />
+        <result property="Info"    column="Info"    />
+        <result property="parametersValues"    column="parameters_values"    />
+        <result property="url"    column="url"    />
+        <result property="publishStatus"    column="publish_status"    />
+        <result property="remake"    column="remake"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectProItemVersionVo">
+        select id, item_id, item_code, item_name, item_type_id, item_type_code, item_type_name, item_version, material_classify_ids, material_classify_name, specification, unit_id, unit_name, status, enable, vendor_id, vendor_name, material, color, weight, Info, parameters_values, url, publish_status, remake, create_by, create_time, update_by, update_time from pro_item_version
+    </sql>
+
+    <select id="selectProItemVersionList" parameterType="ProItemVersion" resultMap="ProItemVersionResult">
+        <include refid="selectProItemVersionVo"/>
+        <where>  
+            <if test="itemId != null "> and item_id = #{itemId}</if>
+            <if test="itemCode != null  and itemCode != ''"> and item_code = #{itemCode}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <insert id="insertProItemVersion" parameterType="ProItemVersion" useGeneratedKeys="true" keyProperty="id">
+        insert into pro_item_version
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="itemId != null">item_id,</if>
+            <if test="itemCode != null and itemCode != ''">item_code,</if>
+            <if test="itemName != null and itemName != ''">item_name,</if>
+            <if test="itemTypeId != null">item_type_id,</if>
+            <if test="itemTypeCode != null and itemTypeCode != ''">item_type_code,</if>
+            <if test="itemTypeName != null and itemTypeName != ''">item_type_name,</if>
+            <if test="itemVersion != null and itemVersion != ''">item_version,</if>
+            <if test="materialClassifyIds != null and materialClassifyIds != ''">material_classify_ids,</if>
+            <if test="materialClassifyName != null and materialClassifyName != ''">material_classify_name,</if>
+            <if test="specification != null">specification,</if>
+            <if test="unitId != null">unit_id,</if>
+            <if test="unitName != null and unitName != ''">unit_name,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="enable != null and enable != ''">enable,</if>
+            <if test="vendorId != null">vendor_id,</if>
+            <if test="vendorName != null">vendor_name,</if>
+            <if test="material != null">material,</if>
+            <if test="color != null">color,</if>
+            <if test="weight != null">weight,</if>
+            <if test="Info != null">Info,</if>
+            <if test="parametersValues != null">parameters_values,</if>
+            <if test="url != null">url,</if>
+            <if test="publishStatus != null and publishStatus != ''">publish_status,</if>
+            <if test="remake != null">remake,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="itemId != null">#{itemId},</if>
+            <if test="itemCode != null and itemCode != ''">#{itemCode},</if>
+            <if test="itemName != null and itemName != ''">#{itemName},</if>
+            <if test="itemTypeId != null">#{itemTypeId},</if>
+            <if test="itemTypeCode != null and itemTypeCode != ''">#{itemTypeCode},</if>
+            <if test="itemTypeName != null and itemTypeName != ''">#{itemTypeName},</if>
+            <if test="itemVersion != null and itemVersion != ''">#{itemVersion},</if>
+            <if test="materialClassifyIds != null and materialClassifyIds != ''">#{materialClassifyIds},</if>
+            <if test="materialClassifyName != null and materialClassifyName != ''">#{materialClassifyName},</if>
+            <if test="specification != null">#{specification},</if>
+            <if test="unitId != null">#{unitId},</if>
+            <if test="unitName != null and unitName != ''">#{unitName},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="enable != null and enable != ''">#{enable},</if>
+            <if test="vendorId != null">#{vendorId},</if>
+            <if test="vendorName != null">#{vendorName},</if>
+            <if test="material != null">#{material},</if>
+            <if test="color != null">#{color},</if>
+            <if test="weight != null">#{weight},</if>
+            <if test="Info != null">#{Info},</if>
+            <if test="parametersValues != null">#{parametersValues},</if>
+            <if test="url != null">#{url},</if>
+            <if test="publishStatus != null and publishStatus != ''">#{publishStatus},</if>
+            <if test="remake != null">#{remake},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+</mapper>

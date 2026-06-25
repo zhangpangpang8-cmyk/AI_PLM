@@ -229,6 +229,14 @@ import {listClassify, getClassify, delClassify, addClassify, updateClassify} fro
 import Treeselect from "@riophae/vue-treeselect"
 import "@riophae/vue-treeselect/dist/vue-treeselect.css"
 
+
+export function listClassifyTree() {
+  return request({
+    url: '/system/classify/tree',
+    method: 'get'
+  })
+}
+
 export default {
   name: "MaterialClassify",
   components: {Treeselect},
@@ -351,6 +359,7 @@ export default {
 
       return tree
     },
+
 
     toggleExpandAll() {
       this.refreshTable = false

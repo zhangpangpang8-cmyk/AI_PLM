@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.system;
 
 import java.util.List;
+
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +24,13 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 物料分类（支持多级分类）Controller
- * 
+ *
  * @author ruoyi
  * @date 2026-05-13
  */
 @RestController
 @RequestMapping("/system/classify")
-public class ProMaterialClassifyController extends BaseController
-{
+public class ProMaterialClassifyController extends BaseController {
     @Autowired
     private IProMaterialClassifyService proMaterialClassifyService;
 
@@ -39,8 +39,7 @@ public class ProMaterialClassifyController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:classify:list')")
     @GetMapping("/list")
-    public AjaxResult list(ProMaterialClassify proMaterialClassify)
-    {
+    public AjaxResult list(ProMaterialClassify proMaterialClassify) {
         List<ProMaterialClassify> list = proMaterialClassifyService.selectProMaterialClassifyList(proMaterialClassify);
         return success(list);
     }
@@ -51,8 +50,7 @@ public class ProMaterialClassifyController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:classify:export')")
     @Log(title = "物料分类（支持多级分类）", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, ProMaterialClassify proMaterialClassify)
-    {
+    public void export(HttpServletResponse response, ProMaterialClassify proMaterialClassify) {
         List<ProMaterialClassify> list = proMaterialClassifyService.selectProMaterialClassifyList(proMaterialClassify);
         ExcelUtil<ProMaterialClassify> util = new ExcelUtil<ProMaterialClassify>(ProMaterialClassify.class);
         util.exportExcel(response, list, "物料分类（支持多级分类）数据");
@@ -63,8 +61,7 @@ public class ProMaterialClassifyController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:classify:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return success(proMaterialClassifyService.selectProMaterialClassifyById(id));
     }
 
@@ -74,8 +71,7 @@ public class ProMaterialClassifyController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:classify:add')")
     @Log(title = "物料分类（支持多级分类）", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody ProMaterialClassify proMaterialClassify)
-    {
+    public AjaxResult add(@RequestBody ProMaterialClassify proMaterialClassify) {
         return toAjax(proMaterialClassifyService.insertProMaterialClassify(proMaterialClassify));
     }
 
@@ -85,8 +81,7 @@ public class ProMaterialClassifyController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:classify:edit')")
     @Log(title = "物料分类（支持多级分类）", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody ProMaterialClassify proMaterialClassify)
-    {
+    public AjaxResult edit(@RequestBody ProMaterialClassify proMaterialClassify) {
         return toAjax(proMaterialClassifyService.updateProMaterialClassify(proMaterialClassify));
     }
 
@@ -95,9 +90,18 @@ public class ProMaterialClassifyController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:classify:remove')")
     @Log(title = "物料分类（支持多级分类）", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(proMaterialClassifyService.deleteProMaterialClassifyByIds(ids));
+    }
+
+    /**
+     * 查询物料分类树
+     */
+    @PreAuthorize("@ss.hasPermi('system:classify:list')")
+    @GetMapping("/tree")
+    public AjaxResult tree(ProMaterialClassify proMaterialClassify) {
+        List<ProMaterialClassify> list = proMaterialClassifyService.selectProMaterialClassifyTreeList(proMaterialClassify);
+        return success(list);
     }
 }

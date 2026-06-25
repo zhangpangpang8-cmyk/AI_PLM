@@ -61,40 +61,24 @@
             @keyup.enter.native="handleQuery"
           />
         </el-form-item>
-        <el-form-item prop="itemTypeCode">
-          <el-select
-            v-model="queryParams.itemTypeCode"
-            placeholder="物料类型"
-            clearable
-          >
-            <el-option label="器件原材料" value="RAW_MATERIAL"></el-option>
-            <el-option label="结构类" value="STRUCTURE"></el-option>
-            <el-option label="紧固件线材辅料" value="FASTENER"></el-option>
-            <el-option label="工具" value="TOOL"></el-option>
-            <el-option label="印制板类" value="PCB"></el-option>
-            <el-option label="外协产品" value="OUTSOURCED"></el-option>
-            <el-option label="其他" value="OTHER"></el-option>
-            <el-option label="半成品" value="SEMI_FINISHED"></el-option>
-            <el-option label="成品" value="FINISHED"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item prop="materialClassifyName">
-          <el-input
-            v-model="queryParams.materialClassifyName"
+        <el-form-item prop="materialClassifyIds">
+          <treeselect
+            v-model="queryParams.materialClassifyIds"
+            :options="classifyOptions"
+            :normalizer="normalizer"
             placeholder="物料分类"
-            clearable
-            prefix-icon="el-icon-folder"
+            clearable style="width: 200px"
           />
         </el-form-item>
-        <el-form-item prop="status">
+        <el-form-item prop="auditStatus">
           <el-select
-            v-model="queryParams.status"
-            placeholder="状态"
+            v-model="queryParams.auditStatus"
+            placeholder="审核状态"
             clearable
           >
-            <el-option label="已完成" value="COMPLETED"></el-option>
-            <el-option label="进行中" value="IN_PROGRESS"></el-option>
-            <el-option label="草稿" value="DRAFT"></el-option>
+            <el-option label="待审核" value="0"></el-option>
+            <el-option label="审核通过" value="1"></el-option>
+            <el-option label="审核驳回" value="2"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item prop="enable">
@@ -164,17 +148,9 @@
         </template>
       </el-table-column>
       <el-table-column label="物料名称" prop="itemName" min-width="150" show-overflow-tooltip/>
-      <el-table-column label="物料类型" prop="itemTypeName" min-width="120"/>
       <el-table-column label="规格型号" prop="specification" min-width="150" show-overflow-tooltip/>
       <el-table-column label="单位" prop="unitName" width="80"/>
       <el-table-column label="版本" prop="itemVersion" width="80"/>
-      <el-table-column label="状态" prop="status" width="100" align="center">
-        <template slot-scope="scope">
-          <el-tag :type="getStatusTagType(scope.row.status)" size="small">
-            {{ getStatusText(scope.row.status) }}
-          </el-tag>
-        </template>
-      </el-table-column>
       <el-table-column label="启用状态" prop="enable" width="100" align="center">
         <template slot-scope="scope">
           <el-tag :type="scope.row.enable === '1' ? 'success' : 'info'" size="small">
@@ -182,9 +158,14 @@
           </el-tag>
         </template>
       </el-table-column>
+      <el-table-column label="审批状态" align="center" prop="approvalStatus">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.item_approval_status" :value="scope.row.approvalStatus"/>
+        </template>
+      </el-table-column>
       <el-table-column label="供应商" prop="vendorName" min-width="120" show-overflow-tooltip/>
       <el-table-column label="物料分类" prop="materialClassifyName" min-width="120" show-overflow-tooltip/>
-      <el-table-column label="操作" align="center" width="280" fixed="right">
+      <el-table-column label="操作" align="center" width="320" fixed="right">
         <template slot-scope="scope">
           <el-button-group>
             <el-button
@@ -194,6 +175,16 @@
               @click="handleUpdate(scope.row)"
               v-hasPermi="['system:item:edit']"
             >编辑
+            </el-button>
+            <el-button
+              v-if="scope.row.auditStatus === '0'"
+              size="mini"
+              type="text"
+              icon="el-icon-check"
+              @click="handleAudit(scope.row)"
+              v-hasPermi="['system:item:audit']"
+              style="color: #67C23A"
+            >审核
             </el-button>
             <el-button
               size="mini"
@@ -245,33 +236,39 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="物料类型" prop="itemTypeCode">
-              <el-select v-model="form.itemTypeCode" placeholder="请选择物料类型" style="width: 100%">
-                <el-option label="器件原材料" value="RAW_MATERIAL"></el-option>
-                <el-option label="结构类" value="STRUCTURE"></el-option>
-                <el-option label="紧固件线材辅料" value="FASTENER"></el-option>
-                <el-option label="工具" value="TOOL"></el-option>
-                <el-option label="印制板类" value="PCB"></el-option>
-                <el-option label="外协产品" value="OUTSOURCED"></el-option>
-                <el-option label="其他" value="OTHER"></el-option>
-                <el-option label="半成品" value="SEMI_FINISHED"></el-option>
-                <el-option label="成品" value="FINISHED"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
             <el-form-item label="规格型号" prop="specification">
               <el-input v-model="form.specification" placeholder="请输入规格型号"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="单位" prop="unitName">
-              <el-input v-model="form.unitName" placeholder="请输入单位"/>
+              <el-select
+                v-model="form.unitName"
+                placeholder="请选择单位"
+                clearable
+                filterable
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="dict in unitOptions"
+                  :key="dict.dictValue"
+                  :label="dict.dictLabel"
+                  :value="dict.dictValue"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="物料分类" prop="materialClassifyName">
-              <el-input v-model="form.materialClassifyName" placeholder="请输入物料分类"/>
+            <el-form-item label="物料分类" prop="materialClassifyIds">
+              <treeselect
+                v-model="form.materialClassifyIds"
+                :options="classifyOptions"
+                :normalizer="normalizer"
+                placeholder="请选择物料分类"
+                :multiple="false"
+                :flat="true"
+                :show-count="true" style="width: 100%"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -325,6 +322,32 @@
       </div>
     </el-dialog>
 
+    <!-- 审核对话框 -->
+    <el-dialog title="物料审核" :visible.sync="auditDialogVisible" width="500px" append-to-body>
+      <div style="margin-bottom: 15px;">
+        <el-descriptions :column="1" border size="small">
+          <el-descriptions-item label="物料编码">{{ auditForm.itemCode }}</el-descriptions-item>
+          <el-descriptions-item label="物料名称">{{ auditForm.itemName }}</el-descriptions-item>
+          <el-descriptions-item label="规格型号">{{ auditForm.specification }}</el-descriptions-item>
+        </el-descriptions>
+      </div>
+      <el-form :model="auditForm" label-width="80px">
+        <el-form-item label="审核结果">
+          <el-radio-group v-model="auditForm.auditStatus">
+            <el-radio label="1">通过</el-radio>
+            <el-radio label="2">驳回</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="审核备注">
+          <el-input v-model="auditForm.auditRemark" type="textarea" :rows="3" placeholder="请输入审核备注"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="auditDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitAudit">确 定</el-button>
+      </div>
+    </el-dialog>
+
     <!-- 版本历史对话框 -->
     <el-dialog title="版本历史" :visible.sync="versionDialogVisible" width="900px" append-to-body>
       <el-table :data="versionList" border stripe>
@@ -332,13 +355,6 @@
         <el-table-column label="物料编码" prop="itemCode" width="120"/>
         <el-table-column label="物料名称" prop="itemName" width="150"/>
         <el-table-column label="规格型号" prop="specification" width="150"/>
-        <el-table-column label="状态" prop="status" width="100" align="center">
-          <template slot-scope="scope">
-            <el-tag :type="getStatusTagType(scope.row.status)" size="small">
-              {{ getStatusText(scope.row.status) }}
-            </el-tag>
-          </template>
-        </el-table-column>
         <el-table-column label="发布时间" prop="createTime" width="160"/>
         <el-table-column label="发布人" prop="createBy" width="100"/>
         <el-table-column label="操作" width="120" align="center">
@@ -352,10 +368,16 @@
 </template>
 
 <script>
-import {listItem, getItem, delItem, addItem, updateItem} from "@/api/system/item"
+import {listItem, getItem, delItem, addItem, updateItem, getStatistics, auditItem, getVersionHistory} from "@/api/system/item"
+import {listClassifyTree} from "@/api/system/classify"
+import {getDicts} from "@/api/system/dict/data"
+import Treeselect from "@riophae/vue-treeselect"
+import "@riophae/vue-treeselect/dist/vue-treeselect.css"
 
 export default {
   name: "MaterialLibrary",
+  components: {Treeselect},
+  dicts: ['item_approval_status'],
   data() {
     return {
       // 遮罩层
@@ -378,30 +400,26 @@ export default {
       versionDialogVisible: false,
       // 版本列表
       versionList: [],
+      // 审核对话框
+      auditDialogVisible: false,
+      auditForm: {},
       // 统计数据
       statistics: {
-        totalCount: 1795,
+        totalCount: 0,
         compareLastMonth: 0,
-        categories: [
-          {name: '器件原材料', count: 1348, percent: 75.10, color: 'green'},
-          {name: '结构类', count: 136, percent: 7.58, color: 'yellow'},
-          {name: '紧固件线材辅料', count: 132, percent: 7.35, color: 'purple'},
-          {name: '工具', count: 94, percent: 5.24, color: 'blue'},
-          {name: '印制板类', count: 49, percent: 2.73, color: 'teal'},
-          {name: '外协产品', count: 22, percent: 1.23, color: 'orange'},
-          {name: '其他', count: 7, percent: 0.39, color: 'pink'},
-          {name: '半成品', count: 6, percent: 0.33, color: 'light-blue'},
-          {name: '成品', count: 1, percent: 0.06, color: 'light-green'}
-        ]
+        categories: []
       },
+      // 物料分类选项（树形）
+      classifyOptions: [],
+      // 单位字典选项
+      unitOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 20,
         searchText: null,
-        itemTypeCode: null,
-        materialClassifyName: null,
-        status: null,
+        materialClassifyIds: null,
+        auditStatus: null,
         enable: null
       },
       // 表单参数
@@ -414,14 +432,14 @@ export default {
         itemName: [
           {required: true, message: "物料名称不能为空", trigger: "blur"}
         ],
-        itemTypeCode: [
-          {required: true, message: "物料类型不能为空", trigger: "change"}
-        ],
         specification: [
           {required: true, message: "规格型号不能为空", trigger: "blur"}
         ],
         unitName: [
           {required: true, message: "单位不能为空", trigger: "blur"}
+        ],
+        materialClassifyIds: [
+          {required: true, message: "物料分类不能为空", trigger: "change"}
         ],
         enable: [
           {required: true, message: "启用状态不能为空", trigger: "change"}
@@ -431,8 +449,74 @@ export default {
   },
   created() {
     this.getList()
+    this.getClassifyTree()
+    this.getStatisticsData()
+    this.getUnitDicts()
   },
   methods: {
+    /** 查询物料分类树 */
+    getClassifyTree() {
+      listClassifyTree().then(response => {
+        this.classifyOptions = response.data || []
+      })
+    },
+
+    /** 获取单位字典 */
+    getUnitDicts() {
+      console.log('开始获取单位字典...')
+      getDicts('sys_item_unit').then(response => {
+        console.log('获取单位字典响应:', response)
+        this.unitOptions = response.data || []
+        console.log('单位选项数量:', this.unitOptions.length)
+      }).catch(error => {
+        console.error('获取单位字典失败:', error)
+        this.unitOptions = []
+      })
+    },
+
+    /** 获取统计数据 */
+    getStatisticsData() {
+      getStatistics().then(response => {
+        const data = response.data || []
+        if (data && data.length > 0) {
+          // 第一个元素是总计
+          const totalStat = data[0]
+          this.statistics.totalCount = totalStat.count || 0
+
+          // 其余元素是一级分类统计
+          const categories = []
+          const colors = ['green', 'yellow', 'purple', 'blue', 'teal', 'orange', 'pink', 'light-blue', 'light-green']
+
+          for (let i = 1; i < data.length; i++) {
+            const stat = data[i]
+            const percent = this.statistics.totalCount > 0 
+              ? ((stat.count / this.statistics.totalCount) * 100).toFixed(2)
+              : 0
+            
+            categories.push({
+              name: stat.classifyName,
+              count: stat.count,
+              percent: parseFloat(percent),
+              color: colors[(i - 1) % colors.length],
+              classifyId: stat.classifyId
+            })
+          }
+
+          this.statistics.categories = categories
+        }
+      }).catch(error => {
+        console.error('获取统计数据失败:', error)
+      })
+    },
+
+    /** 转换树形数据格式 */
+    normalizer(node) {
+      return {
+        id: node.id,
+        label: node.materialClassifyName,
+        children: node.children
+      }
+    },
     /** 查询物料列表 */
     getList() {
       this.loading = true
@@ -454,26 +538,6 @@ export default {
       })
     },
 
-    /** 获取状态标签类型 */
-    getStatusTagType(status) {
-      const typeMap = {
-        'COMPLETED': 'success',
-        'IN_PROGRESS': 'warning',
-        'DRAFT': 'info'
-      }
-      return typeMap[status] || 'info'
-    },
-
-    /** 获取状态文本 */
-    getStatusText(status) {
-      const textMap = {
-        'COMPLETED': '已完成',
-        'IN_PROGRESS': '进行中',
-        'DRAFT': '草稿'
-      }
-      return textMap[status] || status
-    },
-
     // 取消按钮
     cancel() {
       this.open = false
@@ -486,11 +550,9 @@ export default {
         id: null,
         itemCode: null,
         itemName: null,
-        itemTypeCode: null,
-        itemTypeName: null,
         specification: null,
         unitName: null,
-        materialClassifyName: null,
+        materialClassifyIds: null,
         vendorName: null,
         material: null,
         color: null,
@@ -499,10 +561,51 @@ export default {
         parametersValues: null,
         enable: '1',
         remake: null,
-        status: 'DRAFT',
         itemVersion: 'V1.0'
       }
       this.resetForm("form")
+    },
+
+    /** 获取审核状态文本 */
+    getAuditStatusText(auditStatus) {
+      const map = { '0': '待审核', '1': '审核通过', '2': '审核驳回' }
+      return map[auditStatus] || auditStatus || '待审核'
+    },
+
+    /** 获取审核状态标签类型 */
+    getAuditStatusType(auditStatus) {
+      const map = { '0': 'info', '1': 'success', '2': 'danger' }
+      return map[auditStatus] || 'info'
+    },
+
+    /** 审核按钮操作 */
+    handleAudit(row) {
+      this.auditForm = {
+        id: row.id,
+        itemCode: row.itemCode,
+        itemName: row.itemName,
+        specification: row.specification,
+        auditStatus: '1',
+        auditRemark: ''
+      }
+      this.auditDialogVisible = true
+    },
+
+    /** 提交审核 */
+    submitAudit() {
+      if (!this.auditForm.auditStatus) {
+        this.$message.warning('请选择审核结果')
+        return
+      }
+      auditItem({
+        id: this.auditForm.id,
+        auditStatus: this.auditForm.auditStatus,
+        auditRemark: this.auditForm.auditRemark
+      }).then(() => {
+        this.$modal.msgSuccess('审核成功')
+        this.auditDialogVisible = false
+        this.getList()
+      })
     },
 
     /** 搜索按钮操作 */
@@ -553,11 +656,11 @@ export default {
     /** 版本历史 */
     handleVersionHistory(row) {
       this.versionDialogVisible = true
-      // TODO: 调用API获取版本历史
-      this.versionList = [
-        {...row, itemVersion: 'V1.0', createTime: '2026-06-17 10:00:00', createBy: 'admin'},
-        {...row, itemVersion: 'V0.9', createTime: '2026-06-16 15:30:00', createBy: 'admin'}
-      ]
+      getVersionHistory(row.id).then(response => {
+        this.versionList = response.data || []
+      }).catch(() => {
+        this.versionList = []
+      })
     },
 
     /** 查看版本详情 */

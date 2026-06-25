@@ -147,8 +147,9 @@ public class WfProcessInstanceServiceImpl implements IWfProcessInstanceService
 
         if ("user".equals(firstTaskNode.getAssigneeType())) {
             task.setAssignee(firstTaskNode.getAssigneeValue());
-        } else if ("role".equals(firstTaskNode.getAssigneeType())) {
-            task.setCandidateUsers(firstTaskNode.getAssigneeValue());
+        } else if ("role".equals(firstTaskNode.getAssigneeType()) || "dept".equals(firstTaskNode.getAssigneeType()) || "leader".equals(firstTaskNode.getAssigneeType())) {
+            task.setCandidateUsers(firstTaskNode.getAssigneeType() + ":" + firstTaskNode.getAssigneeValue());
+            task.setAssignee(firstTaskNode.getAssigneeType() + ":" + firstTaskNode.getAssigneeValue());
         }
 
         task.setTaskStatus("pending");

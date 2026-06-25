@@ -155,8 +155,8 @@ xss:
 
 # MinIO配置
 minio:
-  endpoint: http://192.168.2.122:9000
+  endpoint: http://127.0.0.1:9005
   accessKey: minioadmin
-  secretKey: minioadmin
+  secretKey: minioadmin 
   bucketName: drawings
 

@@ -58,4 +58,11 @@ public interface IProItemService
      * @return 结果
      */
     public int deleteProItemById(Long id);
+
+    /**
+     * 按一级分类统计物料数量
+     * 
+     * @return 统计结果列表，每个元素包含：classifyId, classifyName, count
+     */
+    public java.util.List<java.util.Map<String, Object>> statisticsByFirstClassify();
 }

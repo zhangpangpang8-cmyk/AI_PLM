@@ -41,10 +41,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="allowChange"    column="allow_change"    />
         <result property="itemUuid"    column="item_uuid"    />
         <result property="mesSyncId"    column="mes_sync_id"    />
+        <result property="auditStatus"    column="audit_status"    />
+        <result property="auditBy"    column="audit_by"    />
+        <result property="auditTime"    column="audit_time"    />
+        <result property="auditRemark"    column="audit_remark"    />
     </resultMap>
 
     <sql id="selectProItemVo">
-        select id, item_code, item_name, item_type_id, item_type_code, item_type_name, item_version, material_classify_ids, material_classify_name, specification, unit_id, unit_name, status, enable, vendor_id, vendor_name, material, color, weight, Info, parameters_values, url, latest_version, publish_status, remake, create_by, create_time, update_by, update_time, flow_key, flow_ins_id, bill_type, used_as_parent, allow_change, item_uuid, mes_sync_id from pro_item
+        select id, item_code, item_name, item_type_id, item_type_code, item_type_name, item_version, material_classify_ids, material_classify_name, specification, unit_id, unit_name, status, enable, vendor_id, vendor_name, material, color, weight, Info, parameters_values, url, latest_version, publish_status, remake, create_by, create_time, update_by, update_time, flow_key, flow_ins_id, bill_type, used_as_parent, allow_change, item_uuid, mes_sync_id, audit_status, audit_by, audit_time, audit_remark from pro_item
     </sql>
 
     <select id="selectProItemList" parameterType="ProItem" resultMap="ProItemResult">
@@ -81,6 +85,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="allowChange != null  and allowChange != ''"> and allow_change = #{allowChange}</if>
             <if test="itemUuid != null  and itemUuid != ''"> and item_uuid = #{itemUuid}</if>
             <if test="mesSyncId != null  and mesSyncId != ''"> and mes_sync_id = #{mesSyncId}</if>
+            <if test="auditStatus != null  and auditStatus != ''"> and audit_status = #{auditStatus}</if>
+            <if test="auditBy != null  and auditBy != ''"> and audit_by like concat('%', #{auditBy}, '%')</if>
+            <if test="auditTime != null "> and audit_time = #{auditTime}</if>
+            <if test="auditRemark != null  and auditRemark != ''"> and audit_remark like concat('%', #{auditRemark}, '%')</if>
         </where>
     </select>
     
@@ -127,6 +135,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="allowChange != null">allow_change,</if>
             <if test="itemUuid != null">item_uuid,</if>
             <if test="mesSyncId != null">mes_sync_id,</if>
+            <if test="auditStatus != null">audit_status,</if>
+            <if test="auditBy != null">audit_by,</if>
+            <if test="auditTime != null">audit_time,</if>
+            <if test="auditRemark != null">audit_remark,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="itemCode != null and itemCode != ''">#{itemCode},</if>
@@ -164,6 +176,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="allowChange != null">#{allowChange},</if>
             <if test="itemUuid != null">#{itemUuid},</if>
             <if test="mesSyncId != null">#{mesSyncId},</if>
+            <if test="auditStatus != null">#{auditStatus},</if>
+            <if test="auditBy != null">#{auditBy},</if>
+            <if test="auditTime != null">#{auditTime},</if>
+            <if test="auditRemark != null">#{auditRemark},</if>
          </trim>
     </insert>
 
@@ -205,6 +221,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="allowChange != null">allow_change = #{allowChange},</if>
             <if test="itemUuid != null">item_uuid = #{itemUuid},</if>
             <if test="mesSyncId != null">mes_sync_id = #{mesSyncId},</if>
+            <if test="auditStatus != null">audit_status = #{auditStatus},</if>
+            <if test="auditBy != null">audit_by = #{auditBy},</if>
+            <if test="auditTime != null">audit_time = #{auditTime},</if>
+            <if test="auditRemark != null">audit_remark = #{auditRemark},</if>
         </trim>
         where id = #{id}
     </update>

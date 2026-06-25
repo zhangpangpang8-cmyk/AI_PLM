@@ -22,7 +22,8 @@ export function addDrawing(data) {
   return request({
     url: '/system/drawing',
     method: 'post',
-    data: data
+    data: data,
+    headers: { 'Content-Type': 'multipart/form-data' }
   })
 }
 
