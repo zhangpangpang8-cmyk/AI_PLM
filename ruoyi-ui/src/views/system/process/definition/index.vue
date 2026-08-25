@@ -11,16 +11,12 @@
       </el-form-item>
       <el-form-item label="流程分类" prop="processCategory">
         <el-select v-model="queryParams.processCategory" placeholder="请选择流程分类" clearable>
-          <el-option label="图纸审批" value="drawing"/>
-          <el-option label="文档审批" value="document"/>
-          <el-option label="变更通知" value="ecn"/>
-          <el-option label="其他" value="other"/>
+          <el-option v-for="item in processCategoryOptions" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
-          <el-option label="正常" value="0"/>
-          <el-option label="停用" value="1"/>
+          <el-option v-for="item in normalDisableOptions" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -173,17 +169,12 @@
         </el-form-item>
         <el-form-item label="流程分类" prop="processCategory">
           <el-select v-model="form.processCategory" placeholder="请选择流程分类" style="width: 100%">
-            <el-option label="图纸审批" value="drawing"/>
-            <el-option label="文档审批" value="document"/>
-            <el-option label="变更通知" value="ecn"/>
-            <el-option label="其他" value="other"/>
+            <el-option v-for="item in processCategoryOptions" :key="item.value" :label="item.label" :value="item.value"/>
           </el-select>
         </el-form-item>
         <el-form-item label="流程类型" prop="processType">
           <el-select v-model="form.processType" placeholder="请选择流程类型" style="width: 100%">
-            <el-option label="图纸" value="drawing"/>
-            <el-option label="文档" value="document"/>
-            <el-option label="变更通知" value="ecn"/>
+            <el-option v-for="item in processTypeOptions" :key="item.value" :label="item.label" :value="item.value"/>
           </el-select>
         </el-form-item>
         <el-form-item label="流程描述" prop="description">
@@ -272,11 +263,15 @@ import {
   addProcessDefinition,
   updateProcessDefinition
 } from "@/api/system/process"
+import { NORMAL_DISABLE_OPTIONS, PROCESS_CATEGORY_OPTIONS, PROCESS_TYPE_OPTIONS } from '@/constants/business'
 
 export default {
   name: "ProcessDefinition",
   data() {
     return {
+      processCategoryOptions: PROCESS_CATEGORY_OPTIONS,
+      processTypeOptions: PROCESS_TYPE_OPTIONS,
+      normalDisableOptions: NORMAL_DISABLE_OPTIONS,
       loading: true,
       ids: [],
       single: true,

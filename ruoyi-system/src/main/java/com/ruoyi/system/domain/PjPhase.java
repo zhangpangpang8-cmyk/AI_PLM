@@ -33,7 +33,7 @@ public class PjPhase extends BaseEntity
     private String phaseName;
 
     /** 阶段类型（initiation=立项, planning=计划, execution=执行, monitoring=监控, closure=结项） */
-    @Excel(name = "阶段类型", readConverterExp = "i=nitiation=立项,,p=lanning=计划,,e=xecution=执行,,m=onitoring=监控,,c=losure=结项")
+    @Excel(name = "阶段类型", readConverterExp = "initiation=立项,planning=计划,execution=执行,monitoring=监控,closure=结项")
     private String phaseType;
 
     /** 计划开始日期 */
@@ -57,7 +57,7 @@ public class PjPhase extends BaseEntity
     private Date actualEndDate;
 
     /** 阶段状态（not_started=未开始, in_progress=进行中, completed=已完成） */
-    @Excel(name = "阶段状态", readConverterExp = "n=ot_started=未开始,,i=n_progress=进行中,,c=ompleted=已完成")
+    @Excel(name = "阶段状态", readConverterExp = "not_started=未开始,in_progress=进行中,completed=已完成")
     private String phaseStatus;
 
     /** 阶段交付物 */

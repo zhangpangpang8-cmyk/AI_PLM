@@ -165,9 +165,9 @@
       </el-table-column>
       <el-table-column label="供应商" prop="vendorName" min-width="120" show-overflow-tooltip/>
       <el-table-column label="物料分类" prop="materialClassifyName" min-width="120" show-overflow-tooltip/>
-      <el-table-column label="操作" align="center" width="320" fixed="right">
+      <el-table-column label="操作" align="center" min-width="280" fixed="right">
         <template slot-scope="scope">
-          <el-button-group>
+          <div class="operation-btns">
             <el-button
               size="mini"
               type="text"
@@ -207,7 +207,7 @@
                 <el-dropdown-item command="delete" divided>删除</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-          </el-button-group>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -1014,5 +1014,18 @@ export default {
 
 .dialog-footer .el-button {
   margin-left: 10px;
+}
+
+/* 操作列按钮自适应容器 */
+.operation-btns {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px;
+}
+
+.operation-btns .el-button {
+  margin-left: 0;
+  padding: 7px 8px;
 }
 </style>

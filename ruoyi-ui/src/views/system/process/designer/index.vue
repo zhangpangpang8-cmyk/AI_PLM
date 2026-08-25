@@ -206,10 +206,7 @@
             </el-form-item>
             <el-form-item label="流程分类">
               <el-select v-model="processForm.processCategory" placeholder="请选择" style="width: 100%">
-                <el-option label="图纸审批" value="drawing"></el-option>
-                <el-option label="文档审批" value="document"></el-option>
-                <el-option label="变更通知" value="ecn"></el-option>
-                <el-option label="其他" value="other"></el-option>
+                <el-option v-for="item in processCategoryOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="流程描述">
@@ -233,10 +230,7 @@
             <template v-if="selectedNode.nodeType === 'userTask'">
               <el-form-item label="审批人类型">
                 <el-select v-model="selectedNode.assigneeType" style="width: 100%" @change="handleAssigneeTypeChange">
-                  <el-option label="指定用户" value="user"></el-option>
-                  <el-option label="角色" value="role"></el-option>
-                  <el-option label="部门" value="dept"></el-option>
-                  <el-option label="部门负责人" value="leader"></el-option>
+                  <el-option v-for="item in assigneeTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="审批人" v-if="selectedNode.assigneeType === 'user'">
@@ -335,11 +329,14 @@ import {getProcessDefinition, saveProcessDesign} from "@/api/system/process"
 import {listUser} from "@/api/system/user"
 import {listRole} from "@/api/system/role"
 import {deptTreeSelect} from "@/api/system/user"
+import { ASSIGNEE_TYPE_OPTIONS, PROCESS_CATEGORY_OPTIONS } from '@/constants/business'
 
 export default {
   name: "ProcessDesigner",
   data() {
     return {
+      processCategoryOptions: PROCESS_CATEGORY_OPTIONS,
+      assigneeTypeOptions: ASSIGNEE_TYPE_OPTIONS,
       processId: null,
       saving: false,
 

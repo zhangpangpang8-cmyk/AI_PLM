@@ -81,4 +81,7 @@ public interface WfProcessEdgeMapper {
      * @return 流程连线
      */
     public WfProcessEdge selectEdgeBySourceNodeId(Long sourceNodeId);
+
+    /** 查询源节点的全部出边，用于安全推进流程。 */
+    public List<WfProcessEdge> selectEdgesBySourceNodeId(Long sourceNodeId);
 }

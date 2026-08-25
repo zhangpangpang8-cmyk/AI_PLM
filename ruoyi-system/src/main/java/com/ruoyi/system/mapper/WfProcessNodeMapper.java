@@ -3,6 +3,7 @@ package com.ruoyi.system.mapper;
 import java.util.List;
 
 import com.ruoyi.system.domain.WfProcessNode;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 流程节点Mapper接口
@@ -81,4 +82,8 @@ public interface WfProcessNodeMapper {
      * @return 流程节点
      */
     public WfProcessNode selectStartNodeByDefinitionId(Long processDefinitionId);
+
+    /** 根据流程定义和节点名称精确查询当前节点。 */
+    public WfProcessNode selectNodeByDefinitionIdAndName(@Param("processDefinitionId") Long processDefinitionId,
+                                                         @Param("nodeName") String nodeName);
 }

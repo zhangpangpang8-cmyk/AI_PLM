@@ -1,45 +1,11 @@
-import request from '@/utils/request'
+import { createCrudApi } from '@/api/crud'
 
-// 查询图纸管理列表
-export function listDrawing(query) {
-  return request({
-    url: '/system/drawing/list',
-    method: 'get',
-    params: query
-  })
-}
+const drawingCrud = createCrudApi('/system/drawing', {
+  add: { headers: { 'Content-Type': 'multipart/form-data' } }
+})
 
-// 查询图纸管理详细
-export function getDrawing(id) {
-  return request({
-    url: '/system/drawing/' + id,
-    method: 'get'
-  })
-}
-
-// 新增图纸管理
-export function addDrawing(data) {
-  return request({
-    url: '/system/drawing',
-    method: 'post',
-    data: data,
-    headers: { 'Content-Type': 'multipart/form-data' }
-  })
-}
-
-// 修改图纸管理
-export function updateDrawing(data) {
-  return request({
-    url: '/system/drawing',
-    method: 'put',
-    data: data
-  })
-}
-
-// 删除图纸管理
-export function delDrawing(id) {
-  return request({
-    url: '/system/drawing/' + id,
-    method: 'delete'
-  })
-}
+export const listDrawing = drawingCrud.list
+export const getDrawing = drawingCrud.get
+export const addDrawing = drawingCrud.add
+export const updateDrawing = drawingCrud.update
+export const delDrawing = drawingCrud.remove

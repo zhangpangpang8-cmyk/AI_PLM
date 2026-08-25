@@ -19,6 +19,7 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.system.domain.DmDrawing;
 import com.ruoyi.system.service.IDmDrawingService;
 import com.ruoyi.system.service.IMinioService;
@@ -94,6 +95,9 @@ public class DmDrawingController extends BaseController
         // 将文件信息设置到DmDrawing对象
         dmDrawing.setFileName(file.getOriginalFilename());
         dmDrawing.setFilePath(fileUrl);
+        dmDrawing.setSize(file.getSize());
+        dmDrawing.setFileSuffix(FileUploadUtils.getExtension(file));
+        dmDrawing.setFileSize(FileUploadUtils.formatFileSize(file.getSize()));
 
         return toAjax(dmDrawingService.insertDmDrawing(dmDrawing));
     }

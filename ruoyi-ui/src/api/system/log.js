@@ -1,44 +1,9 @@
-import request from '@/utils/request'
+import { createCrudApi } from '@/api/crud'
 
-// 查询任务进度日志列表
-export function listLog(query) {
-  return request({
-    url: '/system/log/list',
-    method: 'get',
-    params: query
-  })
-}
+const logCrud = createCrudApi('/system/log')
 
-// 查询任务进度日志详细
-export function getLog(id) {
-  return request({
-    url: '/system/log/' + id,
-    method: 'get'
-  })
-}
-
-// 新增任务进度日志
-export function addLog(data) {
-  return request({
-    url: '/system/log',
-    method: 'post',
-    data: data
-  })
-}
-
-// 修改任务进度日志
-export function updateLog(data) {
-  return request({
-    url: '/system/log',
-    method: 'put',
-    data: data
-  })
-}
-
-// 删除任务进度日志
-export function delLog(id) {
-  return request({
-    url: '/system/log/' + id,
-    method: 'delete'
-  })
-}
+export const listLog = logCrud.list
+export const getLog = logCrud.get
+export const addLog = logCrud.add
+export const updateLog = logCrud.update
+export const delLog = logCrud.remove

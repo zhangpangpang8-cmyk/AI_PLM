@@ -257,4 +257,27 @@ public class FileUploadUtils
         }
         return extension;
     }
+
+    /**
+     * 将字节数格式化为适合界面展示的文件大小。
+     *
+     * @param size 文件大小（字节）
+     * @return B、KB、MB 或 GB 格式的文件大小
+     */
+    public static String formatFileSize(long size)
+    {
+        if (size < 1024)
+        {
+            return size + "B";
+        }
+        if (size < 1024 * 1024)
+        {
+            return String.format(java.util.Locale.ROOT, "%.1fKB", size / 1024.0);
+        }
+        if (size < 1024L * 1024 * 1024)
+        {
+            return String.format(java.util.Locale.ROOT, "%.2fMB", size / 1024.0 / 1024.0);
+        }
+        return String.format(java.util.Locale.ROOT, "%.2fGB", size / 1024.0 / 1024.0 / 1024.0);
+    }
 }

@@ -67,7 +67,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
               )
               or exists (
                   select 1 from sys_user u
+                  join sys_dept d on d.dept_id = u.dept_id
                   where u.user_name = #{userId}
+                    and (d.leader = u.user_name or d.leader = u.nick_name)
                     and t.assignee = concat('leader:', u.dept_id)
               )
           )
@@ -96,7 +98,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
               )
               or exists (
                   select 1 from sys_user u
+                  join sys_dept d on d.dept_id = u.dept_id
                   where u.user_name = #{userId}
+                    and (d.leader = u.user_name or d.leader = u.nick_name)
                     and t.assignee = concat('leader:', u.dept_id)
               )
           )

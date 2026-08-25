@@ -102,4 +102,9 @@
         order by sort asc
         limit 1
     </select>
+    <select id="selectEdgesBySourceNodeId" parameterType="Long" resultMap="WfProcessEdgeResult">
+        <include refid="selectWfProcessEdgeVo"/>
+        where source_node_id = #{sourceNodeId}
+        order by sort asc, id asc
+    </select>
 </mapper>

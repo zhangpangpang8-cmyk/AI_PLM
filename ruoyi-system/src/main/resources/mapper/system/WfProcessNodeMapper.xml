@@ -123,4 +123,11 @@
         order by sort asc
         limit 1
     </select>
+    <select id="selectNodeByDefinitionIdAndName" resultMap="WfProcessNodeResult">
+        <include refid="selectWfProcessNodeVo"/>
+        where process_definition_id = #{processDefinitionId}
+          and node_name = #{nodeName}
+        order by id asc
+        limit 1
+    </select>
 </mapper>

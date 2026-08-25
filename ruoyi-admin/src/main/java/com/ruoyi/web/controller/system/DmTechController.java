@@ -12,6 +12,7 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.system.domain.DmTech;
 import com.ruoyi.system.service.IDmTechService;
 import com.ruoyi.system.service.IMinioService;
@@ -86,17 +87,9 @@ public class DmTechController extends BaseController {
         dmTech.setFilePath(fileUrl);
         dmTech.setSize(file.getSize());
 
-        // 3. 自动设置文件后缀
-        String originalFilename = file.getOriginalFilename();
-        if (originalFilename != null && originalFilename.contains(".")) {
-            dmTech.setFileSuffix(originalFilename.substring(originalFilename.lastIndexOf('.') + 1));
-        }
-
-        // 4. 自动格式化文件大小
-        long size = file.getSize();
-        dmTech.setFileSize(size < 1024 * 1024
-                ? String.format("%.1fKB", size / 1024.0)
-                : String.format("%.2fMB", size / 1024.0 / 1024.0));
+        // 3. 统一提取文件后缀并格式化文件大小
+        dmTech.setFileSuffix(FileUploadUtils.getExtension(file));
+        dmTech.setFileSize(FileUploadUtils.formatFileSize(file.getSize()));
 
         // 5. 设置默认版本号
         if (dmTech.getTechVersion() == null || dmTech.getTechVersion().isEmpty()) {
@@ -126,15 +119,8 @@ public class DmTechController extends BaseController {
             dmTech.setFilePath(fileUrl);
             dmTech.setSize(file.getSize());
 
-            String originalFilename = file.getOriginalFilename();
-            if (originalFilename != null && originalFilename.contains(".")) {
-                dmTech.setFileSuffix(originalFilename.substring(originalFilename.lastIndexOf('.') + 1));
-            }
-
-            long size = file.getSize();
-            dmTech.setFileSize(size < 1024 * 1024
-                    ? String.format("%.1fKB", size / 1024.0)
-                    : String.format("%.2fMB", size / 1024.0 / 1024.0));
+            dmTech.setFileSuffix(FileUploadUtils.getExtension(file));
+            dmTech.setFileSize(FileUploadUtils.formatFileSize(file.getSize()));
         }
 
         // Service层会自动递增版本号

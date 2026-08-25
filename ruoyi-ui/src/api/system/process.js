@@ -1,47 +1,13 @@
 import request from '@/utils/request'
+import { createCrudApi } from '@/api/crud'
 
-// 查询流程定义列表
-export function listProcessDefinition(query) {
-  return request({
-    url: '/system/process/definition/list',
-    method: 'get',
-    params: query
-  })
-}
+const definitionCrud = createCrudApi('/system/process/definition')
 
-// 查询流程定义详细
-export function getProcessDefinition(id) {
-  return request({
-    url: '/system/process/definition/' + id,
-    method: 'get'
-  })
-}
-
-// 新增流程定义
-export function addProcessDefinition(data) {
-  return request({
-    url: '/system/process/definition',
-    method: 'post',
-    data: data
-  })
-}
-
-// 修改流程定义
-export function updateProcessDefinition(data) {
-  return request({
-    url: '/system/process/definition',
-    method: 'put',
-    data: data
-  })
-}
-
-// 删除流程定义
-export function delProcessDefinition(id) {
-  return request({
-    url: '/system/process/definition/' + id,
-    method: 'delete'
-  })
-}
+export const listProcessDefinition = definitionCrud.list
+export const getProcessDefinition = definitionCrud.get
+export const addProcessDefinition = definitionCrud.add
+export const updateProcessDefinition = definitionCrud.update
+export const delProcessDefinition = definitionCrud.remove
 
 // 保存流程设计（包含节点和连线）
 export function saveProcessDesign(data) {
