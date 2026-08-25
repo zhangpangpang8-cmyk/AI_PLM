@@ -4,18 +4,13 @@
       <el-table-column label="流程标题" align="center" prop="title" min-width="150" />
       <el-table-column label="业务类型" align="center" prop="businessType" min-width="100">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.businessType === 'drawing'" type="primary">图纸</el-tag>
-          <el-tag v-else-if="scope.row.businessType === 'document'" type="success">文档</el-tag>
-          <el-tag v-else-if="scope.row.businessType === 'tech_doc'" type="warning">技术文档</el-tag>
-          <span v-else>{{ scope.row.businessType }}</span>
+          <business-status-tag group="workflowBusinessType" :value="scope.row.businessType" />
         </template>
       </el-table-column>
       <el-table-column label="当前节点" align="center" prop="currentNode" min-width="120" />
       <el-table-column label="流程状态" align="center" prop="status" min-width="100">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 'running'" type="warning">进行中</el-tag>
-          <el-tag v-else-if="scope.row.status === 'approved'" type="success">已通过</el-tag>
-          <el-tag v-else-if="scope.row.status === 'rejected'" type="danger">已驳回</el-tag>
+          <business-status-tag group="workflowInstanceStatus" :value="scope.row.status" />
         </template>
       </el-table-column>
       <el-table-column label="发起时间" align="center" prop="startTime" min-width="160">
@@ -52,6 +47,7 @@
 
 <script>
 import { listMyProcesses } from "@/api/system/process"
+import { formatWorkflowDuration, getWorkflowBusinessRoute } from '@/utils/workflow'
 
 export default {
   name: "MyProcesses",
@@ -79,18 +75,11 @@ export default {
       })
     },
     handleView(row) {
-      if (row.businessType === 'drawing') {
-        this.$router.push({ path: '/system/drawing', query: { id: row.businessId }})
-      }
+      const route = getWorkflowBusinessRoute(row.businessType, row.businessId)
+      route ? this.$router.push(route) : this.$modal.msgInfo("该业务类型暂未接入详情页面")
     },
     formatDuration(seconds) {
-      if (!seconds) return '-'
-      const hours = Math.floor(seconds / 3600)
-      const minutes = Math.floor((seconds % 3600) / 60)
-      if (hours > 0) {
-        return `${hours}小时${minutes}分钟`
-      }
-      return `${minutes}分钟`
+      return formatWorkflowDuration(seconds)
     }
   }
 }

@@ -260,27 +260,7 @@
     <el-row>
       <el-col :span="24">
         <el-form-item label="上传文件" prop="file">
-          <div class="upload-container">
-            <el-upload
-              ref="upload"
-              :limit="1"
-              :auto-upload="false"
-              :on-change="handleFileChange"
-              :on-remove="handleFileRemove"
-              :file-list="fileList"
-              accept=".pdf,.dwg,.dxf,.jpg,.png,.doc,.docx,.xls,.xlsx"
-              action="#"
-              drag
-              :multiple="false"
-              list-type="text"
-            >
-              <i class="el-icon-upload"></i>
-              <div class="el-upload__text">选择文件</div>
-            </el-upload>
-            <div class="upload-tip">
-              支持 PDF、DWG、DXF、图片、Office 等格式文件
-            </div>
-          </div>
+          <single-file-upload v-model="fileList" @file-change="selectedFile = $event" />
         </el-form-item>
       </el-col>
     </el-row>
@@ -424,16 +404,6 @@ export default {
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
-    /** 文件改变 */
-    handleFileChange(file, fileList) {
-      this.selectedFile = file.raw
-      this.fileList = fileList.slice(-1) // 只保留最后一个文件
-    },
-    /** 文件移除 */
-    handleFileRemove(file, fileList) {
-      this.selectedFile = null
-      this.fileList = fileList
-    },
     /** 查看文件 */
     handleView(row) {
       if (row.filePath) {
@@ -511,24 +481,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.el-upload__tip {
-  margin-top: 10px;
-  color: #909399;
-  font-size: 12px;
-}
-.upload-container {
-  width: 100%;
-}
-
-.upload-tip {
-  margin-top: 8px;
-  color: #909399;
-  font-size: 12px;
-}
-
-::v-deep .el-upload-list {
-  margin-top: 10px;
-}
-</style>

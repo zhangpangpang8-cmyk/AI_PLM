@@ -33,6 +33,10 @@ import ImageUpload from "@/components/ImageUpload"
 import ImagePreview from "@/components/ImagePreview"
 // 字典标签组件
 import DictTag from '@/components/DictTag'
+// 业务状态标签组件
+import BusinessStatusTag from '@/components/BusinessStatusTag'
+// 单文件选择组件
+import SingleFileUpload from '@/components/SingleFileUpload'
 // 字典数据组件
 import DictData from '@/components/DictData'
 
@@ -49,6 +53,8 @@ Vue.prototype.handleTree = handleTree
 
 // 全局组件挂载
 Vue.component('DictTag', DictTag)
+Vue.component('BusinessStatusTag', BusinessStatusTag)
+Vue.component('SingleFileUpload', SingleFileUpload)
 Vue.component('Pagination', Pagination)
 Vue.component('RightToolbar', RightToolbar)
 Vue.component('Editor', Editor)

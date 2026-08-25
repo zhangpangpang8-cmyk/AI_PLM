@@ -63,19 +63,13 @@
       <el-table-column label="版本" align="center" prop="techVersion" min-width="80"/>
       <el-table-column label="发布状态" align="center" prop="publishStatus" min-width="100">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.publishStatus === 'draft'" type="info">草稿</el-tag>
-          <el-tag v-else-if="scope.row.publishStatus === 'pending'" type="warning">审批中</el-tag>
-          <el-tag v-else-if="scope.row.publishStatus === 'approved'" type="success">已发布</el-tag>
-          <el-tag v-else-if="scope.row.publishStatus === 'rejected'" type="danger">已驳回</el-tag>
-          <span v-else>{{ scope.row.publishStatus }}</span>
+          <business-status-tag group="techPublishStatus" :value="scope.row.publishStatus" />
         </template>
       </el-table-column>
       <el-table-column label="状态" align="center" prop="status" min-width="80">
 
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === '0'" type="info">草稿</el-tag>
-          <el-tag v-else-if="scope.row.status === '1'" type="warning">审批中</el-tag>
-          <el-tag v-else type="success">已完成</el-tag>
+          <business-status-tag group="techStatus" :value="scope.row.status" />
         </template>
       </el-table-column>
       <el-table-column label="文件名称" align="center" prop="fileName" width="120" :show-overflow-tooltip="true"/>
@@ -207,27 +201,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="上传文件" prop="file">
-              <div class="upload-container">
-                <el-upload
-                  ref="upload"
-                  :limit="1"
-                  :auto-upload="false"
-                  :on-change="handleFileChange"
-                  :on-remove="handleFileRemove"
-                  :file-list="fileList"
-                  accept=".pdf,.dwg,.dxf,.jpg,.png,.doc,.docx,.xls,.xlsx"
-                  action="#"
-                  drag
-                  :multiple="false"
-                  list-type="text"
-                >
-                  <i class="el-icon-upload"></i>
-                  <div class="el-upload__text">选择文件</div>
-                </el-upload>
-                <div class="upload-tip">
-                  支持 PDF、DWG、DXF、图片、Office 等格式文件
-                </div>
-              </div>
+              <single-file-upload v-model="fileList" @file-change="selectedFile = $event" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -460,14 +434,6 @@ export default {
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
-    // 文件选择变化
-    handleFileChange(file) {
-      this.selectedFile = file.raw
-    },
-    // 文件移除
-    handleFileRemove() {
-      this.selectedFile = null
-    },
     /** 查看按钮操作 */
     handleView(row) {
       this.$router.push({
@@ -551,18 +517,4 @@ export default {
   }
 }
 </script>
-<style scoped>.upload-container {
-  width: 100%;
-}
-
-.upload-tip {
-  margin-top: 8px;
-  color: #909399;
-  font-size: 12px;
-}
-
-::v-deep .el-upload-list {
-  margin-top: 10px;
-}
-</style>
 

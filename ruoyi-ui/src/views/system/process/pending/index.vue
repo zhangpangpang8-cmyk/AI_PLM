@@ -4,11 +4,7 @@
       <el-table-column label="流程标题" align="center" prop="title" min-width="150" show-overflow-tooltip />
       <el-table-column label="业务类型" align="center" prop="businessType" min-width="100">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.businessType === 'drawing'" type="primary">图纸</el-tag>
-          <el-tag v-else-if="scope.row.businessType === 'document'" type="success">文档</el-tag>
-          <el-tag v-else-if="scope.row.businessType === 'tech_doc'" type="warning">技术文档</el-tag>
-          <el-tag v-else-if="scope.row.businessType === 'project'" type="danger">项目</el-tag>
-          <span v-else>{{ scope.row.businessType }}</span>
+          <business-status-tag group="workflowBusinessType" :value="scope.row.businessType" />
         </template>
       </el-table-column>
       <el-table-column label="业务编号" align="center" prop="businessNo" min-width="120" show-overflow-tooltip />
@@ -71,6 +67,7 @@
 
 <script>
 import { listPendingTasks, approveTask } from "@/api/system/process"
+import { getWorkflowBusinessRoute } from '@/utils/workflow'
 
 export default {
   name: "PendingTasks",
@@ -106,15 +103,8 @@ export default {
       })
     },
     handleView(row) {
-      if (row.businessType === 'drawing') {
-        this.$router.push({ path: '/system/drawing', query: { id: row.businessId }})
-      } else if (row.businessType === 'tech_doc') {
-        this.$router.push({ path: '/system/tech-detail/' + row.businessId })
-      } else if (row.businessType === 'project') {
-        this.$router.push({ path: '/system/overview', query: { id: row.businessId, view: true }})
-      } else if (row.businessType === 'document') {
-        this.$modal.msgInfo("文档详情页面待开发")
-      }
+      const route = getWorkflowBusinessRoute(row.businessType, row.businessId)
+      route ? this.$router.push(route) : this.$modal.msgInfo("该业务类型暂未接入详情页面")
     },
     handleApprove(row, approved) {
       this.approveForm.taskId = row.id

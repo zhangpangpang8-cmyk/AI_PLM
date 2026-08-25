@@ -81,19 +81,12 @@
       <el-table-column label="流程名称" align="center" prop="processName" width="180"/>
       <el-table-column label="流程分类" align="center" prop="processCategory" width="120">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.processCategory === 'drawing'" type="primary">图纸审批</el-tag>
-          <el-tag v-else-if="scope.row.processCategory === 'document'" type="success">文档审批</el-tag>
-          <el-tag v-else-if="scope.row.processCategory === 'ecn'" type="warning">变更通知</el-tag>
-          <el-tag v-else-if="scope.row.processCategory === 'other'" type="info">其他</el-tag>
-          <span v-else>-</span>
+          <business-status-tag group="processCategory" :value="scope.row.processCategory" />
         </template>
       </el-table-column>
       <el-table-column label="流程类型" align="center" prop="processType" width="120">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.processType === 'drawing'" type="primary">图纸</el-tag>
-          <el-tag v-else-if="scope.row.processType === 'document'" type="success">文档</el-tag>
-          <el-tag v-else-if="scope.row.processType === 'ecn'" type="warning">变更通知</el-tag>
-          <span v-else>-</span>
+          <business-status-tag group="processType" :value="scope.row.processType" />
         </template>
       </el-table-column>
       <el-table-column label="流程描述" align="center" prop="description" show-overflow-tooltip/>
@@ -196,19 +189,13 @@
         <el-descriptions-item label="流程标识">{{ viewForm.processKey }}</el-descriptions-item>
         <el-descriptions-item label="流程名称">{{ viewForm.processName }}</el-descriptions-item>
         <el-descriptions-item label="流程分类">
-          <el-tag v-if="viewForm.processCategory === 'drawing'" type="primary">图纸审批</el-tag>
-          <el-tag v-else-if="viewForm.processCategory === 'document'" type="success">文档审批</el-tag>
-          <el-tag v-else-if="viewForm.processCategory === 'ecn'" type="warning">变更通知</el-tag>
-          <el-tag v-else-if="viewForm.processCategory === 'other'" type="info">其他</el-tag>
+          <business-status-tag group="processCategory" :value="viewForm.processCategory" />
         </el-descriptions-item>
         <el-descriptions-item label="流程类型">
-          <el-tag v-if="viewForm.processType === 'drawing'" type="primary">图纸</el-tag>
-          <el-tag v-else-if="viewForm.processType === 'document'" type="success">文档</el-tag>
-          <el-tag v-else-if="viewForm.processType === 'ecn'" type="warning">变更通知</el-tag>
+          <business-status-tag group="processType" :value="viewForm.processType" />
         </el-descriptions-item>
         <el-descriptions-item label="状态">
-          <el-tag v-if="viewForm.status === '0'" type="success">正常</el-tag>
-          <el-tag v-else type="danger">停用</el-tag>
+          <business-status-tag group="normalDisable" :value="viewForm.status" />
         </el-descriptions-item>
         <el-descriptions-item label="创建时间">{{ parseTime(viewForm.createTime) }}</el-descriptions-item>
         <el-descriptions-item label="流程描述" :span="2">{{ viewForm.description || '-' }}</el-descriptions-item>
@@ -221,10 +208,7 @@
         <el-table-column label="节点名称" prop="nodeName" width="120"/>
         <el-table-column label="节点类型" width="100">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.nodeType === 'startEvent'" type="success" size="mini">开始</el-tag>
-            <el-tag v-else-if="scope.row.nodeType === 'userTask'" type="primary" size="mini">审批</el-tag>
-            <el-tag v-else-if="scope.row.nodeType === 'exclusiveGateway'" type="warning" size="mini">网关</el-tag>
-            <el-tag v-else-if="scope.row.nodeType === 'endEvent'" type="danger" size="mini">结束</el-tag>
+            <business-status-tag group="workflowNodeType" :value="scope.row.nodeType" size="mini" />
           </template>
         </el-table-column>
         <el-table-column label="审批人类型" prop="assigneeType" width="100">
