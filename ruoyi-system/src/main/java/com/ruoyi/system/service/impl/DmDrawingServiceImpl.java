@@ -11,6 +11,7 @@ import com.ruoyi.system.domain.DmDrawing;
 import com.ruoyi.system.domain.WfProcessInstance;
 import com.ruoyi.system.service.IDmDrawingService;
 import com.ruoyi.system.service.IWfProcessInstanceService;
+import com.ruoyi.system.workflow.WorkflowApprovalStatusResolver;
 
 /**
  * 图纸管理Service业务层处理
@@ -25,6 +26,9 @@ public class DmDrawingServiceImpl implements IDmDrawingService
 
     @Autowired
     private IWfProcessInstanceService processInstanceService;
+
+    @Autowired
+    private WorkflowApprovalStatusResolver approvalStatusResolver;
 
     private static final String DEFAULT_DRAWING_FLOW_KEY = "drawing_approval";
 
@@ -52,48 +56,9 @@ public class DmDrawingServiceImpl implements IDmDrawingService
         List<DmDrawing> list = dmDrawingMapper.selectDmDrawingList(dmDrawing);
         // 批量填充审批状态
         for (DmDrawing drawing : list) {
-            computeApprovalStatus(drawing);
+            drawing.setApprovalStatus(approvalStatusResolver.resolve(drawing.getFlowInsId()));
         }
         return list;
-    }
-
-    /**
-     * 根据流程实例状态计算审批状态
-     * 0=草稿, 1=审批中, 2=已通过, 3=已驳回, 4=已取消
-     */
-    private void computeApprovalStatus(DmDrawing drawing) {
-        String flowInsId = drawing.getFlowInsId();
-        if (flowInsId == null || flowInsId.isEmpty()) {
-            drawing.setApprovalStatus("0"); // 草稿
-            return;
-        }
-        try {
-            WfProcessInstance instance = processInstanceService.selectWfProcessInstanceById(Long.valueOf(flowInsId));
-            if (instance == null) {
-                drawing.setApprovalStatus("1"); // 审批中（容错默认）
-                return;
-            }
-            String insStatus = instance.getStatus();
-            switch (insStatus) {
-                case "running":
-                    drawing.setApprovalStatus("1"); // 审批中
-                    break;
-                case "approved":
-                    drawing.setApprovalStatus("2"); // 已通过
-                    break;
-                case "rejected":
-                    drawing.setApprovalStatus("3"); // 已驳回
-                    break;
-                case "cancelled":
-                    drawing.setApprovalStatus("4"); // 已取消
-                    break;
-                default:
-                    drawing.setApprovalStatus("1"); // 审批中（未知状态容错）
-                    break;
-            }
-        } catch (Exception e) {
-            drawing.setApprovalStatus("1"); // 审批中（异常容错）
-        }
     }
 
     /**

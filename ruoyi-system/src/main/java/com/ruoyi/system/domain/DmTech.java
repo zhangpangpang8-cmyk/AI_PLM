@@ -11,7 +11,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author ruoyi
  * @date 2026-05-06
  */
-public class DmTech extends BaseEntity
+public class DmTech extends BaseEntity implements com.ruoyi.system.domain.support.DocumentFileMetadata
 {
     private static final long serialVersionUID = 1L;
 

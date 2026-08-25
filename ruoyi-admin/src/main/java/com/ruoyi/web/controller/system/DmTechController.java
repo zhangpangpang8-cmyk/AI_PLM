@@ -5,17 +5,15 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.system.domain.DmTech;
+import com.ruoyi.system.service.DocumentFileStorageService;
 import com.ruoyi.system.service.IDmTechService;
-import com.ruoyi.system.service.IMinioService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 
@@ -33,10 +31,7 @@ public class DmTechController extends BaseController {
     private IDmTechService dmTechService;
 
     @Autowired
-    private IMinioService minioService;
-
-    @Value("${minio.bucketName}")
-    private String bucketName;
+    private DocumentFileStorageService documentFileStorageService;
 
     /**
      * 查询技术文档列表
@@ -77,19 +72,7 @@ public class DmTechController extends BaseController {
     @Log(title = "技术文档", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestParam("file") MultipartFile file, @ModelAttribute DmTech dmTech) throws Exception {
-        // 1. 上传文件到MinIO
-        String fileUrl = minioService.uploadFile(file, bucketName);
-        System.out.println("=== 文件上传到MinIO成功 ===");
-        System.out.println("文件URL: " + fileUrl);
-
-        // 2. 将MinIO返回的URL保存到数据库
-        dmTech.setFileName(file.getOriginalFilename());
-        dmTech.setFilePath(fileUrl);
-        dmTech.setSize(file.getSize());
-
-        // 3. 统一提取文件后缀并格式化文件大小
-        dmTech.setFileSuffix(FileUploadUtils.getExtension(file));
-        dmTech.setFileSize(FileUploadUtils.formatFileSize(file.getSize()));
+        documentFileStorageService.uploadAndApply(file, dmTech);
 
         // 5. 设置默认版本号
         if (dmTech.getTechVersion() == null || dmTech.getTechVersion().isEmpty()) {
@@ -111,16 +94,7 @@ public class DmTechController extends BaseController {
     {
         // 如果有新文件，上传到MinIO并更新数据库
         if (file != null && !file.isEmpty()) {
-            String fileUrl = minioService.uploadFile(file, bucketName);
-            System.out.println("=== 文件更新上传到MinIO成功 ===");
-            System.out.println("文件URL: " + fileUrl);
-
-            dmTech.setFileName(file.getOriginalFilename());
-            dmTech.setFilePath(fileUrl);
-            dmTech.setSize(file.getSize());
-
-            dmTech.setFileSuffix(FileUploadUtils.getExtension(file));
-            dmTech.setFileSize(FileUploadUtils.formatFileSize(file.getSize()));
+            documentFileStorageService.uploadAndApply(file, dmTech);
         }
 
         // Service层会自动递增版本号

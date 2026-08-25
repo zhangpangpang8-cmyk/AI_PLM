@@ -10,7 +10,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  *
  * @author ruoyi
  */
-public class DmDrawing extends BaseEntity
+public class DmDrawing extends BaseEntity implements com.ruoyi.system.domain.support.DocumentFileMetadata
 {
     private static final long serialVersionUID = 1L;
 

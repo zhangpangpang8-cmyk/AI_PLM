@@ -15,6 +15,7 @@ import com.ruoyi.system.service.IProItemService;
 import com.ruoyi.system.service.IProMaterialClassifyService;
 import com.ruoyi.system.domain.ProMaterialClassify;
 import com.ruoyi.system.service.IWfProcessInstanceService;
+import com.ruoyi.system.workflow.WorkflowApprovalStatusResolver;
 
 /**
  * 物料管理Service业务层处理
@@ -33,6 +34,9 @@ public class ProItemServiceImpl implements IProItemService
 
     @Autowired
     private IWfProcessInstanceService wfProcessInstanceService;
+
+    @Autowired
+    private WorkflowApprovalStatusResolver approvalStatusResolver;
 
     /**
      * 查询物料管理
@@ -58,48 +62,9 @@ public class ProItemServiceImpl implements IProItemService
         List<ProItem> list = proItemMapper.selectProItemList(proItem);
         // 批量填充审批状态
         for (ProItem item : list) {
-            computeApprovalStatus(item);
+            item.setApprovalStatus(approvalStatusResolver.resolve(item.getFlowInsId()));
         }
         return list;
-    }
-
-    /**
-     * 根据流程实例状态计算审批状态
-     * 0=草稿, 1=审批中, 2=已通过, 3=已驳回, 4=已取消
-     */
-    private void computeApprovalStatus(ProItem item) {
-        String flowInsId = item.getFlowInsId();
-        if (flowInsId == null || flowInsId.isEmpty()) {
-            item.setApprovalStatus("0"); // 草稿
-            return;
-        }
-        try {
-            WfProcessInstance instance = wfProcessInstanceService.selectWfProcessInstanceById(Long.valueOf(flowInsId));
-            if (instance == null) {
-                item.setApprovalStatus("1"); // 审批中（容错默认）
-                return;
-            }
-            String insStatus = instance.getStatus();
-            switch (insStatus) {
-                case "running":
-                    item.setApprovalStatus("1"); // 审批中
-                    break;
-                case "approved":
-                    item.setApprovalStatus("2"); // 已通过
-                    break;
-                case "rejected":
-                    item.setApprovalStatus("3"); // 已驳回
-                    break;
-                case "cancelled":
-                    item.setApprovalStatus("4"); // 已取消
-                    break;
-                default:
-                    item.setApprovalStatus("1"); // 审批中（未知状态容错）
-                    break;
-            }
-        } catch (Exception e) {
-            item.setApprovalStatus("1"); // 审批中（异常容错）
-        }
     }
 
     /**

@@ -4,7 +4,6 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,10 +18,9 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.system.domain.DmDrawing;
+import com.ruoyi.system.service.DocumentFileStorageService;
 import com.ruoyi.system.service.IDmDrawingService;
-import com.ruoyi.system.service.IMinioService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -41,10 +39,7 @@ public class DmDrawingController extends BaseController
     private IDmDrawingService dmDrawingService;
 
     @Autowired
-    private IMinioService minioService;
-
-    @Value("${minio.bucketName}")
-    private String bucketName;
+    private DocumentFileStorageService documentFileStorageService;
 
     /**
      * 查询图纸管理列表
@@ -89,16 +84,7 @@ public class DmDrawingController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestParam("file") MultipartFile file, @ModelAttribute DmDrawing dmDrawing) throws Exception
     {
-        // 上传文件到MinIO
-        String fileUrl = minioService.uploadFile(file, bucketName);
-
-        // 将文件信息设置到DmDrawing对象
-        dmDrawing.setFileName(file.getOriginalFilename());
-        dmDrawing.setFilePath(fileUrl);
-        dmDrawing.setSize(file.getSize());
-        dmDrawing.setFileSuffix(FileUploadUtils.getExtension(file));
-        dmDrawing.setFileSize(FileUploadUtils.formatFileSize(file.getSize()));
-
+        documentFileStorageService.uploadAndApply(file, dmDrawing);
         return toAjax(dmDrawingService.insertDmDrawing(dmDrawing));
     }
 
