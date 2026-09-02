@@ -19,35 +19,7 @@
       </div>
     </div>
 
-    <div class="statistics-cards">
-      <el-row :gutter="20" type="flex" justify="space-between">
-        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="3">
-          <div class="stat-card stat-total">
-            <div class="stat-label">物料总数</div>
-            <div class="stat-value">{{ statistics.totalCount }}</div>
-            <div class="stat-compare">较上月 +{{ statistics.compareLastMonth }}</div>
-          </div>
-        </el-col>
-        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="3" v-for="(item, index) in statistics.categories.slice(0, 7)"
-                :key="index">
-          <div class="stat-card" :class="'stat-' + item.color">
-            <div class="stat-label">{{ item.name }}</div>
-            <div class="stat-value">{{ item.count }}</div>
-            <div class="stat-percent">占比 {{ item.percent }}%</div>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20" type="flex" justify="space-between" style="margin-top: 20px;">
-        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="3" v-for="(item, index) in statistics.categories.slice(7)"
-                :key="'second-' + index">
-          <div class="stat-card" :class="'stat-' + item.color">
-            <div class="stat-label">{{ item.name }}</div>
-            <div class="stat-value">{{ item.count }}</div>
-            <div class="stat-percent">占比 {{ item.percent }}%</div>
-          </div>
-        </el-col>
-      </el-row>
-    </div>
+    <material-statistics :value="statistics" />
 
     <!-- 搜索区域 -->
     <el-card class="search-card" shadow="never">
@@ -76,9 +48,12 @@
             placeholder="审核状态"
             clearable
           >
-            <el-option label="待审核" value="0"></el-option>
-            <el-option label="审核通过" value="1"></el-option>
-            <el-option label="审核驳回" value="2"></el-option>
+            <el-option
+              v-for="option in auditStatusOptions"
+              :key="option.value"
+              :label="option.label"
+              :value="option.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item prop="enable">
@@ -87,8 +62,12 @@
             placeholder="启用状态"
             clearable
           >
-            <el-option label="启用" value="1"></el-option>
-            <el-option label="禁用" value="0"></el-option>
+            <el-option
+              v-for="option in enableStatusOptions"
+              :key="option.value"
+              :label="option.label"
+              :value="option.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -153,9 +132,7 @@
       <el-table-column label="版本" prop="itemVersion" width="80"/>
       <el-table-column label="启用状态" prop="enable" width="100" align="center">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.enable === '1' ? 'success' : 'info'" size="small">
-            {{ scope.row.enable === '1' ? '启用' : '禁用' }}
-          </el-tag>
+          <business-status-tag group="enabledDisabled" :value="scope.row.enable" size="small" />
         </template>
       </el-table-column>
       <el-table-column label="审批状态" align="center" prop="approvalStatus">
@@ -221,149 +198,28 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改物料对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="物料编码" prop="itemCode">
-              <el-input v-model="form.itemCode" placeholder="请输入物料编码"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="物料名称" prop="itemName">
-              <el-input v-model="form.itemName" placeholder="请输入物料名称"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="规格型号" prop="specification">
-              <el-input v-model="form.specification" placeholder="请输入规格型号"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="单位" prop="unitName">
-              <el-select
-                v-model="form.unitName"
-                placeholder="请选择单位"
-                clearable
-                filterable
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="dict in unitOptions"
-                  :key="dict.dictValue"
-                  :label="dict.dictLabel"
-                  :value="dict.dictValue"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="物料分类" prop="materialClassifyIds">
-              <treeselect
-                v-model="form.materialClassifyIds"
-                :options="classifyOptions"
-                :normalizer="normalizer"
-                placeholder="请选择物料分类"
-                :multiple="false"
-                :flat="true"
-                :show-count="true" style="width: 100%"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="供应商" prop="vendorName">
-              <el-input v-model="form.vendorName" placeholder="请输入供应商名称"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="材质" prop="material">
-              <el-input v-model="form.material" placeholder="请输入材质"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="颜色" prop="color">
-              <el-input v-model="form.color" placeholder="请输入颜色"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="重量(kg)" prop="weight">
-              <el-input-number v-model="form.weight" :precision="2" :step="0.1" style="width: 100%"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="详细描述" prop="Info">
-              <el-input v-model="form.Info" type="textarea" :rows="3" placeholder="请输入详细描述"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="技术参数" prop="parametersValues">
-              <el-input v-model="form.parametersValues" type="textarea" :rows="3" placeholder="请输入技术参数"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="是否启用" prop="enable">
-              <el-radio-group v-model="form.enable">
-                <el-radio label="1">启用</el-radio>
-                <el-radio label="0">禁用</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="备注" prop="remake">
-              <el-input v-model="form.remake" placeholder="请输入备注"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-      </div>
-    </el-dialog>
-
-    <!-- 审核对话框 -->
-    <el-dialog title="物料审核" :visible.sync="auditDialogVisible" width="500px" append-to-body>
-      <div style="margin-bottom: 15px;">
-        <el-descriptions :column="1" border size="small">
-          <el-descriptions-item label="物料编码">{{ auditForm.itemCode }}</el-descriptions-item>
-          <el-descriptions-item label="物料名称">{{ auditForm.itemName }}</el-descriptions-item>
-          <el-descriptions-item label="规格型号">{{ auditForm.specification }}</el-descriptions-item>
-        </el-descriptions>
-      </div>
-      <el-form :model="auditForm" label-width="80px">
-        <el-form-item label="审核结果">
-          <el-radio-group v-model="auditForm.auditStatus">
-            <el-radio label="1">通过</el-radio>
-            <el-radio label="2">驳回</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="审核备注">
-          <el-input v-model="auditForm.auditRemark" type="textarea" :rows="3" placeholder="请输入审核备注"/>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="auditDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitAudit">确 定</el-button>
-      </div>
-    </el-dialog>
-
-    <!-- 版本历史对话框 -->
-    <el-dialog title="版本历史" :visible.sync="versionDialogVisible" width="900px" append-to-body>
-      <el-table :data="versionList" border stripe>
-        <el-table-column label="版本号" prop="itemVersion" width="100"/>
-        <el-table-column label="物料编码" prop="itemCode" width="120"/>
-        <el-table-column label="物料名称" prop="itemName" width="150"/>
-        <el-table-column label="规格型号" prop="specification" width="150"/>
-        <el-table-column label="发布时间" prop="createTime" width="160"/>
-        <el-table-column label="发布人" prop="createBy" width="100"/>
-        <el-table-column label="操作" width="120" align="center">
-          <template slot-scope="scope">
-            <el-button size="mini" type="text" @click="handleViewVersion(scope.row)">查看</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-dialog>
+    <material-form-dialog
+      :visible="open"
+      :title="title"
+      :form="form"
+      :classify-options="classifyOptions"
+      :unit-options="unitOptions"
+      :normalizer="normalizer"
+      @cancel="cancel"
+      @submit="submitForm"
+    />
+    <material-audit-dialog
+      :visible="auditDialogVisible"
+      :item="auditItem"
+      @cancel="auditDialogVisible = false"
+      @submit="submitAudit"
+    />
+    <material-version-dialog
+      :visible="versionDialogVisible"
+      :versions="versionList"
+      @close="versionDialogVisible = false"
+      @view="handleViewVersion"
+    />
   </div>
 </template>
 
@@ -373,10 +229,31 @@ import {listClassifyTree} from "@/api/system/classify"
 import {getDicts} from "@/api/system/dict/data"
 import Treeselect from "@riophae/vue-treeselect"
 import "@riophae/vue-treeselect/dist/vue-treeselect.css"
+import MaterialStatistics from './components/MaterialStatistics'
+import MaterialFormDialog from './components/MaterialFormDialog'
+import MaterialAuditDialog from './components/MaterialAuditDialog'
+import MaterialVersionDialog from './components/MaterialVersionDialog'
+import {
+  ENABLE_STATUS_OPTIONS,
+  ITEM_AUDIT_STATUS_OPTIONS,
+  MATERIAL_UNIT_DICT_TYPE,
+  buildMaterialStatistics,
+  createEmptyMaterialStatistics,
+  createItemForm,
+  createItemListParams,
+  createItemQueryParams,
+  normalizeMaterialClassifyNode
+} from '@/utils/material'
 
 export default {
   name: "MaterialLibrary",
-  components: {Treeselect},
+  components: {
+    Treeselect,
+    MaterialStatistics,
+    MaterialFormDialog,
+    MaterialAuditDialog,
+    MaterialVersionDialog
+  },
   dicts: ['item_approval_status'],
   data() {
     return {
@@ -402,49 +279,19 @@ export default {
       versionList: [],
       // 审核对话框
       auditDialogVisible: false,
-      auditForm: {},
+      auditItem: {},
       // 统计数据
-      statistics: {
-        totalCount: 0,
-        compareLastMonth: 0,
-        categories: []
-      },
+      statistics: createEmptyMaterialStatistics(),
       // 物料分类选项（树形）
       classifyOptions: [],
       // 单位字典选项
       unitOptions: [],
       // 查询参数
-      queryParams: {
-        pageNum: 1,
-        pageSize: 20,
-        searchText: null,
-        materialClassifyIds: null,
-        auditStatus: null,
-        enable: null
-      },
+      queryParams: createItemQueryParams(),
       // 表单参数
-      form: {},
-      // 表单校验
-      rules: {
-        itemCode: [
-          {required: true, message: "物料编码不能为空", trigger: "blur"}
-        ],
-        itemName: [
-          {required: true, message: "物料名称不能为空", trigger: "blur"}
-        ],
-        specification: [
-          {required: true, message: "规格型号不能为空", trigger: "blur"}
-        ],
-        unitName: [
-          {required: true, message: "单位不能为空", trigger: "blur"}
-        ],
-        materialClassifyIds: [
-          {required: true, message: "物料分类不能为空", trigger: "change"}
-        ],
-        enable: [
-          {required: true, message: "启用状态不能为空", trigger: "change"}
-        ]
-      }
+      form: createItemForm(),
+      auditStatusOptions: ITEM_AUDIT_STATUS_OPTIONS,
+      enableStatusOptions: ENABLE_STATUS_OPTIONS
     }
   },
   created() {
@@ -463,13 +310,9 @@ export default {
 
     /** 获取单位字典 */
     getUnitDicts() {
-      console.log('开始获取单位字典...')
-      getDicts('sys_item_unit').then(response => {
-        console.log('获取单位字典响应:', response)
+      getDicts(MATERIAL_UNIT_DICT_TYPE).then(response => {
         this.unitOptions = response.data || []
-        console.log('单位选项数量:', this.unitOptions.length)
-      }).catch(error => {
-        console.error('获取单位字典失败:', error)
+      }).catch(() => {
         this.unitOptions = []
       })
     },
@@ -477,57 +320,20 @@ export default {
     /** 获取统计数据 */
     getStatisticsData() {
       getStatistics().then(response => {
-        const data = response.data || []
-        if (data && data.length > 0) {
-          // 第一个元素是总计
-          const totalStat = data[0]
-          this.statistics.totalCount = totalStat.count || 0
-
-          // 其余元素是一级分类统计
-          const categories = []
-          const colors = ['green', 'yellow', 'purple', 'blue', 'teal', 'orange', 'pink', 'light-blue', 'light-green']
-
-          for (let i = 1; i < data.length; i++) {
-            const stat = data[i]
-            const percent = this.statistics.totalCount > 0 
-              ? ((stat.count / this.statistics.totalCount) * 100).toFixed(2)
-              : 0
-            
-            categories.push({
-              name: stat.classifyName,
-              count: stat.count,
-              percent: parseFloat(percent),
-              color: colors[(i - 1) % colors.length],
-              classifyId: stat.classifyId
-            })
-          }
-
-          this.statistics.categories = categories
-        }
-      }).catch(error => {
-        console.error('获取统计数据失败:', error)
+        this.statistics = buildMaterialStatistics(response.data)
+      }).catch(() => {
+        this.statistics = createEmptyMaterialStatistics()
       })
     },
 
     /** 转换树形数据格式 */
     normalizer(node) {
-      return {
-        id: node.id,
-        label: node.materialClassifyName,
-        children: node.children
-      }
+      return normalizeMaterialClassifyNode(node)
     },
     /** 查询物料列表 */
     getList() {
       this.loading = true
-      const params = {...this.queryParams}
-
-      // 处理搜索文本
-      if (params.searchText) {
-        params.itemCode = params.searchText
-        params.itemName = params.searchText
-        params.specification = params.searchText
-      }
+      const params = createItemListParams(this.queryParams)
 
       listItem(params).then(response => {
         this.itemList = response.rows
@@ -546,62 +352,18 @@ export default {
 
     // 表单重置
     reset() {
-      this.form = {
-        id: null,
-        itemCode: null,
-        itemName: null,
-        specification: null,
-        unitName: null,
-        materialClassifyIds: null,
-        vendorName: null,
-        material: null,
-        color: null,
-        weight: null,
-        Info: null,
-        parametersValues: null,
-        enable: '1',
-        remake: null,
-        itemVersion: 'V1.0'
-      }
-      this.resetForm("form")
-    },
-
-    /** 获取审核状态文本 */
-    getAuditStatusText(auditStatus) {
-      const map = { '0': '待审核', '1': '审核通过', '2': '审核驳回' }
-      return map[auditStatus] || auditStatus || '待审核'
-    },
-
-    /** 获取审核状态标签类型 */
-    getAuditStatusType(auditStatus) {
-      const map = { '0': 'info', '1': 'success', '2': 'danger' }
-      return map[auditStatus] || 'info'
+      this.form = createItemForm()
     },
 
     /** 审核按钮操作 */
     handleAudit(row) {
-      this.auditForm = {
-        id: row.id,
-        itemCode: row.itemCode,
-        itemName: row.itemName,
-        specification: row.specification,
-        auditStatus: '1',
-        auditRemark: ''
-      }
+      this.auditItem = row
       this.auditDialogVisible = true
     },
 
     /** 提交审核 */
-    submitAudit() {
-      if (!this.auditForm.auditStatus) {
-        this.$message.warning('请选择审核结果')
-        return
-      }
-      auditItem({
-        id: this.auditForm.id,
-        auditStatus: this.auditForm.auditStatus,
-        auditRemark: this.auditForm.auditRemark
-      }).then(() => {
+    submitAudit(payload) {
+      auditItem(payload).then(() => {
         this.$modal.msgSuccess('审核成功')
         this.auditDialogVisible = false
         this.getList()
@@ -639,7 +401,7 @@ export default {
       this.reset()
       const id = row.id || this.ids
       getItem(id).then(response => {
-        this.form = response.data
+        this.form = createItemForm(response.data)
         this.open = true
         this.title = "修改物料"
       })
@@ -730,22 +492,12 @@ export default {
 
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateItem(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功")
-              this.open = false
-              this.getList()
-            })
-          } else {
-            addItem(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功")
-              this.open = false
-              this.getList()
-            })
-          }
-        }
+      const request = this.form.id != null ? updateItem(this.form) : addItem(this.form)
+      const message = this.form.id != null ? '修改成功' : '新增成功'
+      request.then(() => {
+        this.$modal.msgSuccess(message)
+        this.open = false
+        this.getList()
       })
     },
 
@@ -805,91 +557,6 @@ export default {
   margin-left: 10px;
 }
 
-/* 统计卡片样式 */
-.statistics-cards {
-  margin-bottom: 20px;
-}
-
-.stat-card {
-  padding: 20px 15px;
-  border-radius: 8px;
-  text-align: center;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  transition: all 0.3s;
-  cursor: pointer;
-  min-height: 120px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.15);
-}
-
-.stat-total {
-  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-}
-
-.stat-green {
-  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-}
-
-.stat-yellow {
-  background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
-}
-
-.stat-purple {
-  background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
-}
-
-.stat-blue {
-  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-}
-
-.stat-teal {
-  background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
-}
-
-.stat-orange {
-  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-}
-
-.stat-pink {
-  background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
-}
-
-.stat-light-blue {
-  background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
-}
-
-.stat-light-green {
-  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-}
-
-.stat-label {
-  font-size: 14px;
-  color: #606266;
-  margin-bottom: 10px;
-  word-break: break-all;
-  line-height: 1.4;
-}
-
-.stat-value {
-  font-size: 28px;
-  font-weight: bold;
-  color: #303133;
-  margin-bottom: 8px;
-}
-
-.stat-compare,
-.stat-percent {
-  font-size: 13px;
-  color: #909399;
-}
-
 /* 搜索卡片样式 */
 .search-card {
   margin-bottom: 20px;
@@ -924,18 +591,6 @@ export default {
     width: 160px;
   }
 
-  .stat-card {
-    padding: 15px 10px;
-    min-height: 100px;
-  }
-
-  .stat-value {
-    font-size: 24px;
-  }
-
-  .stat-label {
-    font-size: 13px;
-  }
 }
 
 @media (max-width: 1366px) {

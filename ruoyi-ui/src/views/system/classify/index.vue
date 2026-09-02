@@ -38,8 +38,12 @@
             clearable
             style="width: 150px"
           >
-            <el-option label="是" value="1"></el-option>
-            <el-option label="否" value="0"></el-option>
+            <el-option
+              v-for="option in enableStatusOptions"
+              :key="option.value"
+              :label="option.label"
+              :value="option.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -102,9 +106,7 @@
         align="center"
       >
         <template slot-scope="scope">
-          <el-tag :type="scope.row.enable === '1' ? 'success' : 'info'" size="small">
-            {{ scope.row.enable === '1' ? '是' : '否' }}
-          </el-tag>
+          <business-status-tag group="enabledDisabled" :value="scope.row.enable" size="small" />
         </template>
       </el-table-column>
       <el-table-column
@@ -164,8 +166,9 @@
           <el-col :span="16">
             <el-form-item label="启用状态" prop="enable">
               <el-radio-group v-model="form.enable">
-                <el-radio label="1">是</el-radio>
-                <el-radio label="0">否</el-radio>
+                <el-radio v-for="option in enableStatusOptions" :key="option.value" :label="option.value">
+                  {{ option.label }}
+                </el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -226,20 +229,14 @@
 
 <script>
 import {listClassify, getClassify, delClassify, addClassify, updateClassify} from "@/api/system/classify"
-import Treeselect from "@riophae/vue-treeselect"
-import "@riophae/vue-treeselect/dist/vue-treeselect.css"
-
-
-export function listClassifyTree() {
-  return request({
-    url: '/system/classify/tree',
-    method: 'get'
-  })
-}
+import {
+  ENABLE_STATUS_OPTIONS,
+  buildMaterialClassifyTree,
+  createMaterialClassifyForm
+} from '@/utils/material'
 
 export default {
   name: "MaterialClassify",
-  components: {Treeselect},
   data() {
     return {
       // 遮罩层
@@ -262,15 +259,14 @@ export default {
       expandAll: false,
       // 刷新表格
       refreshTable: true,
-      // 分类选项（用于树形选择器）
-      classifyOptions: [],
+      enableStatusOptions: ENABLE_STATUS_OPTIONS,
       // 查询参数
       queryParams: {
         materialClassifyName: null,
         enable: null
       },
       // 表单参数
-      form: {},
+      form: createMaterialClassifyForm(),
       // 技术参数列表
       parameterList: [],
       // 表单校验
@@ -301,7 +297,7 @@ export default {
         const dataList = response.data || []
 
         if (dataList && dataList.length > 0) {
-          this.classifyList = this.handleTree(dataList, "id", "parentClassifyId")
+          this.classifyList = buildMaterialClassifyTree(dataList)
         } else {
           this.classifyList = []
         }
@@ -313,53 +309,6 @@ export default {
         this.loading = false
       })
     },
-
-    /** 转换树形数据 */
-    handleTree(data, id, parentId, children) {
-      const config = {
-        id: id || 'id',
-        parentId: parentId || 'parentId',
-        childrenList: children || 'children'
-      }
-
-      const childrenListMap = {}
-      const nodeIds = {}
-      const tree = []
-
-      for (const d of data) {
-        const parentId = d[config.parentId]
-        if (childrenListMap[parentId] == null) {
-          childrenListMap[parentId] = []
-        }
-        nodeIds[d[config.id]] = d
-        childrenListMap[parentId].push(d)
-      }
-
-      for (const d of data) {
-        const parentId = d[config.parentId]
-        if (nodeIds[parentId] == null) {
-          tree.push(d)
-        }
-      }
-
-      for (const t of tree) {
-        adaptToChildrenList(t)
-      }
-
-      function adaptToChildrenList(o) {
-        if (childrenListMap[o[config.id]] !== null) {
-          o[config.childrenList] = childrenListMap[o[config.id]]
-        }
-        if (o[config.childrenList]) {
-          for (const c of o[config.childrenList]) {
-            adaptToChildrenList(c)
-          }
-        }
-      }
-
-      return tree
-    },
-
 
     toggleExpandAll() {
       this.refreshTable = false
@@ -377,18 +326,7 @@ export default {
 
     // 表单重置
     reset() {
-      this.form = {
-        id: null,
-        materialClassifyCode: null,
-        materialClassifyName: null,
-        parentClassifyId: 0,
-        ancestors: null,
-        ancestorsName: null,
-        orderNum: 0,
-        enable: '1',
-        remark: null,
-        mesSyncId: null
-      }
+      this.form = createMaterialClassifyForm()
       this.parameterList = []
       this.resetForm("form")
     },

@@ -45,8 +45,12 @@
           </el-select>
 
           <el-select v-model="filterStatus" placeholder="状态" clearable style="width: 100%; margin-top: 10px;">
-            <el-option label="启用" value="1"></el-option>
-            <el-option label="禁用" value="0"></el-option>
+            <el-option
+              v-for="option in enableStatusOptions"
+              :key="option.value"
+              :label="option.label"
+              :value="option.value"
+            />
           </el-select>
         </div>
 
@@ -92,9 +96,7 @@
           <el-card>
             <div slot="header" class="card-header">
               <span class="card-title">{{ selectedBom.bomName }}</span>
-              <el-tag :type="selectedBom.enable === '1' ? 'success' : 'danger'">
-                {{ selectedBom.enable === '1' ? '启用' : '禁用' }}
-              </el-tag>
+              <business-status-tag group="enabledDisabled" :value="selectedBom.enable" />
             </div>
 
             <el-descriptions :column="2" border>
@@ -128,9 +130,7 @@
               <el-table-column prop="dosage" label="用量" width="80"></el-table-column>
               <el-table-column prop="enable" label="状态" width="100">
                 <template slot-scope="scope">
-                  <el-tag :type="scope.row.enable === '1' ? 'success' : 'danger'" size="small">
-                    {{ scope.row.enable === '1' ? '启用' : '禁用' }}
-                  </el-tag>
+                  <business-status-tag group="enabledDisabled" :value="scope.row.enable" size="small" />
                 </template>
               </el-table-column>
             </el-table>
@@ -173,8 +173,9 @@
         </el-form-item>
         <el-form-item label="启用状态" prop="enable">
           <el-radio-group v-model="form.enable">
-            <el-radio label="1">启用</el-radio>
-            <el-radio label="0">禁用</el-radio>
+            <el-radio v-for="option in enableStatusOptions" :key="option.value" :label="option.value">
+              {{ option.label }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -222,7 +223,8 @@
 </template>
 
 <script>
-import { listBom, getBom, delBom, addBom, updateBom } from "@/api/system/bom"
+import { listBom, getBom, addBom, updateBom } from "@/api/system/bom"
+import { ENABLE_STATUS_OPTIONS, buildBomTree, createBomForm } from '@/utils/material'
 
 export default {
   name: "Bom",
@@ -231,6 +233,7 @@ export default {
       searchQuery: '',
       filterCategory: '',
       filterStatus: '',
+      enableStatusOptions: ENABLE_STATUS_OPTIONS,
       categoryOptions: [
         { value: 'product1', label: '产品类型1' },
         { value: 'product2', label: '产品类型2' },
@@ -252,7 +255,7 @@ export default {
       },
       dialogVisible: false,
       dialogTitle: '',
-      form: {},
+      form: createBomForm(),
       bomStructure: [],
       rules: {
         bomCode: [
@@ -285,29 +288,11 @@ export default {
         status: this.filterStatus
       }
       listBom(params).then(response => {
-        this.bomTreeData = this.buildTree(response.rows)
+        this.bomTreeData = buildBomTree(response.rows)
         this.treeLoading = false
       }).catch(() => {
         this.treeLoading = false
       })
-    },
-    buildTree(data) {
-      const tree = []
-      const map = {}
-
-      data.forEach(item => {
-        map[item.id] = { ...item, children: [] }
-      })
-
-      data.forEach(item => {
-        if (item.parentNode && map[item.parentNode]) {
-          map[item.parentNode].children.push(map[item.id])
-        } else {
-          tree.push(map[item.id])
-        }
-      })
-
-      return tree
     },
     handleSearch() {
       this.getBomTree()
@@ -339,17 +324,21 @@ export default {
       this.$message.info('导入功能开发中')
     },
     handleUpdate(row) {
-      this.form = {}
+      this.form = createBomForm()
       getBom(row.id).then(response => {
-        this.form = response.data
+        this.form = createBomForm(response.data)
         this.dialogTitle = '编辑BOM'
         this.dialogVisible = true
       })
     },
     handleCopy(row) {
-      this.form = {}
+      this.form = createBomForm()
       getBom(row.id).then(response => {
-        this.form = { ...response.data, id: null, bomCode: response.data.bomCode + '-copy' }
+        this.form = createBomForm({
+          ...response.data,
+          id: null,
+          bomCode: response.data.bomCode + '-copy'
+        })
         this.dialogTitle = '复制BOM'
         this.dialogVisible = true
       })
@@ -390,20 +379,7 @@ export default {
       })
     },
     resetForm() {
-      this.form = {
-        id: null,
-        bomCode: null,
-        bomName: null,
-        bomVersion: null,
-        itemCode: null,
-        itemName: null,
-        productName: null,
-        hierarchy: null,
-        dosage: null,
-        versionBriefly: null,
-        remark: null,
-        enable: '1'
-      }
+      this.form = createBomForm()
       if (this.$refs["form"]) {
         this.$refs["form"].resetFields()
       }

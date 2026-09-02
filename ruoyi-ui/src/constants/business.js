@@ -62,6 +62,10 @@ export const BUSINESS_STATUS_META = {
     '0': { label: '正常', type: 'success' },
     '1': { label: '停用', type: 'danger' }
   },
+  enabledDisabled: {
+    '1': { label: '启用', type: 'success' },
+    '0': { label: '禁用', type: 'info' }
+  },
   workflowNodeType: {
     startEvent: { label: '开始', type: 'success' },
     userTask: { label: '审批', type: 'primary' },
